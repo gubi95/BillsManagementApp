@@ -1,5 +1,6 @@
 package pwr.billsmanagement;
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,7 @@ import android.widget.ListView;
 
 public class HelperMethods {
     public static void CreateMenu(
-            AppCompatActivity objAppCompatActivity,
+            final AppCompatActivity objAppCompatActivity,
             final DrawerLayout objDrawerLayout,
             final ListView objListView,
             final ActionBarDrawerToggle objActionBarDrawerToggle) {
@@ -23,8 +24,13 @@ public class HelperMethods {
         objListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // bill scanning activity
+                if(position == 0) {
+                    Intent objIntent = new Intent(objAppCompatActivity, OcrActivity.class);
+                    objAppCompatActivity.startActivity(objIntent);
+                }
+
                 objDrawerLayout.closeDrawer(objListView);
-                // TO DO: go to selected activity based on int position
             }
         });
 
