@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,10 +46,14 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Activity for the multi-tracker app.  This app detects text and displays the value with the
@@ -104,7 +109,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
+        Snackbar.make(mGraphicOverlay, this.getString(R.string.ocr_tap_info),
                 Snackbar.LENGTH_LONG)
                 .show();
     }
@@ -312,33 +317,60 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * onTap is called to capture the first TextBlock under the tap location and return it to
-     * the Initializing Activity.
-     *
-     * @param rawX - the raw position of the tap
-     * @param rawY - the raw position of the tap.
-     * @return true if the activity is ending.
-     */
-    private boolean onTap(float rawX, float rawY) {
-        OcrGraphic graphic = mGraphicOverlay.getGraphicAtLocation(rawX, rawY);
-        TextBlock text = null;
-        if (graphic != null) {
-            text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                Intent data = new Intent();
-                data.putExtra(TextBlockObject, text.getValue());
-                setResult(CommonStatusCodes.SUCCESS, data);
-                finish();
+    public class CustomComparator implements Comparator<TextBlock> {
+        @Override
+        public int compare(TextBlock o1, TextBlock o2) {
+
+            String s1 = o1.getValue();
+            String s2 = o2.getValue();
+
+            if( o1.getBoundingBox().centerY() < o2.getBoundingBox().centerY()) {
+                return -1;
             }
-            else {
-                Log.d(TAG, "text data is null");
+            else if(o1.getBoundingBox().centerY() > o2.getBoundingBox().centerY()) {
+                return 1;
+            }
+
+            return 0;
+        }
+    }
+
+    private boolean onTap(float rawX, float rawY) {
+        Rect objRect = new Rect();
+        ArrayList<OcrGraphic> listGraphics = mGraphicOverlay.getAllGraphics();
+        ArrayList<TextBlock> listTextBlock = new ArrayList<>();
+
+        if (listGraphics.size() > 0) {
+            for(OcrGraphic objOcrGraphic: listGraphics) {
+                TextBlock text = objOcrGraphic.getTextBlock();
+                if (text != null && text.getValue() != null) {
+                    listTextBlock.add(text);
+                } else {
+                    Log.d(TAG, "text data is null");
+                }
             }
         }
         else {
             Log.d(TAG,"no text detected");
         }
-        return text != null;
+
+        Collections.sort(listTextBlock, new CustomComparator());
+
+        String strWholeText = "";
+
+        for(TextBlock tb: listTextBlock) {
+            strWholeText += tb.getValue();
+        }
+
+        Intent objIntent = new Intent(this, ScanResultActivity.class);
+        objIntent.putExtra("scan_data", strWholeText);
+        //setResult(CommonStatusCodes.SUCCESS, data);
+        //finish();
+        this.startActivity(objIntent);
+
+
+
+        return listTextBlock.size() != 0;
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {

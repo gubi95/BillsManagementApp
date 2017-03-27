@@ -17,11 +17,16 @@ package mobile.vision;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.android.gms.vision.CameraSource;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -155,6 +160,16 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
                 }
             }
             return null;
+        }
+    }
+
+    public ArrayList<T> getAllGraphics() {
+        synchronized (mLock) {
+            ArrayList<T> listGraphics = new ArrayList<>();
+            for (T graphic : mGraphics) {
+                listGraphics.add(graphic);
+            }
+            return listGraphics;
         }
     }
 

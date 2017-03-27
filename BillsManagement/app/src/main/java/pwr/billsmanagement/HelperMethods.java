@@ -29,6 +29,10 @@ public class HelperMethods {
                     Intent objIntent = new Intent(objAppCompatActivity, OcrActivity.class);
                     objAppCompatActivity.startActivity(objIntent);
                 }
+                if(position == 1) {
+                    Intent objIntent = new Intent(objAppCompatActivity, ScanResultActivity.class);
+                    objAppCompatActivity.startActivity(objIntent);
+                }
 
                 objDrawerLayout.closeDrawer(objListView);
             }
