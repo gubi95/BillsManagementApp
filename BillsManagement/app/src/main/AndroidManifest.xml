@@ -27,10 +27,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".OcrCaptureActivity" android:label="Skanowanie" />
-        <activity android:name=".OcrActivity" android:label="Skanowanie" />
-        <activity android:name=".ScanResultActivity" />
-
     </application>
 
 </manifest>
