@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     private TessBaseAPI tessBaseApi;
     TextView textView;
     Uri outputFileUri;
-    private static final String lang = "eng";
+    private static final String lang = "pol";
     String result = "empty";
     private RequestPermissionsTool requestTool; //for API >=23 only
 
