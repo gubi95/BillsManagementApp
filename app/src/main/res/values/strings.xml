@@ -8,5 +8,6 @@
     <string name="button_next">Dalej</string>
     <string name="text_nazwa_produktu">Nazwa produktu</string>
     <string name="text_cena">Cena</string>
-    <string name="button_add">Dodaj</string>
+    <string name="button_add">Zakończ dodawanie</string>
+    <string name="button_add_more">Dodaj następne</string>
 </resources>

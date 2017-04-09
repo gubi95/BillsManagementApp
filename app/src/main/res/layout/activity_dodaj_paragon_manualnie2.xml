@@ -111,7 +111,18 @@
         android:layout_marginTop="16dp"
         android:onClick="dodajParagon"
         android:text="@string/button_add"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText13" />
+        app:layout_constraintLeft_toRightOf="@+id/button6"
+        app:layout_constraintTop_toBottomOf="@+id/editText13"/>
 
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="dodajProdukty"
+        android:text="@string/button_add_more"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText13"
+/>
 </android.support.constraint.ConstraintLayout>
