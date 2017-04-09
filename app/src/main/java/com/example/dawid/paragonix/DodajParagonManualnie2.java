@@ -30,17 +30,17 @@ public class DodajParagonManualnie2 extends AppCompatActivity {
     }
 
     public void dodajProduktyDoBazy(View view) {
-        String product1 =((EditText)findViewById(R.id.editText3)).getText().toString();
-        String price1 =((EditText)findViewById(R.id.editText4)).getText().toString();
+        String product1 = ((EditText) findViewById(R.id.editText3)).getText().toString();
+        String price1 = ((EditText) findViewById(R.id.editText4)).getText().toString();
 
-        String product2 =((EditText)findViewById(R.id.editText7)).getText().toString();
-        String price2 =((EditText)findViewById(R.id.editText12)).getText().toString();
+        String product2 = ((EditText) findViewById(R.id.editText7)).getText().toString();
+        String price2 = ((EditText) findViewById(R.id.editText12)).getText().toString();
 
-        String product3 =((EditText)findViewById(R.id.editText10)).getText().toString();
-        String price3 =((EditText)findViewById(R.id.editText9)).getText().toString();
+        String product3 = ((EditText) findViewById(R.id.editText10)).getText().toString();
+        String price3 = ((EditText) findViewById(R.id.editText9)).getText().toString();
 
-        String product4 =((EditText)findViewById(R.id.editText13)).getText().toString();
-        String price4 =((EditText)findViewById(R.id.editText15)).getText().toString();
+        String product4 = ((EditText) findViewById(R.id.editText13)).getText().toString();
+        String price4 = ((EditText) findViewById(R.id.editText15)).getText().toString();
 
         // dodanie produktów do bazy
 

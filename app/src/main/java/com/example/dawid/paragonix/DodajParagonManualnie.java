@@ -18,8 +18,8 @@ public class DodajParagonManualnie extends AppCompatActivity {
 
     // Metoda wywoływana po naciśnięciu przycisku "Dalej"
     public void przejdzDalej(View view) {
-        String shop_name =((EditText)findViewById(R.id.editText)).getText().toString();
-        String sum =((EditText)findViewById(R.id.editText2)).getText().toString();
+        String shop_name = ((EditText) findViewById(R.id.editText)).getText().toString();
+        String sum = ((EditText) findViewById(R.id.editText2)).getText().toString();
 
         // dodanie nazwy sklepu i ceny do BD
 
