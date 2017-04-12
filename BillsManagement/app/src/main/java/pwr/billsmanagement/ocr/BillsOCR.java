@@ -39,18 +39,11 @@ public class BillsOCR {
 
     public Intent startCameraActivity() {
         try {
-
             prepareDirectory(IMG_PATH);
-
             String img_path = IMG_PATH + "/ocr.jpg";
-
             outputFileUri = Uri.fromFile(new File(img_path));
 
-            final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-            return takePictureIntent;
-
+            return new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

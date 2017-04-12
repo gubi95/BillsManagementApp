@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -27,25 +28,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import pwr.billsmanagement.ocr.BillsOCR;
+import pwr.billsmanagement.ocr.parsers.BillParser;
+import pwr.billsmanagement.ocr.parsers.ShopProduct;
+import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 
 public class MainActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
     static final int PHOTO_REQUEST_CODE = 1;
-    private TessBaseAPI tessBaseApi;
     TextView textView;
-    Uri outputFileUri;
-    private static final String lang = "pol";
-    String result = "empty";
     private RequestPermissionsTool requestTool; //for API >=23 only
-
-    private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/TesseractSample/";
-    private static final String TESSDATA = "tessdata";
-
     private BillsOCR billsOCR;
 
     @Override
@@ -55,13 +52,10 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
 
         Button captureImg = (Button) findViewById(R.id.shootPhoto);
         if (captureImg != null) {
-            captureImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    billsOCR = new BillsOCR(getAssets());
-                    final Intent takePhotoIntent = billsOCR.startCameraActivity();
-                    startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
-                }
+            captureImg.setOnClickListener(v -> {
+                billsOCR = new BillsOCR(getAssets());
+                final Intent takePhotoIntent = billsOCR.startCameraActivity();
+                startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
             });
         }
         textView = (TextView) findViewById(R.id.textResult);
@@ -72,54 +66,19 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String result = billsOCR.doOCR();
-            textView.setText(result);
-            ArrayList<String> products = new ArrayList<>();
-            ArrayList<String> prices = new ArrayList<>();
+            BillParser billParser = new TwoLineBillParser(result, "ZABKA", new ArrayList<>(), new ArrayList<>());
+            ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult(2);
 
-            for(String line : result.split("\n")) {
-                StringBuilder removedErrors = new StringBuilder();
-                for(String word : line.split(" ")) {
-                    if(word.length() > 2) {
-                        removedErrors.append(word + " ");
-                    }
-                }
-
-                String noErrorsLine = removedErrors.toString();
-
-                int numbers = 0;
-                int size = 0;
-                for(int i = 0; i < noErrorsLine.length(); i++) {
-                    if(noErrorsLine.charAt(i) >= 48 && noErrorsLine.charAt(i) <= 57) {
-                        numbers++;
-                        size++;
-                        continue;
-                    }
-                    if(noErrorsLine.charAt(i) == 44 || noErrorsLine.charAt(i) == 32){
-                        size--;
-                        continue;
-                    }
-                    size++;
-                }
-                if(numbers > size/2) {
-                    prices.add(noErrorsLine);
-                } else {
-                    products.add(noErrorsLine);
-                }
-
+            StringBuilder parsedOcr = new StringBuilder();
+            for (ShopProduct product : shopProducts) {
+                parsedOcr.append(product.toString() +"\n\n");
             }
 
-            for(int i = 0; i < products.size(); i++) {
-                System.out.println(i + ". Produkt: " + products.get(i));
-            }
-            System.out.println("\n");
-            for(int i = 0; i < prices.size(); i++) {
-                System.out.println(i + ". Cena: " + prices.get(i));
-            }
+            textView.setText(parsedOcr.toString());
 
         } else {
             Toast.makeText(this, "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();
@@ -143,7 +102,6 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
         }
 
         if (grantResults.length != permissions.length || (!grantedAllPermissions)) {
-
             requestTool.onPermissionDenied();
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
