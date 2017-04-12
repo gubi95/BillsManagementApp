@@ -1,4 +1,4 @@
-package pwr.billsmanagement;
+package pwr.billsmanagement.ocr.permissions;
 
 /**
  * Created by Rafał on 03.04.2017.

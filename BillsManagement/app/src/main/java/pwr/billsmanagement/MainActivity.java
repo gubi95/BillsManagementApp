@@ -25,6 +25,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import pwr.billsmanagement.ocr.BillsOCR;
+import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
+import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 
 public class MainActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
 
@@ -40,6 +46,8 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/TesseractSample/";
     private static final String TESSDATA = "tessdata";
 
+    private BillsOCR billsOCR;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +58,9 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
             captureImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startCameraActivity();
+                    billsOCR = new BillsOCR(getAssets());
+                    final Intent takePhotoIntent = billsOCR.startCameraActivity();
+                    startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
                 }
             });
         }
@@ -61,168 +71,60 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
         }
     }
 
-
-    /**
-     * to get high resolution image from camera
-     */
-    private void startCameraActivity() {
-        try {
-            String IMGS_PATH = Environment.getExternalStorageDirectory().toString() + "/TesseractSample/imgs";
-            prepareDirectory(IMGS_PATH);
-
-            String img_path = IMGS_PATH + "/ocr.jpg";
-
-            outputFileUri = Uri.fromFile(new File(img_path));
-
-            final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, PHOTO_REQUEST_CODE);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent data) {
         //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            doOCR();
+            String result = billsOCR.doOCR();
+            textView.setText(result);
+            ArrayList<String> products = new ArrayList<>();
+            ArrayList<String> prices = new ArrayList<>();
+
+            for(String line : result.split("\n")) {
+                StringBuilder removedErrors = new StringBuilder();
+                for(String word : line.split(" ")) {
+                    if(word.length() > 2) {
+                        removedErrors.append(word + " ");
+                    }
+                }
+
+                String noErrorsLine = removedErrors.toString();
+
+                int numbers = 0;
+                int size = 0;
+                for(int i = 0; i < noErrorsLine.length(); i++) {
+                    if(noErrorsLine.charAt(i) >= 48 && noErrorsLine.charAt(i) <= 57) {
+                        numbers++;
+                        size++;
+                        continue;
+                    }
+                    if(noErrorsLine.charAt(i) == 44 || noErrorsLine.charAt(i) == 32){
+                        size--;
+                        continue;
+                    }
+                    size++;
+                }
+                if(numbers > size/2) {
+                    prices.add(noErrorsLine);
+                } else {
+                    products.add(noErrorsLine);
+                }
+
+            }
+
+            for(int i = 0; i < products.size(); i++) {
+                System.out.println(i + ". Produkt: " + products.get(i));
+            }
+            System.out.println("\n");
+            for(int i = 0; i < prices.size(); i++) {
+                System.out.println(i + ". Cena: " + prices.get(i));
+            }
+
         } else {
             Toast.makeText(this, "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void doOCR() {
-        prepareTesseract();
-        startOCR(outputFileUri);
-    }
-
-    /**
-     * Prepare directory on external storage
-     *
-     * @param path
-     * @throws Exception
-     */
-    private void prepareDirectory(String path) {
-
-        File dir = new File(path);
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                Log.e(TAG, "ERROR: Creation of directory " + path + " failed, check does Android Manifest have permission to write to external storage.");
-            }
-        } else {
-            Log.i(TAG, "Created directory " + path);
-        }
-    }
-
-
-    private void prepareTesseract() {
-        try {
-            prepareDirectory(DATA_PATH + TESSDATA);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        copyTessDataFiles(TESSDATA);
-    }
-
-    /**
-     * Copy tessdata files (located on assets/tessdata) to destination directory
-     *
-     * @param path - name of directory with .traineddata files
-     */
-    private void copyTessDataFiles(String path) {
-        try {
-            String fileList[] = getAssets().list(path);
-
-            for (String fileName : fileList) {
-
-                // open file within the assets folder
-                // if it is not already there copy it to the sdcard
-                String pathToDataFile = DATA_PATH + path + "/" + fileName;
-                if (!(new File(pathToDataFile)).exists()) {
-
-                    InputStream in = getAssets().open(path + "/" + fileName);
-
-                    OutputStream out = new FileOutputStream(pathToDataFile);
-
-                    // Transfer bytes from in to out
-                    byte[] buf = new byte[1024];
-                    int len;
-
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                    in.close();
-                    out.close();
-
-                    Log.d(TAG, "Copied " + fileName + "to tessdata");
-                }
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to copy files to tessdata " + e.toString());
-        }
-    }
-
-
-    /**
-     * don't run this code in main thread - it stops UI thread. Create AsyncTask instead.
-     * http://developer.android.com/intl/ru/reference/android/os/AsyncTask.html
-     *
-     * @param imgUri
-     */
-    private void startOCR(Uri imgUri) {
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
-            Bitmap bitmap = BitmapFactory.decodeFile(imgUri.getPath(), options);
-
-            result = extractText(bitmap);
-
-            textView.setText(result);
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-
-    private String extractText(Bitmap bitmap) {
-        try {
-            tessBaseApi = new TessBaseAPI();
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            if (tessBaseApi == null) {
-                Log.e(TAG, "TessBaseAPI is null. TessFactory not returning tess object.");
-            }
-        }
-
-        tessBaseApi.init(DATA_PATH, lang);
-
-//       //EXTRA SETTINGS
-//        //For example if we only want to detect numbers
-//        tessBaseApi.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "1234567890");
-//
-//        //blackList Example
-//        tessBaseApi.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, "!@#$%^&*()_+=-qwertyuiop[]}{POIU" +
-//                "YTRWQasdASDfghFGHjklJKLl;L:'\"\\|~`xcvXCVbnmBNM,./<>?");
-
-        Log.d(TAG, "Training file loaded");
-        tessBaseApi.setImage(bitmap);
-        String extractedText = "empty result";
-        try {
-            extractedText = tessBaseApi.getUTF8Text();
-        } catch (Exception e) {
-            Log.e(TAG, "Error in recognizing text.");
-        }
-        tessBaseApi.end();
-        return extractedText;
-    }
-
 
     private void requestPermissions() {
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};

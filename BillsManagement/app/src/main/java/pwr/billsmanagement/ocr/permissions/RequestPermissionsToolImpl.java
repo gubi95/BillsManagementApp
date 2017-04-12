@@ -1,4 +1,4 @@
-package pwr.billsmanagement;
+package pwr.billsmanagement.ocr.permissions;
 
 import android.app.Activity;
 import android.app.AlertDialog;
