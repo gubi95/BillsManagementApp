@@ -27,4 +27,8 @@ public class ShopProduct {
                 "\n\tprice='" + price + '\'' +
                 "\n}";
     }
+
+    public String getName() {
+        return name;
+    }
 }

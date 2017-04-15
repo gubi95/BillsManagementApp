@@ -7,15 +7,16 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
 /**
  * Created by Squier on 12.04.2017.
@@ -23,31 +24,36 @@ import java.io.OutputStream;
 
 public class BillsOCR {
 
-    private static final String TAG = BillsOCR.class.getName();
-    private static final String IMG_PATH = Environment.getExternalStorageDirectory().toString() + "/TesseractSample/imgs";
-    private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/TesseractSample/";
-    private static final String TESSDATA = "tessdata";
-    private static final String LANG = "pol";
+    private final String CHAR_WHITE_LIST;
+    private final String DATA_PATH;
+    private final String IMG_PATH;
+    private final String TESSERACT_TRAINED_DATA_LOCATION;
+    private final String LANG;
+    private final String CAPTURE_AS;
 
     private Uri outputFileUri;
     private TessBaseAPI tessBaseApi;
     private AssetManager assets;
 
-    public BillsOCR(AssetManager assets) {
+    public BillsOCR(AssetManager assets, Properties config) {
         this.assets = assets;
+        DATA_PATH = Environment.getExternalStorageDirectory().toString() + config.getProperty("data_path");
+        IMG_PATH = DATA_PATH + config.getProperty("img_path");
+        CHAR_WHITE_LIST = config.getProperty("ocr_char_white_list");
+        TESSERACT_TRAINED_DATA_LOCATION = config.getProperty("ocr_trained_data_location");
+        LANG = config.getProperty("ocr_lang");
+        CAPTURE_AS = config.getProperty("save_captured_img_as");
     }
-
+    
     public Intent startCameraActivity() {
         try {
             prepareDirectory(IMG_PATH);
-            String img_path = IMG_PATH + "/ocr.jpg";
-            outputFileUri = Uri.fromFile(new File(img_path));
+            outputFileUri = Uri.fromFile(new File(IMG_PATH + CAPTURE_AS));
 
             return new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Logger.e(e.getMessage());
         }
-
         return null;
     }
 
@@ -55,10 +61,10 @@ public class BillsOCR {
         File dir = new File(path);
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                Log.e(TAG, "ERROR: Creation of directory " + path + " failed, check does Android Manifest have permission to write to external storage.");
+                Logger.e("ERROR: Creation of directory " + path + " failed, check does Android Manifest have permission to write to external storage.");
             }
         } else {
-            Log.i(TAG, "Created directory " + path);
+            Logger.i("Created directory " + path);
         }
     }
 
@@ -69,12 +75,12 @@ public class BillsOCR {
 
     private void prepareTesseract() {
         try {
-            prepareDirectory(DATA_PATH + TESSDATA);
+            prepareDirectory(DATA_PATH + TESSERACT_TRAINED_DATA_LOCATION);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        copyTessDataFiles(TESSDATA);
+        copyTessDataFiles(TESSERACT_TRAINED_DATA_LOCATION);
     }
 
     private void copyTessDataFiles(String path) {
@@ -98,11 +104,11 @@ public class BillsOCR {
                     in.close();
                     out.close();
 
-                    Log.d(TAG, "Copied " + fileName + "to tessdata");
+                    Logger.d("Copied " + fileName + "to tessdata");
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, "Unable to copy files to tessdata " + e.toString());
+            Logger.e("Unable to copy files to tessdata " + e.toString());
         }
     }
 
@@ -115,7 +121,7 @@ public class BillsOCR {
             return extractText(bitmap);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Logger.e(e.getMessage());
         }
 
         return null;
@@ -125,9 +131,9 @@ public class BillsOCR {
         try {
             tessBaseApi = new TessBaseAPI();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Logger.e(e.getMessage());
             if (tessBaseApi == null) {
-                Log.e(TAG, "TessBaseAPI is null. TessFactory not returning tess object.");
+                Logger.e("TessBaseAPI is null. TessFactory not returning tess object.");
             }
         }
 
@@ -135,23 +141,22 @@ public class BillsOCR {
 
 //       //EXTRA SETTINGS
 //        //For example if we only want to detect numbers
-        tessBaseApi.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,.*");
+        tessBaseApi.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, CHAR_WHITE_LIST);
 
         //blackList Example
         //tessBaseApi.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, "!@#$%^&()_+=-[]}{" +
         //"'\"\\|~`/<>?");
 
-        Log.d(TAG, "Training file loaded");
+        Logger.d("Training file loaded");
         tessBaseApi.setImage(bitmap);
         String extractedText = "empty result";
         try {
             extractedText = tessBaseApi.getUTF8Text();
         } catch (Exception e) {
-            Log.e(TAG, "Error in recognizing text.");
+            Logger.e("Error in recognizing text.");
         }
         tessBaseApi.end();
         return extractedText;
     }
-
-
+    
 }

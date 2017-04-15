@@ -3,66 +3,77 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
+import com.orhanobut.logger.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Properties;
 
 import pwr.billsmanagement.ocr.BillsOCR;
+import pwr.billsmanagement.ocr.matcher.BestMatchesArray;
+import pwr.billsmanagement.ocr.matcher.MatchWorker;
+import pwr.billsmanagement.ocr.matcher.Matcher;
+import pwr.billsmanagement.ocr.matcher.ProductMatch;
 import pwr.billsmanagement.ocr.parsers.BillParser;
 import pwr.billsmanagement.ocr.parsers.ShopProduct;
 import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
+import pwr.billsmanagement.readers.FileReader;
+import pwr.billsmanagement.readers.PropertiesReader;
 
 public class MainActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
 
-    static final int PHOTO_REQUEST_CODE = 1;
-    TextView textView;
-    private RequestPermissionsTool requestTool; //for API >=23 only
+    private static final int PHOTO_REQUEST_CODE = 1;
+    private static final String CONFIG_FILE = "properties/config.properties";
+    private static final String EXTERNAL_FILES = "properties/external_files.properties";
+
+    private TextView textView;
+    private RequestPermissionsTool requestTool;
+
     private BillsOCR billsOCR;
+    private MatchWorker matchWorker;
+    private PropertiesReader reader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Logger.init("OCR");
 
-        Button captureImg = (Button) findViewById(R.id.shootPhoto);
-        if (captureImg != null) {
-            captureImg.setOnClickListener(v -> {
-                billsOCR = new BillsOCR(getAssets());
-                final Intent takePhotoIntent = billsOCR.startCameraActivity();
-                startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
-            });
-        }
         textView = (TextView) findViewById(R.id.textResult);
+        reader = new PropertiesReader(getApplicationContext(), new Properties());
+        captureImageSetOnClick();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions();
         }
+    }
+
+    private void captureImageSetOnClick() {
+        Button captureImg = (Button) findViewById(R.id.shootPhoto);
+        if (captureImg != null) {
+            captureImg.setOnClickListener(v -> {
+                billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE));
+                final Intent takePhotoIntent = billsOCR.startCameraActivity();
+                startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
+            });
+        }
+    }
+
+    private void initializeMatchWorker() {
+        matchWorker = new MatchWorker(new Matcher(margin), new Properties());
+        matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES))
+                .initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
     }
 
     @Override
@@ -70,15 +81,24 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
         //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String result = billsOCR.doOCR();
-            BillParser billParser = new TwoLineBillParser(result, "ZABKA", new ArrayList<>(), new ArrayList<>());
-            ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult(2);
+            textView.setText(result);
+            BillParser billParser = new TwoLineBillParser(result, "ZABKA", reader.readMyProperties(CONFIG_FILE));
+            billParser.setPrices(new ArrayList<>());
+            billParser.setProducts(new ArrayList<>());
+            ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
 
-            StringBuilder parsedOcr = new StringBuilder();
+            String check;
+            initializeMatchWorker();
             for (ShopProduct product : shopProducts) {
-                parsedOcr.append(product.toString() +"\n\n");
+                check = "FINAL " + product.getName() + " may be: ";
+                List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
+                for (BestMatchesArray array : bestMatches) {
+                    for (ProductMatch productMatch : array.getBestMatches()) {
+                        check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
+                    }
+                }
+                Logger.i(check);
             }
-
-            textView.setText(parsedOcr.toString());
 
         } else {
             Toast.makeText(this, "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();

@@ -12,6 +12,11 @@ public abstract class BillParser {
     protected List<String> products;
     protected List<String> prices;
 
+    public BillParser(String OCR_RESULT, String SHOP_NAME) {
+        this.OCR_RESULT = OCR_RESULT;
+        this.SHOP_NAME = SHOP_NAME;
+    }
+
     public BillParser(String OCR_RESULT, String SHOP_NAME, List<String> products, List<String> prices) {
         this.OCR_RESULT = OCR_RESULT;
         this.SHOP_NAME = SHOP_NAME;
@@ -39,7 +44,7 @@ public abstract class BillParser {
         this.prices = prices;
     }
 
-    public abstract List<ShopProduct> parseOcrResult(final int wordLength);
+    public abstract List<ShopProduct> parseOcrResult();
     public abstract String filterByLength(final String line, final int wordLength);
     public abstract boolean lineIsPrice(final String word);
 }
