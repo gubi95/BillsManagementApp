@@ -71,7 +71,7 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     }
 
     private void initializeMatchWorker() {
-        matchWorker = new MatchWorker(new Matcher(margin), new Properties());
+        matchWorker = new MatchWorker(new Matcher(reader.readMyProperties(CONFIG_FILE)), new Properties());
         matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES))
                 .initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
     }
