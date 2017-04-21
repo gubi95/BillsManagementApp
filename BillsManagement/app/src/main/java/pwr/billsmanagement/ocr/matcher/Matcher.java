@@ -52,15 +52,35 @@ public class Matcher {
     }
 
     private List<ProductMatch> findMatches(final ArrayList<String> sameLengthDict, final String ocrResult) {
-        // TODO jak już zrobisz intersectByLegth to wtedy to trzeba poprawić żeby jakoś sensownie dopasowaywał literki
         List<ProductMatch> bestMatches = new ArrayList<>();
 
         for (String word : sameLengthDict) {
-            int match = 0;
-            for (int i = 0; i < word.length(); i++) {
-                if(word.charAt(i) == ocrResult.charAt(i)) match++;
+            int match1 = 0;
+            int match2 = 0;
+            if(word.length()==ocrResult.length()) {
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
+                }
+                bestMatches.add(new ProductMatch(ocrResult, word, match1));
             }
-            bestMatches.add(new ProductMatch(ocrResult, word, match));
+            else if(word.length()+MARGIN==ocrResult.length()){
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
+                    if (word.charAt(i) == ocrResult.charAt(i+MARGIN)) match2++;
+                }
+                if(match1>match2)bestMatches.add(new ProductMatch(ocrResult, word, match1));
+                else bestMatches.add(new ProductMatch(ocrResult, word, match2));
+            }
+            else if(word.length()==ocrResult.length()+MARGIN){
+                for (int i = 0; i < ocrResult.length(); i++) {
+                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
+                    if (word.charAt(i+MARGIN) == ocrResult.charAt(i)) match2++;
+                }
+                if(match1>match2)bestMatches.add(new ProductMatch(ocrResult, word, match1));
+                else bestMatches.add(new ProductMatch(ocrResult, word, match2));
+            }
+
+
         }
 
         Logger.i("Found matches [" + bestMatches.size() + "] in dictionary to word " + ocrResult);
@@ -68,10 +88,9 @@ public class Matcher {
     }
 
     private List<String> intersectionByLength(final String ocrResult) {
-        // TODO trzeba dodać jakiś margines z tą długością, żeby dobierał też słowa o MARGIN krósze lub dłuższe, w configu jest wartość
         List<String> shortDict = new ArrayList<>();
         for (String dictWord : dictionary) {
-            if (dictWord.length() == ocrResult.length()) {
+            if (dictWord.length() >= ocrResult.length() - MARGIN && dictWord.length() <= ocrResult.length() + MARGIN){
                 shortDict.add(dictWord);
             }
         }
