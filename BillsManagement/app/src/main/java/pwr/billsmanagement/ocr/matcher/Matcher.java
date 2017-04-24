@@ -3,6 +3,8 @@ package pwr.billsmanagement.ocr.matcher;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class Matcher {
                     (ArrayList<ProductMatch>) findMatches(
                             (ArrayList<String>) intersectionByLength(result), result)));
         }
-        Logger.wtf("Matched external ocr result.");
+        Logger.i("Matched external ocr result.");
         return matches;
     }
 
@@ -55,31 +57,34 @@ public class Matcher {
         List<ProductMatch> bestMatches = new ArrayList<>();
 
         for (String word : sameLengthDict) {
-            int match1 = 0;
-            int match2 = 0;
+            int match = 0;
             if(word.length()==ocrResult.length()) {
                 for (int i = 0; i < word.length(); i++) {
-                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
+                    if (word.charAt(i) == ocrResult.charAt(i)) match++;
                 }
-                bestMatches.add(new ProductMatch(ocrResult, word, match1));
+                bestMatches.add(new ProductMatch(ocrResult, word, match));
             }
-            else if(word.length()+MARGIN==ocrResult.length()){
-                for (int i = 0; i < word.length(); i++) {
-                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
-                    if (word.charAt(i) == ocrResult.charAt(i+MARGIN)) match2++;
-                }
-                if(match1>match2)bestMatches.add(new ProductMatch(ocrResult, word, match1));
-                else bestMatches.add(new ProductMatch(ocrResult, word, match2));
-            }
-            else if(word.length()==ocrResult.length()+MARGIN){
-                for (int i = 0; i < ocrResult.length(); i++) {
-                    if (word.charAt(i) == ocrResult.charAt(i)) match1++;
-                    if (word.charAt(i+MARGIN) == ocrResult.charAt(i)) match2++;
-                }
-                if(match1>match2)bestMatches.add(new ProductMatch(ocrResult, word, match1));
-                else bestMatches.add(new ProductMatch(ocrResult, word, match2));
-            }
+            else {
+                String shorter = ocrResult.length() > word.length() ? word : ocrResult;
+                String longer = ocrResult.length() > word.length() ? ocrResult : word;
+                int diff = longer.length() - shorter.length();
+                ArrayList<Integer> matches = new ArrayList<>();
 
+                for (int i = 0; i <= diff; i++) {
+                    matches.add(0);
+                }
+
+                for (int i = 0; i <= diff; i++) {
+                    for (int j = 0; j < shorter.length(); j++) {
+                        if(shorter.charAt(j) == longer.charAt(j)) {
+                            matches.set(i, matches.get(i)+1);
+                        }
+                    }
+                    shorter = " " + shorter;
+                }
+
+                bestMatches.add(new ProductMatch(ocrResult, word, Collections.max(matches)));
+            }
 
         }
 
@@ -95,7 +100,7 @@ public class Matcher {
             }
         }
 
-        Logger.i("Intersected dictionary by length " + ocrResult.length());
+        Logger.i("Intersected dictionary by length " + ocrResult.length() + ".\nFounded " + shortDict.size() + " length matches.");
         return shortDict;
     }
 
