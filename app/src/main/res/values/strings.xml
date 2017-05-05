@@ -2,12 +2,15 @@
     <string name="app_name">Paragonix</string>
     <string name="button_photo">Zrób zdjęcie</string>
     <string name="button_manual">Dodaj paragon</string>
+    <string name="button_manual2">Dodaj paragon (listview)</string>
     <string name="button_browse">Przeglądaj</string>
     <string name="text_sklep">Nazwa sklepu:</string>
     <string name="text_suma">Suma zakupów:</string>
     <string name="button_next">Dalej</string>
-    <string name="text_nazwa_produktu">Nazwa produktu</string>
+    <string name="text_nazwa_produktu">Produkt</string>
     <string name="text_cena">Cena</string>
+    <string name="text_kategoria">Kategoria</string>
     <string name="button_add">Zakończ dodawanie</string>
     <string name="button_add_more">Dodaj następne</string>
+    <string name="title_activity_add_bill">addBill</string>
 </resources>

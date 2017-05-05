@@ -18,4 +18,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DodajParagonManualnie.class);
         startActivity(intent);
     }
+
+    public void addBillManually(View view) {
+        Intent intent = new Intent(this, addBill.class);
+        startActivity(intent);
+    }
 }
