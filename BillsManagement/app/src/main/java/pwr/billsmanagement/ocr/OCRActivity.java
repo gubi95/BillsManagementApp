@@ -1,4 +1,4 @@
-package pwr.billsmanagement;
+package pwr.billsmanagement.ocr;
 
 import android.Manifest;
 import android.app.Activity;
@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import pwr.billsmanagement.R;
 import pwr.billsmanagement.ocr.BillsOCR;
 import pwr.billsmanagement.ocr.matcher.BestMatchesArray;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
