@@ -17,4 +17,11 @@
     <string name="ocr_failure">No text captured</string>
     <string name="ocr_error">"Error reading text: %1$s"</string>
     <string name="ocr_tap_info">Dotknij ekranu, aby zapisać</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="product_price">Cena produktu</string>
+    <string-array name="categories">
+        <item>Something</item>
+        <item>Went</item>
+        <item>Wrong</item>
+    </string-array>
 </resources>

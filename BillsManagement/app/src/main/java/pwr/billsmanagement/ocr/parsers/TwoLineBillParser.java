@@ -1,8 +1,5 @@
 package pwr.billsmanagement.ocr.parsers;
 
-import android.text.BoringLayout;
-import android.util.Log;
-
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;

@@ -3,12 +3,10 @@ package pwr.billsmanagement.ocr.matcher;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by Squier on 11.04.2017.
