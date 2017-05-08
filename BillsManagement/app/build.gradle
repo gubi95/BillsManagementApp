@@ -36,6 +36,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
     compile 'com.rmtheis:tess-two:6.2.0'
     compile 'com.orhanobut:logger:1.15'
     testCompile 'junit:junit:4.12'
