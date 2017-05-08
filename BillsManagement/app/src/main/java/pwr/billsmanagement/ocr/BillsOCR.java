@@ -68,6 +68,11 @@ public class BillsOCR {
         }
     }
 
+    public String doOCR(Bitmap croppedImage) {
+        prepareTesseract();
+        return startOCR(croppedImage);
+    }
+
     public String doOCR() {
         prepareTesseract();
         return startOCR(outputFileUri);
@@ -110,6 +115,10 @@ public class BillsOCR {
         } catch (IOException e) {
             Logger.e("Unable to copy files to tessdata " + e.toString());
         }
+    }
+
+    private String startOCR(Bitmap bitmap) {
+        return extractText(bitmap);
     }
 
     private String startOCR(Uri imgUri) {
@@ -158,5 +167,8 @@ public class BillsOCR {
         tessBaseApi.end();
         return extractedText;
     }
-    
+
+    public Uri getOutputFileUri() {
+        return outputFileUri;
+    }
 }

@@ -1,18 +1,25 @@
 package pwr.billsmanagement;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.widget.Button;
-import android.widget.TextView;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,12 +44,17 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     private static final String CONFIG_FILE = "properties/config.properties";
     private static final String EXTERNAL_FILES = "properties/external_files.properties";
 
-    private TextView textView;
+    private CropImageView cropImageView;
     private RequestPermissionsTool requestTool;
+    private Toolbar toolbar;
+    private ImageButton captureImg, startOCRForCroppedImage;
 
     private BillsOCR billsOCR;
     private MatchWorker matchWorker;
     private PropertiesReader reader;
+
+    private Bitmap croppedBill;
+    private Uri billPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +62,62 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
         setContentView(R.layout.activity_main);
         Logger.init("OCR");
 
-        textView = (TextView) findViewById(R.id.textResult);
+        initView();
+
         reader = new PropertiesReader(getApplicationContext(), new Properties());
-        captureImageSetOnClick();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions();
         }
     }
 
+    private void initView() {
+        toolbar = (Toolbar) findViewById(R.id.myToolbar);
+        toolbar.setTitle(getString(R.string.app_name));
+
+        captureImg = (ImageButton) findViewById(R.id.shootPhoto);
+        captureImg.setImageResource(R.drawable.ic_take_photo);
+        captureImg.setBackgroundColor(ContextCompat.getColor(this, R.color.activeButton));
+
+        startOCRForCroppedImage = (ImageButton) findViewById(R.id.startOCRForCroppedImage);
+        startOCRForCroppedImage.setImageResource(R.drawable.ic_start_ocr);
+        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.inactiveButton));
+        startOCRForCroppedImage.setEnabled(false);
+
+        cropImageView = (CropImageView) findViewById(R.id.cropImageView);
+        captureImageSetOnClick();
+        startOCRForCroppedImageSetOnClick();
+    }
+
+    private void startOCRForCroppedImageSetOnClick() {
+
+        startOCRForCroppedImage.setOnClickListener(v -> {
+            croppedBill = cropImageView.getCroppedImage();
+            if(croppedBill != null) {
+                String result = billsOCR.doOCR(croppedBill);
+                BillParser billParser = new TwoLineBillParser(result, "ZABKA", reader.readMyProperties(CONFIG_FILE));
+                billParser.setPrices(new ArrayList<>());
+                billParser.setProducts(new ArrayList<>());
+                ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
+
+                String check;
+                initializeMatchWorker();
+                for (ShopProduct product : shopProducts) {
+                    check = "FINAL " + product.getName() + " may be: ";
+                    List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
+                    for (BestMatchesArray array : bestMatches) {
+                        for (ProductMatch productMatch : array.getBestMatches()) {
+                            check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
+                        }
+                    }
+                    Logger.i(check);
+                }
+            }
+        });
+
+    }
+
     private void captureImageSetOnClick() {
-        Button captureImg = (Button) findViewById(R.id.shootPhoto);
         if (captureImg != null) {
             captureImg.setOnClickListener(v -> {
                 billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE));
@@ -80,29 +137,18 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            String result = billsOCR.doOCR();
-            textView.setText(result);
-            BillParser billParser = new TwoLineBillParser(result, "ZABKA", reader.readMyProperties(CONFIG_FILE));
-            billParser.setPrices(new ArrayList<>());
-            billParser.setProducts(new ArrayList<>());
-            ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
-
-            String check;
-            initializeMatchWorker();
-            for (ShopProduct product : shopProducts) {
-                check = "FINAL " + product.getName() + " may be: ";
-                List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
-                for (BestMatchesArray array : bestMatches) {
-                    for (ProductMatch productMatch : array.getBestMatches()) {
-                        check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
-                    }
-                }
-                Logger.i(check);
-            }
-
+            Logger.i("In onActivityResult after shooting photo.");
+            billPhoto = billsOCR.getOutputFileUri();
+            cropImageView.setImageUriAsync(billPhoto);
+            activateStartOcrButton(ContextCompat.getColor(this, R.color.activeButton), true);
         } else {
             Toast.makeText(this, "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void activateStartOcrButton(int color, boolean enabled) {
+        startOCRForCroppedImage.setBackgroundColor(color);
+        startOCRForCroppedImage.setEnabled(enabled);
     }
 
     private void requestPermissions() {

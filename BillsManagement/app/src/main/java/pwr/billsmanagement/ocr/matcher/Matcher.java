@@ -3,6 +3,8 @@ package pwr.billsmanagement.ocr.matcher;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -47,20 +49,43 @@ public class Matcher {
                     (ArrayList<ProductMatch>) findMatches(
                             (ArrayList<String>) intersectionByLength(result), result)));
         }
-        Logger.wtf("Matched external ocr result.");
+        Logger.i("Matched external ocr result.");
         return matches;
     }
 
     private List<ProductMatch> findMatches(final ArrayList<String> sameLengthDict, final String ocrResult) {
-        // TODO jak już zrobisz intersectByLegth to wtedy to trzeba poprawić żeby jakoś sensownie dopasowaywał literki
         List<ProductMatch> bestMatches = new ArrayList<>();
 
         for (String word : sameLengthDict) {
             int match = 0;
-            for (int i = 0; i < word.length(); i++) {
-                if(word.charAt(i) == ocrResult.charAt(i)) match++;
+            if(word.length()==ocrResult.length()) {
+                for (int i = 0; i < word.length(); i++) {
+                    if (word.charAt(i) == ocrResult.charAt(i)) match++;
+                }
+                bestMatches.add(new ProductMatch(ocrResult, word, match));
             }
-            bestMatches.add(new ProductMatch(ocrResult, word, match));
+            else {
+                String shorter = ocrResult.length() > word.length() ? word : ocrResult;
+                String longer = ocrResult.length() > word.length() ? ocrResult : word;
+                int diff = longer.length() - shorter.length();
+                ArrayList<Integer> matches = new ArrayList<>();
+
+                for (int i = 0; i <= diff; i++) {
+                    matches.add(0);
+                }
+
+                for (int i = 0; i <= diff; i++) {
+                    for (int j = 0; j < shorter.length(); j++) {
+                        if(shorter.charAt(j) == longer.charAt(j)) {
+                            matches.set(i, matches.get(i)+1);
+                        }
+                    }
+                    shorter = " " + shorter;
+                }
+
+                bestMatches.add(new ProductMatch(ocrResult, word, Collections.max(matches)));
+            }
+
         }
 
         Logger.i("Found matches [" + bestMatches.size() + "] in dictionary to word " + ocrResult);
@@ -68,15 +93,14 @@ public class Matcher {
     }
 
     private List<String> intersectionByLength(final String ocrResult) {
-        // TODO trzeba dodać jakiś margines z tą długością, żeby dobierał też słowa o MARGIN krósze lub dłuższe, w configu jest wartość
         List<String> shortDict = new ArrayList<>();
         for (String dictWord : dictionary) {
-            if (dictWord.length() == ocrResult.length()) {
+            if (dictWord.length() >= ocrResult.length() - MARGIN && dictWord.length() <= ocrResult.length() + MARGIN){
                 shortDict.add(dictWord);
             }
         }
 
-        Logger.i("Intersected dictionary by length " + ocrResult.length());
+        Logger.i("Intersected dictionary by length " + ocrResult.length() + ".\nFounded " + shortDict.size() + " length matches.");
         return shortDict;
     }
 

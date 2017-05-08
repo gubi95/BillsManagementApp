@@ -57,7 +57,7 @@ public class TwoLineBillParser extends BillParser {
             prices.add(filteredLine);
             Logger.i("Founded price: " + filteredLine);
         }
-        else if (filteredLine.length() > SHORTEST_WORD) {   //TODO kurwa po co sprawdzenie robie?
+        else if (filteredLine.length() > SHORTEST_WORD) {   //TODO kurwa po co sprawdzenie robie? Nie po to, żeby przypadkiem nie czytać, jeśli linia jest krótsza od najdłuższego słowa w słowniku?
             names.add(filteredLine);
             Logger.i("Founded name: " + filteredLine);
         }
@@ -84,12 +84,33 @@ public class TwoLineBillParser extends BillParser {
             ale chyba lepiej będzie jak takie coś zrobisz.
             W tej klasie patrzymy na całą linię więc wystarczy zrobić splita po spacjach i sprawdzić
             czy liczba jest otoczona słowami. EZ SHIET! jak coś to pytaj
+
+
          */
-        int number = 0;
+        int word=0;//ilość słów (litery)
+        int number = 0; //ogólna ilość słów
+        int wordStr = 0;//ilość liter w słowie
+        for (String retval: line.split(" ")) {
+            for (int i = 0; i < retval.length(); i++) {
+                wordStr += (retval.charAt(i) <= NINE && retval.charAt(i) >= ZERO) ? 1 : 0;
+            }
+            if(wordStr >=(retval.length()/2)) {//jeśli słowo ma więcej liter niż innego syfu to ilość słów +1
+                word++;
+            }
+            wordStr = 0;
+            number++;
+        }
+
+
+        return word /number  > NUMBERS_PERCENT/100;//ilość słów z literami przez ilość słów
+
+        /*
+         int number = 0;
         for (int i = 0; i < line.length(); i++) {
             number += (line.charAt(i) <= NINE && line.charAt(i) >= ZERO) ? 1 : 0;
         }
 
         return (((float)number) / (line.replaceAll("[,.* ]", "").length())) > NUMBERS_PERCENT/100;
+         */
     }
 }
