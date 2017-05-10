@@ -31,4 +31,5 @@ public class ShopProduct {
     public String getName() {
         return name;
     }
+    public String getPrice() { return price; }
 }

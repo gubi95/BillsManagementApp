@@ -24,12 +24,13 @@ import java.util.Properties;
 
 public class BillsOCR {
 
-    private final String CHAR_WHITE_LIST;
-    private final String DATA_PATH;
-    private final String IMG_PATH;
-    private final String TESSERACT_TRAINED_DATA_LOCATION;
-    private final String LANG;
-    private final String CAPTURE_AS;
+    public final String CHAR_WHITE_LIST;
+    public final String DATA_PATH;
+    public final String IMG_PATH;
+    public final String TESSERACT_TRAINED_DATA_LOCATION;
+    public final String LANG;
+    public final String CAPTURE_AS;
+    public final String SAVE_CROPPED_AS;
 
     private Uri outputFileUri;
     private TessBaseAPI tessBaseApi;
@@ -43,6 +44,7 @@ public class BillsOCR {
         TESSERACT_TRAINED_DATA_LOCATION = config.getProperty("ocr_trained_data_location");
         LANG = config.getProperty("ocr_lang");
         CAPTURE_AS = config.getProperty("save_captured_img_as");
+        SAVE_CROPPED_AS = config.getProperty("save_cropped_img_as");
     }
     
     public Intent startCameraActivity() {
@@ -71,6 +73,11 @@ public class BillsOCR {
     public String doOCR(Bitmap croppedImage) {
         prepareTesseract();
         return startOCR(croppedImage);
+    }
+
+    public String doOCR(Uri fileUri) {
+        prepareTesseract();
+        return startOCR(fileUri);
     }
 
     public String doOCR() {
@@ -171,4 +178,5 @@ public class BillsOCR {
     public Uri getOutputFileUri() {
         return outputFileUri;
     }
+
 }

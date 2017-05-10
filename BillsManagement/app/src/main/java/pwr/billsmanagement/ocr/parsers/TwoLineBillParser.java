@@ -15,6 +15,7 @@ public class TwoLineBillParser extends BillParser {
     private static final String TAG = TwoLineBillParser.class.getSimpleName();
     private static final int NINE = 57;
     private static final int ZERO = 48;
+    private static int LONGEST_ACCEPTABLE_PRICE;
     private final int SHORTEST_WORD;
     private final int NUMBERS_PERCENT;
 
@@ -22,12 +23,14 @@ public class TwoLineBillParser extends BillParser {
         super(ocrResult, SHOP_NAME, products, prices);
         SHORTEST_WORD = Integer.parseInt(config.getProperty("shortest_word"));
         NUMBERS_PERCENT = Integer.parseInt(config.getProperty("numbers_percent"));
+        LONGEST_ACCEPTABLE_PRICE = Integer.parseInt(config.getProperty("longest_acceptable_price"));
     }
 
     public TwoLineBillParser(String OCR_RESULT, String SHOP_NAME, Properties config) {
         super(OCR_RESULT, SHOP_NAME);
         SHORTEST_WORD = Integer.parseInt(config.getProperty("shortest_word"));
         NUMBERS_PERCENT = Integer.parseInt(config.getProperty("numbers_percent"));
+        LONGEST_ACCEPTABLE_PRICE = Integer.parseInt(config.getProperty("longest_acceptable_price"));
         Logger.i(TAG + ": Numbers: " +  NUMBERS_PERCENT + " shortest word: " + SHORTEST_WORD);
     }
 
@@ -54,7 +57,7 @@ public class TwoLineBillParser extends BillParser {
             prices.add(filteredLine);
             Logger.i("Founded price: " + filteredLine);
         }
-        else if (filteredLine.length() > SHORTEST_WORD) {   //TODO kurwa po co sprawdzenie robie? Nie po to, żeby przypadkiem nie czytać, jeśli linia jest krótsza od najdłuższego słowa w słowniku?
+        else if (filteredLine.length() > SHORTEST_WORD) {
             names.add(filteredLine);
             Logger.i("Founded name: " + filteredLine);
         }
@@ -74,40 +77,24 @@ public class TwoLineBillParser extends BillParser {
 
     @Override
     public boolean lineIsPrice(final String line) {
-        /*TODO Zdażają się sytuacje że błędnie przypisuje linię do ceny popatrz na przykład niżej
-            SEREK 444111041 JOVI, niestety zostanie przypisana do ceny choć ewidentnie jest to nazwa
-            produktu, zostanie przypisany do ceny bo stosunek ilości cyfr do całkowitej ilości znaków
-            (bez przecinków i spacji) to 9/18. W config.prperties można se pozmieniać wartość NUMBERS_PERCENT
-            ale chyba lepiej będzie jak takie coś zrobisz.
-            W tej klasie patrzymy na całą linię więc wystarczy zrobić splita po spacjach i sprawdzić
-            czy liczba jest otoczona słowami. EZ SHIET! jak coś to pytaj
-
-
-         */
-        int word=0;//ilość słów (litery)
-        int number = 0; //ogólna ilość słów
-        int wordStr = 0;//ilość liter w słowie
+        int words = 0;
+        int prices = 0;
+        int numbersInWord = 0;
         for (String retval: line.split(" ")) {
             for (int i = 0; i < retval.length(); i++) {
-                wordStr += (retval.charAt(i) <= NINE && retval.charAt(i) >= ZERO) ? 1 : 0;
+                numbersInWord += (retval.charAt(i) <= NINE && retval.charAt(i) >= ZERO) ? 1 : 0;
             }
-            if(wordStr >=(retval.length()/2)) {//jeśli słowo ma więcej liter niż innego syfu to ilość słów +1
-                word++;
+            if(numbersInWord <= (retval.length()/2) && numbersInWord < LONGEST_ACCEPTABLE_PRICE) {
+                words++;
+            } else {
+                numbersInWord = 0;
+                prices++;
             }
-            wordStr = 0;
-            number++;
         }
 
+        prices = prices > 0 ? prices : 1;
+        words = words > 0 ? words : 1;
 
-        return word /number  > NUMBERS_PERCENT/100;//ilość słów z literami przez ilość słów
-
-        /*
-         int number = 0;
-        for (int i = 0; i < line.length(); i++) {
-            number += (line.charAt(i) <= NINE && line.charAt(i) >= ZERO) ? 1 : 0;
-        }
-
-        return (((float)number) / (line.replaceAll("[,.* ]", "").length())) > NUMBERS_PERCENT/100;
-         */
+        return prices/words  > NUMBERS_PERCENT/100;
     }
 }

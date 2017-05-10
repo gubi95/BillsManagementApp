@@ -6,31 +6,31 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.net.URI;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import pwr.billsmanagement.R;
-import pwr.billsmanagement.ocr.BillsOCR;
-import pwr.billsmanagement.ocr.matcher.BestMatchesArray;
+import pwr.billsmanagement.bills.edition.EditBillActivity;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
 import pwr.billsmanagement.ocr.matcher.Matcher;
-import pwr.billsmanagement.ocr.matcher.ProductMatch;
 import pwr.billsmanagement.ocr.parsers.BillParser;
 import pwr.billsmanagement.ocr.parsers.ShopProduct;
 import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
@@ -54,7 +54,6 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     private MatchWorker matchWorker;
     private PropertiesReader reader;
 
-    private Bitmap croppedBill;
     private Uri billPhoto;
 
     @Override
@@ -82,7 +81,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
         startOCRForCroppedImage = (ImageButton) findViewById(R.id.startOCRForCroppedImage);
         startOCRForCroppedImage.setImageResource(R.drawable.ic_start_ocr);
-        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.inactiveButton));
+        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentGrey));
         startOCRForCroppedImage.setEnabled(false);
 
         cropImageView = (CropImageView) findViewById(R.id.cropImageView);
@@ -93,28 +92,66 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     private void startOCRForCroppedImageSetOnClick() {
 
         startOCRForCroppedImage.setOnClickListener(v -> {
-            croppedBill = cropImageView.getCroppedImage();
-            if(croppedBill != null) {
-                String result = billsOCR.doOCR(croppedBill);
-                BillParser billParser = new TwoLineBillParser(result, "ZABKA", reader.readMyProperties(CONFIG_FILE));
+            billPhoto = Uri.fromFile(new File(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS));
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS);
+                cropImageView.getCroppedImage().compress(Bitmap.CompressFormat.PNG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            startOCROnCroppedImage();
+        });
+    }
+
+    private void startOCROnCroppedImage() {
+
+        AsyncTask readOCR = new AsyncTask<Void, Void, ArrayList<ShopProduct>>() {
+            @Override
+            protected ArrayList<ShopProduct> doInBackground(Void... params) {
+                String result = billsOCR.doOCR(billPhoto);
+                result = result.replaceAll("\n\n", "\n");
+                Logger.e("WYNIK " + result);
+                BillParser billParser = new TwoLineBillParser(result, null, reader.readMyProperties(CONFIG_FILE));
                 billParser.setPrices(new ArrayList<>());
                 billParser.setProducts(new ArrayList<>());
                 ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
 
-                String check;
-                initializeMatchWorker();
-                for (ShopProduct product : shopProducts) {
-                    check = "FINAL " + product.getName() + " may be: ";
-                    List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
-                    for (BestMatchesArray array : bestMatches) {
-                        for (ProductMatch productMatch : array.getBestMatches()) {
-                            check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
-                        }
-                    }
-                    Logger.i(check);
-                }
+//        String check;
+//        initializeMatchWorker();
+//        for (ShopProduct product : shopProducts) {
+//            check = "FINAL " + product.getName() + " may be: ";
+//            List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
+//            for (BestMatchesArray array : bestMatches) {
+//                for (ProductMatch productMatch : array.getBestMatches()) {
+//                    check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
+//                }
+//            }
+//            Logger.i(check);
+//        }
+                return shopProducts;
             }
-        });
+
+            @Override
+            protected void onPostExecute(ArrayList<ShopProduct> shopProducts) {
+                Gson gson = new Gson();
+                Logger.i(gson.toJson(shopProducts));
+                Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
+                editBillActivity.putExtra("products_json", gson.toJson(shopProducts));
+                editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(editBillActivity);
+            }
+        }.execute();
+
 
     }
 
