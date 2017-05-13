@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">Paragony</string>
     <string-array name="menu_items">
-        <item>Skanuj paragon</item>
-        <item>Paragony</item>
-        <item>Ustawienia</item>
+        <item>Historia zakupów</item>
+        <item>Dodaj paragon ze zdjęcia</item>
+        <item>Dodaj paragon ręcznie</item>
+        <item>Diagramy wydatków</item>
     </string-array>
     <string name="ok">OK</string>
     <string name="product_name">Product name</string>
     <string name="product_price">Product price</string>
     <string name="shop_name">Nazwa sklepu</string>
+    <string name="title_activity_menu">Menu</string>
 </resources>
