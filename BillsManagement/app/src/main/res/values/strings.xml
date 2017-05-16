@@ -5,7 +5,11 @@
         <item>Dodaj paragon ze zdjęcia</item>
         <item>Dodaj paragon ręcznie</item>
         <item>Diagramy wydatków</item>
+        <item>Wyloguj</item>
     </string-array>
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+
     <string name="ok">OK</string>
     <string name="product_name">Product name</string>
     <string name="product_price">Product price</string>

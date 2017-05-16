@@ -11,6 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageButton;
@@ -39,7 +41,7 @@ import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 import pwr.billsmanagement.readers.FileReader;
 import pwr.billsmanagement.readers.PropertiesReader;
 
-public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
+public class OCRActivity extends FragmentActivity implements ActivityCompat.OnRequestPermissionsResultCallback  {
 
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
