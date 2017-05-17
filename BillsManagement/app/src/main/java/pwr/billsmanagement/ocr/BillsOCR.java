@@ -1,12 +1,16 @@
 package pwr.billsmanagement.ocr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.BuildConfig;
+import android.support.v4.content.FileProvider;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.orhanobut.logger.Logger;
@@ -35,9 +39,11 @@ public class BillsOCR {
     private Uri outputFileUri;
     private TessBaseAPI tessBaseApi;
     private AssetManager assets;
+    private Context context;
 
-    public BillsOCR(AssetManager assets, Properties config) {
+    public BillsOCR(AssetManager assets, Properties config, Context context) {
         this.assets = assets;
+        this.context = context;
         DATA_PATH = Environment.getExternalStorageDirectory().toString() + config.getProperty("data_path");
         IMG_PATH = DATA_PATH + config.getProperty("img_path");
         CHAR_WHITE_LIST = config.getProperty("ocr_char_white_list");
@@ -50,11 +56,20 @@ public class BillsOCR {
     public Intent startCameraActivity() {
         try {
             prepareDirectory(IMG_PATH);
-            outputFileUri = Uri.fromFile(new File(IMG_PATH + CAPTURE_AS));
+
+            Logger.i("Version: " + Build.VERSION.SDK_INT + " " + context.getPackageName());
+
+            if(Build.VERSION.SDK_INT > 23) {
+                outputFileUri = FileProvider.getUriForFile(
+                        context, context.getPackageName() + ".provider", new File(IMG_PATH + CAPTURE_AS)
+                );
+            } else {
+                outputFileUri = Uri.fromFile(new File(IMG_PATH + CAPTURE_AS));
+            }
 
             return new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         } catch (Exception e) {
-            Logger.e(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }

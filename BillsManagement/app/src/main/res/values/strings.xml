@@ -6,7 +6,20 @@
         <item>Ustawienia</item>
     </string-array>
     <string name="ok">OK</string>
-    <string name="product_name">Product name</string>
-    <string name="product_price">Product price</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="product_price">Cena produktu</string>
     <string name="shop_name">Nazwa sklepu</string>
+    <string name="define_label">Produkt</string>
+    <string name="option_name">Nazwa</string>
+    <string name="option_total_price">Cena całk.</string>
+    <string name="option_unit_price">Cena jedn.</string>
+    <string name="option_ignore">Ignoruj</string>
+    <string name="category">Kategoria</string>
+    <string name="product_amount">Ilość</string>
+    <string-array name="define_options">
+        <item>Nazwa</item>
+        <item>Cena całk.</item>
+        <item>Cena jedn.</item>
+        <item>Ignoruj</item>
+    </string-array>
 </resources>

@@ -4,25 +4,22 @@ package pwr.billsmanagement.ocr.parsers;
  * Created by Squier on 12.04.2017.
  */
 
-public class ShopProduct {
+public class Product {
 
-    private String shop;
     private String name;
     private String price;
 
-    public ShopProduct() {
+    public Product() {
     }
 
-    public ShopProduct(String shop, String name, String price) {
-        this.shop = shop;
+    public Product(String name, String price) {
         this.name = name;
         this.price = price;
     }
 
     @Override
     public String toString() {
-        return "ShopProduct{\n" +
-                "\tshop='" + shop + '\'' +
+        return "Product{\n" +
                 "\n\tname='" + name + '\'' +
                 "\n\tprice='" + price + '\'' +
                 "\n}";

@@ -20,7 +20,8 @@
             android:hint="@string/shop_name"
             android:textColor="@color/backgroundWhite"
             android:textColorHint="@color/backgroundWhite"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_centerVertical="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -28,14 +29,6 @@
             android:layout_alignParentEnd="true"
             android:orientation="horizontal"
             android:padding="10dp">
-
-            <ImageButton
-                android:id="@+id/addNewProduct"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:background="@color/colorPrimaryDark"
-                app:srcCompat="@drawable/ic_add_new_product_white" />
 
             <ImageButton
                 android:id="@+id/acceptAll"
@@ -59,11 +52,64 @@
 
     </RelativeLayout>
 
-
-    <ListView
-        android:id="@+id/productList"
+    <LinearLayout
+        android:id="@+id/optionButtons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/selectName"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:textSize="10sp"
+            android:text="@string/option_name"
+            android:backgroundTint="@color/unselected_green"/>
+
+        <Button
+            android:id="@+id/selectPrice"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:textSize="10sp"
+            android:text="@string/option_total_price"
+            android:backgroundTint="@color/unselected_blue"/>
+
+        <Button
+            android:id="@+id/selectUnitPrice"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:textSize="10sp"
+            android:text="@string/option_unit_price"
+            android:backgroundTint="@color/unselected_red"/>
+
+        <Button
+            android:id="@+id/selectAsNothing"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:textSize="10sp"
+            android:text="@string/option_ignore"
+            android:backgroundTint="@color/selected_gray"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/productList"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="500dp" />
+
+
+    </ScrollView>
 
 </LinearLayout>

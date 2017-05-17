@@ -32,7 +32,7 @@ import pwr.billsmanagement.bills.edition.EditBillActivity;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
 import pwr.billsmanagement.ocr.matcher.Matcher;
 import pwr.billsmanagement.ocr.parsers.BillParser;
-import pwr.billsmanagement.ocr.parsers.ShopProduct;
+import pwr.billsmanagement.ocr.parsers.Product;
 import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
@@ -115,20 +115,20 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     private void startOCROnCroppedImage() {
 
-        AsyncTask readOCR = new AsyncTask<Void, Void, ArrayList<ShopProduct>>() {
+        AsyncTask readOCR = new AsyncTask<Void, Void, ArrayList<Product>>() {
             @Override
-            protected ArrayList<ShopProduct> doInBackground(Void... params) {
+            protected ArrayList<Product> doInBackground(Void... params) {
                 String result = billsOCR.doOCR(billPhoto);
                 result = result.replaceAll("\n\n", "\n");
                 Logger.e("WYNIK " + result);
                 BillParser billParser = new TwoLineBillParser(result, null, reader.readMyProperties(CONFIG_FILE));
                 billParser.setPrices(new ArrayList<>());
                 billParser.setProducts(new ArrayList<>());
-                ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
+                ArrayList<Product> products = (ArrayList<Product>) billParser.parseOcrResult();
 
 //        String check;
 //        initializeMatchWorker();
-//        for (ShopProduct product : shopProducts) {
+//        for (Product product : products) {
 //            check = "FINAL " + product.getName() + " may be: ";
 //            List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
 //            for (BestMatchesArray array : bestMatches) {
@@ -138,11 +138,11 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 //            }
 //            Logger.i(check);
 //        }
-                return shopProducts;
+                return products;
             }
 
             @Override
-            protected void onPostExecute(ArrayList<ShopProduct> shopProducts) {
+            protected void onPostExecute(ArrayList<Product> shopProducts) {
                 Gson gson = new Gson();
                 Logger.i(gson.toJson(shopProducts));
                 Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
@@ -152,13 +152,12 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
             }
         }.execute();
 
-
     }
 
     private void captureImageSetOnClick() {
         if (captureImg != null) {
             captureImg.setOnClickListener(v -> {
-                billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE));
+                billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE), this);
                 final Intent takePhotoIntent = billsOCR.startCameraActivity();
                 startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
             });

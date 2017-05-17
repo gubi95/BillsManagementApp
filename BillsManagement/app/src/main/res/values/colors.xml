@@ -6,5 +6,19 @@
     <color name="backgroundWhite">#e8eaf6</color>
     <color name="activeButton">#90caf9</color>
     <color name="transparentGrey">#55353535</color>
+    <color name="transparentLightGrey">#c89e9e9e</color>
+    <color name="transparentWhite">#c8EEEEEE</color>
     <color name="fontColorDark">#1f1f1f</color>
+
+    <color name="selected_green">#388e3c</color>
+    <color name="selected_red">#d32f2f</color>
+    <color name="selected_blue">#0288d1</color>
+    <color name="selected_gray">#616161</color>
+
+    <color name="unselected_green">#4caf50</color>
+    <color name="unselected_red">#f44336</color>
+    <color name="unselected_blue">#03a9f4</color>
+    <color name="unselected_gray">#9e9e9e</color>
+
+
 </resources>

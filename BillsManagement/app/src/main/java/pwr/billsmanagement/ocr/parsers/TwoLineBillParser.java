@@ -35,8 +35,8 @@ public class TwoLineBillParser extends BillParser {
     }
 
     @Override
-    public List<ShopProduct> parseOcrResult() {
-        List<ShopProduct> parsedProducts = new ArrayList<>();
+    public List<Product> parseOcrResult() {
+        List<Product> parsedProducts = new ArrayList<>();
         Logger.i("Parsing ocr bill...");
         for (String line : OCR_RESULT.split("\n")) {
             String filteredLine = filterByLength(line, SHORTEST_WORD);
@@ -45,7 +45,7 @@ public class TwoLineBillParser extends BillParser {
 
         int shorterArray = products.size() <= prices.size() ? products.size() : prices.size();
         for (int i = 0; i < shorterArray; i++) {
-            parsedProducts.add(new ShopProduct(SHOP_NAME, products.get(i), prices.get(i)));
+            parsedProducts.add(new Product(products.get(i), prices.get(i)));
         }
         Logger.i("Ocr bill parsed.");
         return parsedProducts;

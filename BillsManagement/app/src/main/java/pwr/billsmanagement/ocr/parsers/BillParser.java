@@ -44,7 +44,7 @@ public abstract class BillParser {
         this.prices = prices;
     }
 
-    public abstract List<ShopProduct> parseOcrResult();
+    public abstract List<Product> parseOcrResult();
     public abstract String filterByLength(final String line, final int wordLength);
     public abstract boolean lineIsPrice(final String word);
 }
