@@ -41,7 +41,7 @@ import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 import pwr.billsmanagement.readers.FileReader;
 import pwr.billsmanagement.readers.PropertiesReader;
 
-public class OCRActivity extends FragmentActivity implements ActivityCompat.OnRequestPermissionsResultCallback  {
+public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
 
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
