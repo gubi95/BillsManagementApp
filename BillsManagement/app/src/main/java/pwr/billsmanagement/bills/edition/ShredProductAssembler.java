@@ -1,9 +1,13 @@
 package pwr.billsmanagement.bills.edition;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.edition.view.DefineProductItem;
 import pwr.billsmanagement.bills.edition.view.DefineProductRowCreator;
+
+import static pwr.billsmanagement.bills.edition.view.DefineProductRowCreator.*;
 
 /**
  * Created by Squier on 17.05.2017.
@@ -22,18 +26,30 @@ public class ShredProductAssembler {
     }
 
     public void assembly(ShredProduct shredProduct) {
-        for (DefineProductItem shred : shredProduct.getShreds()) {
-            String labelText = shred.getLabel().getText().toString();
-            productName = "";
-            productTotalPrice = "";
-            productUnitPrice = "";
 
-            if(labelText.equals(defineOptions[DefineProductRowCreator.NAME])) {
-                productName += shred.getValue().getText();
-            } else if(labelText.equals(defineOptions[DefineProductRowCreator.TOTAL_PRICE])) {
-                productTotalPrice += shred.getValue().getText();
-            } else if(labelText.equals(defineOptions[DefineProductRowCreator.UNIT_PRICE])) {
-                productUnitPrice += shred.getValue().getText();
+        productName = "";
+        productTotalPrice = "";
+        productUnitPrice = "";
+
+        for (DefineProductItem shred : shredProduct.getShreds()) {
+            String labelText = "";
+            String valueText = "";
+
+            labelText += shred.getLabel().getText();
+            valueText += shred.getValue().getText();
+
+            Logger.i("Assembling product: label:" + labelText + " value:" + valueText);
+            Logger.i("Assembling options: " + defineOptions[0] + "/" + defineOptions[1] + "/" + defineOptions[2]);
+
+            if(labelText.equals(defineOptions[NAME])) {
+                Logger.i("Assembling, added name: " + valueText);
+                productName += valueText + " ";
+            } else if(labelText.equals(defineOptions[TOTAL_PRICE])) {
+                Logger.i("Assembling, added totalPrice: " + valueText);
+                productTotalPrice += valueText + " ";
+            } else if(labelText.equals(defineOptions[UNIT_PRICE])) {
+                Logger.i("Assembling, added unitPrice: " + valueText);
+                productUnitPrice += valueText + " ";
             }
         }
     }
