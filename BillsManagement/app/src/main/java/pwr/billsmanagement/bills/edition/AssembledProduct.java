@@ -39,4 +39,13 @@ public class AssembledProduct {
     public void setProductTotalPrice(String productTotalPrice) {
         this.productTotalPrice = productTotalPrice;
     }
+
+    @Override
+    public String toString() {
+        return "AssembledProduct{" +
+                "productName='" + productName + '\'' +
+                ", productUnitPrice='" + productUnitPrice + '\'' +
+                ", productTotalPrice='" + productTotalPrice + '\'' +
+                '}';
+    }
 }

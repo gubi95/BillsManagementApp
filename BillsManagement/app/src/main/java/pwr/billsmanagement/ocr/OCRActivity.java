@@ -39,7 +39,7 @@ import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 import pwr.billsmanagement.readers.FileReader;
 import pwr.billsmanagement.readers.PropertiesReader;
 
-public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
+public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
@@ -63,12 +63,17 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         Logger.init("OCR");
 
         initView();
+        initListeners();
 
         reader = new PropertiesReader(getApplicationContext(), new Properties());
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions();
         }
+    }
+
+    private void initListeners() {
+        cropImageView.setOnCropImageCompleteListener(new CropImageListener());
     }
 
     private void initView() {
@@ -90,32 +95,12 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     }
 
     private void startOCRForCroppedImageSetOnClick() {
-
-        startOCRForCroppedImage.setOnClickListener(v -> {
-            billPhoto = Uri.fromFile(new File(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS));
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS);
-                cropImageView.getCroppedImage().compress(Bitmap.CompressFormat.PNG, 100, fos);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            startOCROnCroppedImage();
-        });
+        startOCRForCroppedImage.setOnClickListener(v -> cropImageView.getCroppedImageAsync());
     }
 
-    private void startOCROnCroppedImage() {
+    private void startOCROnCroppedImageAsync() {
 
-        AsyncTask readOCR = new AsyncTask<Void, Void, ArrayList<Product>>() {
+        new AsyncTask<Void, Void, ArrayList<Product>>() {
             @Override
             protected ArrayList<Product> doInBackground(Void... params) {
                 String result = billsOCR.doOCR(billPhoto);
@@ -126,18 +111,6 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
                 billParser.setProducts(new ArrayList<>());
                 ArrayList<Product> products = (ArrayList<Product>) billParser.parseOcrResult();
 
-//        String check;
-//        initializeMatchWorker();
-//        for (Product product : products) {
-//            check = "FINAL " + product.getName() + " may be: ";
-//            List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
-//            for (BestMatchesArray array : bestMatches) {
-//                for (ProductMatch productMatch : array.getBestMatches()) {
-//                    check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
-//                }
-//            }
-//            Logger.i(check);
-//        }
                 return products;
             }
 
@@ -211,5 +184,41 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         }
 
     }
-}
 
+    private class CropImageListener implements CropImageView.OnCropImageCompleteListener {
+        @Override
+        public void onCropImageComplete(CropImageView view, CropImageView.CropResult result) {
+            SaveCroppedImageTask saveCroppedImageTask = new SaveCroppedImageTask();
+            saveCroppedImageTask.execute(result.getBitmap());
+        }
+    }
+
+    private class SaveCroppedImageTask extends AsyncTask<Bitmap, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Bitmap... params) {
+            billPhoto = Uri.fromFile(new File(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS));
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS);
+                params[0].compress(Bitmap.CompressFormat.PNG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            startOCROnCroppedImageAsync();
+        }
+    }
+}

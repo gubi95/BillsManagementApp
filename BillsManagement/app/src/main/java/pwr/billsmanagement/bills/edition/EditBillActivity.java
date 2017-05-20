@@ -1,6 +1,7 @@
 package pwr.billsmanagement.bills.edition;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -43,11 +45,14 @@ public class EditBillActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bill_define_product);
 
+        Logger.i("Init view");
         initView();
+        Logger.i("Init resources");
         initResources();
+        Logger.i("Read pass data");
         readPassedData();
+        Logger.i("Create custom list");
         createCustomList();
-        setListeners();
     }
 
     private void initResources() {
@@ -56,18 +61,34 @@ public class EditBillActivity extends Activity {
 
     private void createCustomList() {
 
-        chosenOption = new ChosenOption();
-        creator = new DefineProductRowCreator(
-                getApplicationContext(),
-                chosenOption,
-                new ArrayList<>()
-        );
+        new AsyncTask<Void, Void, ArrayList<View>>() {
+            @Override
+            protected ArrayList<View> doInBackground(Void... params) {
+                chosenOption = new ChosenOption();
+                creator = new DefineProductRowCreator(
+                        getApplicationContext(),
+                        chosenOption,
+                        new ArrayList<>()
+                );
 
-        int id = 1;
+                int id = 1;
 
-        for (Product product : products) {
-            productList.addView(creator.getProductRow(product, id++));
-        }
+                ArrayList<View> views = new ArrayList<>();
+                for (Product product : products) {
+                    views.add(creator.getProductRow(product, id++));
+                }
+                return  views;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<View> views) {
+                for (View view : views) {
+                    productList.addView(view);
+                }
+                Logger.i("Set listeners");
+                setListeners();
+            }
+        }.execute();
 
     }
 

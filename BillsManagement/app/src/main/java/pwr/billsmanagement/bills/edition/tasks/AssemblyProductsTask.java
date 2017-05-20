@@ -3,6 +3,8 @@ package pwr.billsmanagement.bills.edition.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.edition.AssembledProduct;
@@ -26,11 +28,13 @@ public class AssemblyProductsTask extends AsyncTask<ArrayList<ShredProduct>, Voi
     protected ArrayList<AssembledProduct> doInBackground(ArrayList<ShredProduct>... params) {
         for (ShredProduct shred : params[0]) {
             assembler.assembly(shred);
-            assembledProducts.add(new AssembledProduct(
+            AssembledProduct assembledProduct = new AssembledProduct(
                     assembler.getProductName(),
                     assembler.getProductUnitPrice(),
                     assembler.getProductTotalPrice()
-                    ));
+            );
+            Logger.i("Assembled product: " + assembledProduct.toString());
+            assembledProducts.add(assembledProduct);
         }
         return assembledProducts;
     }

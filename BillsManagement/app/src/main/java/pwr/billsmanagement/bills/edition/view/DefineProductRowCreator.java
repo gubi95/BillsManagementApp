@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
+
 import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
@@ -72,20 +74,27 @@ public class DefineProductRowCreator {
         View row = inflater.inflate(R.layout.bill_define_product_row, null);
         initMain(row, id);
 
+        ShredProduct shredProduct = new ShredProduct(new ArrayList<>());
+
         initSubLayout(
                 row,
                 product.getName().split(" "),
                 ColorPair.GREEN,
                 defineOptions[NAME],
-                R.id.productNameStrings
+                R.id.productNameStrings,
+                shredProduct
         );
 
         initSubLayout(row,
                 product.getPrice().split(" "),
                 ColorPair.BLUE,
                 defineOptions[TOTAL_PRICE],
-                R.id.productPriceStrings
+                R.id.productPriceStrings,
+                shredProduct
         );
+
+        Logger.i("Added shred: " + shredProduct.toString());
+        shredProducts.add(shredProduct);
 
         return row;
     }
@@ -99,17 +108,14 @@ public class DefineProductRowCreator {
         ((TextView) row.findViewById(R.id.productNumber)).setText(rowTitle + " " + id);
     }
 
-    private void initSubLayout(View row, String[] words, ColorPair colorPair, String labelText, int linearLayoutId) {
+    private void initSubLayout(View row, String[] words, ColorPair colorPair, String labelText, int linearLayoutId, ShredProduct shredProduct) {
         LinearLayout linearLayout = (LinearLayout) row.findViewById(linearLayoutId);
-
-        ShredProduct shredProduct = new ShredProduct(new ArrayList<>());
 
         for (String word : words) {
             View define = getDefineProductItem(word, labelText, colorPair, shredProduct);
             linearLayout.addView(define);
         }
 
-        shredProducts.add(shredProduct);
     }
 
     private View getDefineProductItem(String word, String labelText, ColorPair colorPair, ShredProduct shredProduct) {

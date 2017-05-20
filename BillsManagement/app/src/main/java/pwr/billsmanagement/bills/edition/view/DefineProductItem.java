@@ -23,4 +23,11 @@ public class DefineProductItem {
     public TextView getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "{label=" + label.getText() +
+                ", value=" + value.getText() +
+                '}';
+    }
 }

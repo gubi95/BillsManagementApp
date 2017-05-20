@@ -2,6 +2,8 @@ package pwr.billsmanagement.bills.edition;
 
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.edition.view.DefineProductItem;
@@ -24,5 +26,19 @@ public class ShredProduct {
 
     public ArrayList<DefineProductItem> getShreds() {
         return shreds;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ShredProduct={");
+        for (DefineProductItem shred :
+                shreds) {
+            builder.append("shred=");
+            builder.append(shred.toString());
+            builder.append(", ");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 }
