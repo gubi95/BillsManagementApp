@@ -16,4 +16,13 @@
     <string name="shop_name">Nazwa sklepu</string>
     <string name="title_activity_menu">Menu</string>
     <string name="title_activity_analysis">AnalysisActivity</string>
+    <string name="wybierz_zakres">Wybierz zakres:</string>
+    <string name="pocz_t_k_zakresu">Początęk zakresu:</string>
+    <string name="koniec_zakresu">Koniec zakresu:</string>
+    <string name="chart_desc">Aby uzyskać szczegółowe informacje, kliknij w słupek kategorii</string>
+    <string name="title_activity_category_details">CategoryDetails</string>
+    <string name="kategoria">Kategoria:</string>
+    <string name="limit">Limit wydatków</string>
+    <string name="wydano">Wydano:</string>
+    <string name="save">Zapisz</string>
 </resources>

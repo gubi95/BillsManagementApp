@@ -5,6 +5,8 @@ import android.util.Log;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
 
 import java.util.ArrayList;
 
@@ -38,7 +40,8 @@ public class Data {
         this.costs.add(new BarEntry(441.55f, 5));
         this.costs.add(new BarEntry(124.66f, 6));
 
-        this.dataset = new BarDataSet(this.costs, "Wydano:");
+        this.dataset = new BarDataSet(this.costs, "Wydano");
+        this.dataset.setColors(ColorTemplate.PASTEL_COLORS);
         this.data = new BarData(this.categories, this.dataset);
         Log.d("koszta", "arr: " + this.costs.toString());
         Log.d("kategorie", "arr: " + this.categories.toString());

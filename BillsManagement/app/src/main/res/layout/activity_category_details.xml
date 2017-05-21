@@ -1,4 +1,4 @@
-<android.support.v4.widget.DrawerLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -22,72 +22,73 @@
             android:theme="@style/AppTheme">
         </android.support.v7.widget.Toolbar>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/text_category"
+                android:gravity="center"
+                android:layout_width="202dp"
+                android:layout_height="wrap_content"
+                android:text="@string/kategoria"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <TextView
+                android:id="@+id/text_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/text_desc"
+            android:id="@+id/limit_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/chart_desc"
-            android:gravity="center"
-        />
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/myBarChart"
-            android:layout_width="match_parent"
-            android:layout_height="355dp">
-        </com.github.mikephil.charting.charts.BarChart>
-
-        <TextView
-            android:id="@+id/text_range"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/wybierz_zakres"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:gravity="center"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/text_range_start"
+                android:id="@+id/text_spend"
                 android:gravity="center"
                 android:layout_width="202dp"
                 android:layout_height="wrap_content"
-                android:text="@string/pocz_t_k_zakresu"
+                android:text="@string/wydano"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-            <EditText
-                android:id="@+id/etDate1"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/spend_value"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="date"/>
+                />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/text_range_end"
+                android:id="@+id/text_spend_limit"
                 android:gravity="center"
                 android:layout_width="202dp"
                 android:layout_height="wrap_content"
-                android:text="@string/koniec_zakresu"
+                android:text="@string/limit"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <EditText
-                android:id="@+id/etDate2"
-                android:layout_width="wrap_content"
+                android:id="@+id/limit_value"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="date"/>
+                android:inputType="number"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/save"/>
+
+
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/drawer_list"
-        android:layout_width="222dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#999" />
-
-    <!-- The navigation drawer -->
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>
