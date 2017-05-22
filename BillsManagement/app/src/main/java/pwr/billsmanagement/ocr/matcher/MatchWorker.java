@@ -43,12 +43,19 @@ public class MatchWorker {
         return this;
     }
 
+    public Matcher getMatcher() {
+        return matcher;
+    }
+
+    public void setMatcher(Matcher matcher) {
+        this.matcher = matcher;
+    }
+
     public Properties getProperties() {
         return properties;
     }
 
-    public MatchWorker setProperties(Properties properties) {
+    public void setProperties(Properties properties) {
         this.properties = properties;
-        return this;
     }
 }

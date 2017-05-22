@@ -6,8 +6,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import pwr.billsmanagement.R;
-import pwr.billsmanagement.bills.edition.AssembledProduct;
+import pwr.billsmanagement.bills.edition.products.AssembledProduct;
 
 /**
  * Created by Squier on 17.05.2017.
@@ -28,10 +33,29 @@ public class FinalProductViewCreator {
 
         ((TextView)row.findViewById(R.id.productFinalNumber)).setText(rowTitle + " " + id);
         ((EditText)row.findViewById(R.id.productFinalName)).setText(product.getProductName());
-        ((EditText)row.findViewById(R.id.productFinalTotalPrice)).setText(product.getProductTotalPrice());
-        ((EditText)row.findViewById(R.id.productFinalUnitPrice)).setText(product.getProductUnitPrice());
+
+        String totalPrice = extractPrice(product.getProductTotalPrice());
+        String unitPrice = extractPrice(product.getProductUnitPrice());
+
+        ((EditText)row.findViewById(R.id.productFinalTotalPrice)).setText(totalPrice);
+        ((EditText)row.findViewById(R.id.productFinalUnitPrice)).setText(unitPrice);
+
+        String quantity = Float.toString(Float.parseFloat(totalPrice)/Float.parseFloat(unitPrice));
+
+        ((EditText)row.findViewById(R.id.productFinalQuantity)).setText(quantity);
+
 
         return row;
+    }
+
+    private String extractPrice(String string) {
+        Pattern pattern = Pattern.compile("([1-9][0-9]*[.,][0-9][0-9])");
+        Matcher matcher = pattern.matcher(string);
+        if(matcher.find()) {
+            Logger.i("IS PRICE: " + matcher.group(1) + " FROM: " + string);
+            return matcher.group(1).replaceAll("[,]", ".");
+        }
+        else return string;
     }
 
 }

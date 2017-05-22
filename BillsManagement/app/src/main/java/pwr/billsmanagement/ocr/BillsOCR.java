@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.BuildConfig;
 import android.support.v4.content.FileProvider;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -52,14 +51,14 @@ public class BillsOCR {
         CAPTURE_AS = config.getProperty("save_captured_img_as");
         SAVE_CROPPED_AS = config.getProperty("save_cropped_img_as");
     }
-    
+
     public Intent startCameraActivity() {
         try {
             prepareDirectory(IMG_PATH);
 
             Logger.i("Version: " + Build.VERSION.SDK_INT + " " + context.getPackageName());
 
-            if(Build.VERSION.SDK_INT > 23) {
+            if (Build.VERSION.SDK_INT > 23) {
                 outputFileUri = FileProvider.getUriForFile(
                         context, context.getPackageName() + ".provider", new File(IMG_PATH + CAPTURE_AS)
                 );

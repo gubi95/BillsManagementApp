@@ -1,4 +1,4 @@
-package pwr.billsmanagement.bills.edition;
+package pwr.billsmanagement.bills.edition.products;
 
 /**
  * Created by Squier on 17.05.2017.

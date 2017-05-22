@@ -2,6 +2,8 @@ package pwr.billsmanagement.ocr;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -32,7 +34,7 @@ import pwr.billsmanagement.bills.edition.EditBillActivity;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
 import pwr.billsmanagement.ocr.matcher.Matcher;
 import pwr.billsmanagement.ocr.parsers.BillParser;
-import pwr.billsmanagement.ocr.parsers.Product;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
@@ -99,32 +101,8 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     }
 
     private void startOCROnCroppedImageAsync() {
-
-        new AsyncTask<Void, Void, ArrayList<Product>>() {
-            @Override
-            protected ArrayList<Product> doInBackground(Void... params) {
-                String result = billsOCR.doOCR(billPhoto);
-                result = result.replaceAll("\n\n", "\n");
-                Logger.e("WYNIK " + result);
-                BillParser billParser = new TwoLineBillParser(result, null, reader.readMyProperties(CONFIG_FILE));
-                billParser.setPrices(new ArrayList<>());
-                billParser.setProducts(new ArrayList<>());
-                ArrayList<Product> products = (ArrayList<Product>) billParser.parseOcrResult();
-
-                return products;
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<Product> shopProducts) {
-                Gson gson = new Gson();
-                Logger.i(gson.toJson(shopProducts));
-                Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
-                editBillActivity.putExtra("products_json", gson.toJson(shopProducts));
-                editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(editBillActivity);
-            }
-        }.execute();
-
+        StartOCRForBitmapTask startOCRForBitmapTask = new StartOCRForBitmapTask();
+        startOCRForBitmapTask.execute();
     }
 
     private void captureImageSetOnClick() {
@@ -139,13 +117,12 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     private void initializeMatchWorker() {
         matchWorker = new MatchWorker(new Matcher(reader.readMyProperties(CONFIG_FILE)), new Properties());
-        matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES))
-                .initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
+        matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES));
+        matchWorker.initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Logger.i("In onActivityResult after shooting photo.");
             billPhoto = billsOCR.getOutputFileUri();
@@ -195,6 +172,18 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     private class SaveCroppedImageTask extends AsyncTask<Bitmap, Void, Void> {
 
+        private ProgressDialog progressDialog;
+        private Context mainActivityContext = OCRActivity.this;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(
+                    mainActivityContext,
+                    mainActivityContext.getString(R.string.save_cropped_image_progress_title),
+                    mainActivityContext.getString(R.string.save_cropped_image_progress_message)
+            );
+        }
+
         @Override
         protected Void doInBackground(Bitmap... params) {
             billPhoto = Uri.fromFile(new File(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS));
@@ -218,7 +207,52 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
             startOCROnCroppedImageAsync();
+        }
+
+    }
+
+    private class StartOCRForBitmapTask extends AsyncTask<Void, Void, ArrayList<OcrProduct>> {
+
+        private ProgressDialog progressDialog;
+        private Context mainActivityContext = OCRActivity.this;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(
+                    mainActivityContext,
+                    mainActivityContext.getString(R.string.start_ocr_for_bitmap_progress_title),
+                    mainActivityContext.getString(R.string.start_ocr_for_bitmap_progress_message)
+            );
+        }
+
+        @Override
+        protected ArrayList<OcrProduct> doInBackground(Void... params) {
+            String result = billsOCR.doOCR(billPhoto);
+            result = result.replaceAll("\n\n", "\n");
+            Logger.e("WYNIK " + result);
+            BillParser billParser = new TwoLineBillParser(result, null, reader.readMyProperties(CONFIG_FILE));
+            billParser.setPrices(new ArrayList<>());
+            billParser.setProducts(new ArrayList<>());
+            ArrayList<OcrProduct> ocrProducts = (ArrayList<OcrProduct>) billParser.parseOcrResult();
+
+            return ocrProducts;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<OcrProduct> shopOcrProducts) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            Gson gson = new Gson();
+            Logger.i(gson.toJson(shopOcrProducts));
+            Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
+            editBillActivity.putExtra("products_json", gson.toJson(shopOcrProducts));
+            editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(editBillActivity);
         }
     }
 }

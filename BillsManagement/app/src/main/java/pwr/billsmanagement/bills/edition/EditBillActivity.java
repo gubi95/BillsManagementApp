@@ -1,11 +1,15 @@
 package pwr.billsmanagement.bills.edition;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -17,8 +21,10 @@ import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.listeners.AcceptAllProductsListener;
+import pwr.billsmanagement.bills.edition.listeners.ShowHelpListener;
+import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.DefineProductRowCreator;
-import pwr.billsmanagement.ocr.parsers.Product;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 
 /**
  * Created by Squier on 08.05.2017.
@@ -26,18 +32,14 @@ import pwr.billsmanagement.ocr.parsers.Product;
 
 public class EditBillActivity extends Activity {
 
-    private enum SelectedOption {
-        SELECT_NAMES, SELECT_TOTAL_PRICE, SELECT_UNIT_PRICE, SELECT_AS_GARBAGE
-    }
-
-    private LinearLayout productList;
-    private ImageButton acceptAll, takePhotoAgain;
-    private Button markAsProductName, markAsProductTotalPrice, markAsProductUnitPrice, markAsGarbage;
+    private EditBillActivityView mView;
 
     private ChosenOption chosenOption;
     private DefineProductRowCreator creator;
 
-    private ArrayList<Product> products;
+    private ShowHelpListener showHelpListener;
+
+    private ArrayList<OcrProduct> ocrProducts;
     private String[] defineOptions;
 
     @Override
@@ -45,167 +47,237 @@ public class EditBillActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bill_define_product);
 
-        Logger.i("Init view");
         initView();
-        Logger.i("Init resources");
         initResources();
-        Logger.i("Read pass data");
+        initListeners();
         readPassedData();
-        Logger.i("Create custom list");
         createCustomList();
     }
 
-    private void initResources() {
-        defineOptions = getResources().getStringArray(R.array.define_options);
-    }
-
-    private void createCustomList() {
-
-        new AsyncTask<Void, Void, ArrayList<View>>() {
-            @Override
-            protected ArrayList<View> doInBackground(Void... params) {
-                chosenOption = new ChosenOption();
-                creator = new DefineProductRowCreator(
-                        getApplicationContext(),
-                        chosenOption,
-                        new ArrayList<>()
-                );
-
-                int id = 1;
-
-                ArrayList<View> views = new ArrayList<>();
-                for (Product product : products) {
-                    views.add(creator.getProductRow(product, id++));
-                }
-                return  views;
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<View> views) {
-                for (View view : views) {
-                    productList.addView(view);
-                }
-                Logger.i("Set listeners");
-                setListeners();
-            }
-        }.execute();
-
-    }
-
-    private void readPassedData() {
-        Bundle extras = getIntent().getExtras();
-        String productJson = extras.getString("products_json");
-        Gson gson = new Gson();
-        products = gson.fromJson(productJson, new TypeToken<ArrayList<Product>>() {
-        }.getType());
-    }
-
-    private void setListeners() {
-
-        acceptAll.setOnClickListener(new AcceptAllProductsListener(
-                creator,
-                new ShredProductAssembler(defineOptions),
-                new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList))
-        ).setContext(getApplicationContext()));
-
-        takePhotoAgain.setOnClickListener(v -> {
-            //TODO go back to camera activity and repeat ocr stuff
-        });
-
-        markAsProductName.setOnClickListener(v -> {
-            chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GREEN);
-            chosenOption.setLabelText(defineOptions[DefineProductRowCreator.NAME]);
-//            indicateSelectedOption(SelectedOption.SELECT_NAMES);
-        });
-
-        markAsProductTotalPrice.setOnClickListener(v -> {
-            chosenOption.setColorPair(DefineProductRowCreator.ColorPair.BLUE);
-            chosenOption.setLabelText(defineOptions[DefineProductRowCreator.TOTAL_PRICE]);
-//            indicateSelectedOption(SelectedOption.SELECT_TOTAL_PRICE);
-        });
-        
-        markAsProductUnitPrice.setOnClickListener(v -> {
-            chosenOption.setColorPair(DefineProductRowCreator.ColorPair.RED);
-            chosenOption.setLabelText(defineOptions[DefineProductRowCreator.UNIT_PRICE]);
-//            indicateSelectedOption(SelectedOption.SELECT_UNIT_PRICE);
-        });
-        
-        markAsGarbage.setOnClickListener(v -> {
-            chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GRAY);
-            chosenOption.setLabelText(defineOptions[DefineProductRowCreator.IGNORE]);
-//            indicateSelectedOption(SelectedOption.SELECT_AS_GARBAGE);
-        });
-    }
-
-    //TODO came up with some clever way to mark active option
-    private void indicateSelectedOption(SelectedOption option) {
-        switch (option) {
-            case SELECT_NAMES: {
-                setColors(
-                        ContextCompat.getColor(getApplicationContext(), R.color.selected_green),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_blue),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_red),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_gray)
-                );
-                break;
-            }
-            case SELECT_TOTAL_PRICE: {
-                setColors(
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_green),
-                        ContextCompat.getColor(getApplicationContext(), R.color.selected_blue),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_red),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_gray)
-                );
-                break;
-            }
-            case SELECT_UNIT_PRICE: {
-                setColors(
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_green),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_blue),
-                        ContextCompat.getColor(getApplicationContext(), R.color.selected_red),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_gray)
-                );
-                break;
-            }
-            case SELECT_AS_GARBAGE: {
-                setColors(
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_green),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_blue),
-                        ContextCompat.getColor(getApplicationContext(), R.color.unselected_red),
-                        ContextCompat.getColor(getApplicationContext(), R.color.selected_gray)
-                );
-                break;
-            }
-        }
-    }
-
-    private void setColors(int nameColor, int totalPriceColor, int unitPriceColor, int garbageColor) {
-        markAsProductName.setBackgroundColor(nameColor);
-        markAsProductTotalPrice.setBackgroundColor(totalPriceColor);
-        markAsProductUnitPrice.setBackgroundColor(unitPriceColor);
-        markAsGarbage.setBackgroundColor(garbageColor);
+    private void initListeners() {
+        showHelpListener = new ShowHelpListener();
+        showHelpListener.setInflater((LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE));
+        showHelpListener.setHelpMessage(this.getString(R.string.edit_bill_show_help_page1));
+        showHelpListener.setParentView(findViewById(R.id.defineProductMainLayout));
+        showHelpListener.setWindowManager(getWindowManager());
     }
 
     private void initView() {
-        productList = (LinearLayout) findViewById(R.id.productList);
-        acceptAll = (ImageButton) findViewById(R.id.acceptAll);
-        takePhotoAgain = (ImageButton) findViewById(R.id.takePhotoAgain);
-        markAsProductName = (Button) findViewById(R.id.selectName);
-        markAsProductTotalPrice = (Button) findViewById(R.id.selectPrice);
-        markAsProductUnitPrice = (Button) findViewById(R.id.selectUnitPrice);
-        markAsGarbage = (Button) findViewById(R.id.selectAsNothing);
+        Logger.i("Init view");
+        mView = new EditBillActivityView(
+                findViewById(R.id.productList),
+                findViewById(R.id.showHelp),
+                findViewById(R.id.shopName),
+                findViewById(R.id.addProduct),
+                findViewById(R.id.acceptAll),
+                findViewById(R.id.takePhotoAgain),
+                findViewById(R.id.selectName),
+                findViewById(R.id.selectPrice),
+                findViewById(R.id.selectUnitPrice),
+                findViewById(R.id.selectAsNothing)
+        );
 
-        acceptAll.setImageResource(R.drawable.ic_accept_white);
-        takePhotoAgain.setImageResource(R.drawable.ic_take_photo_white);
+        mView.setIcons();
+
+    }
+
+    private void initResources() {
+        Logger.i("Init resources");
+        defineOptions = getResources().getStringArray(R.array.define_options);
+    }
+
+    private void readPassedData() {
+        Logger.i("Read pass data");
+        Bundle extras = getIntent().getExtras();
+        String productJson = extras.getString("products_json");
+        Gson gson = new Gson();
+        ocrProducts = gson.fromJson(productJson, new TypeToken<ArrayList<OcrProduct>>() {
+        }.getType());
+    }
+
+    private void createCustomList() {
+        Logger.i("Create custom list");
+        CreateCustomListAsync createCustomListAsync = new CreateCustomListAsync();
+        createCustomListAsync.execute();
+    }
+
+    private enum SelectedOption {
+        SELECT_NAMES, SELECT_TOTAL_PRICE, SELECT_UNIT_PRICE, SELECT_AS_GARBAGE
     }
 
     public class LayoutHandle {
         public LinearLayout optionButtons;
         public LinearLayout productList;
 
-        public LayoutHandle(View optionButtons, View productList) {
+        LayoutHandle(View optionButtons, View productList) {
             this.optionButtons = (LinearLayout) optionButtons;
             this.productList = (LinearLayout) productList;
+        }
+    }
+
+    private class EditBillActivityView {
+        LinearLayout productList;
+        EditText shopName;
+        ImageButton showHelp, addProduct, acceptAll, takePhotoAgain;
+        Button markAsProductName, markAsProductTotalPrice, markAsProductUnitPrice, markAsGarbage;
+
+        EditBillActivityView(View productList, View showHelp, View shopName, View addProduct, View acceptAll, View takePhotoAgain,
+                             View markAsProductName, View markAsProductTotalPrice, View markAsProductUnitPrice,
+                             View markAsGarbage) {
+            this.productList = (LinearLayout) productList;
+            this.showHelp = (ImageButton) showHelp;
+            this.shopName = (EditText) shopName;
+            this.addProduct = (ImageButton) addProduct;
+            this.acceptAll = (ImageButton) acceptAll;
+            this.takePhotoAgain = (ImageButton) takePhotoAgain;
+            this.markAsProductName = (Button) markAsProductName;
+            this.markAsProductTotalPrice = (Button) markAsProductTotalPrice;
+            this.markAsProductUnitPrice = (Button) markAsProductUnitPrice;
+            this.markAsGarbage = (Button) markAsGarbage;
+        }
+
+        void setIcons() {
+            showHelp.setImageResource(R.drawable.ic_show_help);
+            addProduct.setImageResource(R.drawable.ic_add_new_product_white);
+            acceptAll.setImageResource(R.drawable.ic_accept_white);
+            takePhotoAgain.setImageResource(R.drawable.ic_take_photo_white);
+        }
+
+        private void setOptionButtonsColors(int nameColor, int totalPriceColor, int unitPriceColor, int garbageColor) {
+            markAsProductName.setTextColor(nameColor);
+            markAsProductTotalPrice.setTextColor(totalPriceColor);
+            markAsProductUnitPrice.setTextColor(unitPriceColor);
+            markAsGarbage.setTextColor(garbageColor);
+        }
+
+        private void indicateSelectedOption(SelectedOption option) {
+            switch (option) {
+                case SELECT_NAMES: {
+                    setOptionButtonsColors(
+                            ContextCompat.getColor(getApplicationContext(), R.color.selected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button)
+                    );
+                    break;
+                }
+                case SELECT_TOTAL_PRICE: {
+                    setOptionButtonsColors(
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.selected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button)
+                    );
+                    break;
+                }
+                case SELECT_UNIT_PRICE: {
+                    setOptionButtonsColors(
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.selected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button)
+                    );
+                    break;
+                }
+                case SELECT_AS_GARBAGE: {
+                    setOptionButtonsColors(
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.unselected_option_button),
+                            ContextCompat.getColor(getApplicationContext(), R.color.selected_option_button)
+                    );
+                    break;
+                }
+            }
+        }
+
+        void setListeners() {
+
+            showHelp.setOnClickListener(showHelpListener);
+
+            AcceptAllProductsListener acceptAllProductsListener = new AcceptAllProductsListener(
+                    creator,
+                    new ShredProductAssembler(defineOptions),
+                    new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList))
+            );
+            acceptAllProductsListener.setContext(EditBillActivity.this);
+            acceptAllProductsListener.setHelpListener(showHelpListener);
+            acceptAllProductsListener.setAddProduct(addProduct);
+
+            acceptAll.setOnClickListener(acceptAllProductsListener);
+
+            takePhotoAgain.setOnClickListener(v -> {
+                //TODO go back to camera activity and repeat ocr stuff
+            });
+
+            markAsProductName.setOnClickListener(v -> {
+                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GREEN);
+                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.NAME]);
+                indicateSelectedOption(SelectedOption.SELECT_NAMES);
+            });
+
+            markAsProductTotalPrice.setOnClickListener(v -> {
+                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.BLUE);
+                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.TOTAL_PRICE]);
+                indicateSelectedOption(SelectedOption.SELECT_TOTAL_PRICE);
+            });
+
+            markAsProductUnitPrice.setOnClickListener(v -> {
+                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.RED);
+                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.UNIT_PRICE]);
+                indicateSelectedOption(SelectedOption.SELECT_UNIT_PRICE);
+            });
+
+            markAsGarbage.setOnClickListener(v -> {
+                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GRAY);
+                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.IGNORE]);
+                indicateSelectedOption(SelectedOption.SELECT_AS_GARBAGE);
+            });
+        }
+    }
+
+    private class CreateCustomListAsync extends AsyncTask<Void, Void, ArrayList<View>> {
+
+        private ProgressDialog progressDialog;
+        private Context context = EditBillActivity.this;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(context,
+                    context.getString(R.string.edit_bill_create_view_progress_title),
+                    context.getString(R.string.edit_bill_create_view_progress_message)
+            );
+        }
+
+        @Override
+        protected ArrayList<View> doInBackground(Void... params) {
+            chosenOption = new ChosenOption();
+            creator = new DefineProductRowCreator(
+                    getApplicationContext(),
+                    chosenOption,
+                    new ArrayList<>()
+            );
+
+            int id = 1;
+
+            ArrayList<View> views = new ArrayList<>();
+            for (OcrProduct ocrProduct : ocrProducts) {
+                views.add(creator.getProductRow(ocrProduct, id++));
+            }
+            return views;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<View> views) {
+            for (View view : views) {
+                mView.productList.addView(view);
+            }
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            Logger.i("Set listeners");
+            mView.setListeners();
         }
     }
 

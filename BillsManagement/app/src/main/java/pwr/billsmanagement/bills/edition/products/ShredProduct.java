@@ -1,8 +1,4 @@
-package pwr.billsmanagement.bills.edition;
-
-import android.widget.TextView;
-
-import com.google.gson.Gson;
+package pwr.billsmanagement.bills.edition.products;
 
 import java.util.ArrayList;
 
@@ -11,7 +7,6 @@ import pwr.billsmanagement.bills.edition.view.DefineProductItem;
 /**
  * Created by Squier on 17.05.2017.
  */
-
 public class ShredProduct {
 
     private ArrayList<DefineProductItem> shreds;

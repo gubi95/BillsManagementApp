@@ -3,19 +3,24 @@ package pwr.billsmanagement.ocr.matcher;
 /**
  * Created by E6520 on 2017-04-08.
  */
-public class ProductMatch implements Comparable {
+public class MatchProduct implements Comparable {
 
     private String ocrResult;
     private String name;
     private int match;
 
-    public ProductMatch() {
-    }
-
-    public ProductMatch(String ocrResult, String name, int match) {
+    public MatchProduct(String ocrResult, String name, int match) {
         this.ocrResult = ocrResult;
         this.name = name;
         this.match = match;
+    }
+
+    public String getOcrResult() {
+        return ocrResult;
+    }
+
+    public void setOcrResult(String ocrResult) {
+        this.ocrResult = ocrResult;
     }
 
     public String getName() {
@@ -36,7 +41,7 @@ public class ProductMatch implements Comparable {
 
     @Override
     public String toString() {
-        return "ProductMatch{" +
+        return "MatchProduct{" +
                 "ocrResult='" + ocrResult + '\'' +
                 ", name='" + name + '\'' +
                 ", match=" + match +
@@ -45,10 +50,10 @@ public class ProductMatch implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        if(o instanceof ProductMatch) {
-            if(((ProductMatch)o).match > this.match) {
+        if (o instanceof MatchProduct) {
+            if (((MatchProduct) o).match > this.match) {
                 return 1;
-            } else if(((ProductMatch)o).match == this.match) {
+            } else if (((MatchProduct) o).match == this.match) {
                 return 0;
             } else {
                 return -1;

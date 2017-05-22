@@ -32,7 +32,7 @@ public class Matcher {
         ArrayList<BestMatchesArray> matches = new ArrayList<>();
         for (String result : ocrResult) {
             matches.add(new BestMatchesArray(
-                    (ArrayList<ProductMatch>) findMatches(
+                    (ArrayList<MatchProduct>) findMatches(
                             (ArrayList<String>) intersectionByLength(result), result)));
         }
         Logger.i("Matched default ocr result.");
@@ -44,15 +44,15 @@ public class Matcher {
         Logger.i("Matching words...");
         for (String result : ocrResult) {
             matches.add(new BestMatchesArray(
-                    (ArrayList<ProductMatch>) findMatches(
+                    (ArrayList<MatchProduct>) findMatches(
                             (ArrayList<String>) intersectionByLength(result), result)));
         }
         Logger.i("Matched external ocr result.");
         return matches;
     }
 
-    private List<ProductMatch> findMatches(final ArrayList<String> sameLengthDict, final String ocrResult) {
-        List<ProductMatch> bestMatches = new ArrayList<>();
+    private List<MatchProduct> findMatches(final ArrayList<String> sameLengthDict, final String ocrResult) {
+        List<MatchProduct> bestMatches = new ArrayList<>();
 
         for (String word : sameLengthDict) {
             int match = 0;
@@ -60,7 +60,7 @@ public class Matcher {
                 for (int i = 0; i < word.length(); i++) {
                     if (word.charAt(i) == ocrResult.charAt(i)) match++;
                 }
-                bestMatches.add(new ProductMatch(ocrResult, word, match));
+                bestMatches.add(new MatchProduct(ocrResult, word, match));
             }
             else {
                 String shorter = ocrResult.length() > word.length() ? word : ocrResult;
@@ -81,7 +81,7 @@ public class Matcher {
                     shorter = " " + shorter;
                 }
 
-                bestMatches.add(new ProductMatch(ocrResult, word, Collections.max(matches)));
+                bestMatches.add(new MatchProduct(ocrResult, word, Collections.max(matches)));
             }
 
         }
@@ -108,7 +108,6 @@ public class Matcher {
 
     public void setDictionary(Set<String> dictionary) {
         this.dictionary = dictionary;
-        Logger.i("Dictionary set.");
     }
 
     public List<String> getOcrResult() {

@@ -22,15 +22,15 @@ public class DetermineOptionListener implements View.OnClickListener {
         defineProductItemValue.setBackgroundColor(chosenOption.getColorPair().getLight());
     }
 
+    public void setChosenOption(ChosenOption chosenOption) {
+        this.chosenOption = chosenOption;
+    }
+
     public void setDefineProductItemLabel(TextView defineProductItemLabel) {
         this.defineProductItemLabel = defineProductItemLabel;
     }
 
     public void setDefineProductItemValue(View defineProductItemValue) {
         this.defineProductItemValue = defineProductItemValue;
-    }
-
-    public void setChosenOption(ChosenOption chosenOption) {
-        this.chosenOption = chosenOption;
     }
 }

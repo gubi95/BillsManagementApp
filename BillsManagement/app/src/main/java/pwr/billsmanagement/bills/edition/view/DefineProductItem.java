@@ -5,7 +5,6 @@ import android.widget.TextView;
 /**
  * Created by Squier on 17.05.2017.
  */
-
 public class DefineProductItem {
 
     private TextView label;

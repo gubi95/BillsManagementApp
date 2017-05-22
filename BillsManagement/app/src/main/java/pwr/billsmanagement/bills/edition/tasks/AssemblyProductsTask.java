@@ -7,16 +7,15 @@ import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
-import pwr.billsmanagement.bills.edition.AssembledProduct;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
-import pwr.billsmanagement.bills.edition.ShredProduct;
-import pwr.billsmanagement.bills.edition.ShredProductAssembler;
+import pwr.billsmanagement.bills.edition.products.AssembledProduct;
+import pwr.billsmanagement.bills.edition.products.ShredProduct;
+import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
 
 /**
  * Created by Squier on 17.05.2017.
  */
-
 public class AssemblyProductsTask extends AsyncTask<ArrayList<ShredProduct>, Void, ArrayList<AssembledProduct>> {
 
     private ShredProductAssembler assembler;

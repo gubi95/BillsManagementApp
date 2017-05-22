@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/defineProductMainLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,19 +11,36 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
         android:paddingEnd="10dp"
-        android:paddingStart="10dp"
-        android:background="@color/colorPrimaryDark">
+        android:paddingStart="10dp">
 
-        <EditText
-            android:layout_width="150dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/showHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginEnd="10dp"
+            app:srcCompat="@drawable/ic_show_help" />
+
+        <EditText
+            android:id="@+id/shopName"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
             android:hint="@string/shop_name"
+            android:layout_gravity="center_vertical"
             android:textColor="@color/backgroundWhite"
             android:textColorHint="@color/backgroundWhite"
-            android:textSize="20sp"
-            android:layout_centerVertical="true"/>
+            android:textSize="20sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -29,6 +48,15 @@
             android:layout_alignParentEnd="true"
             android:orientation="horizontal"
             android:padding="10dp">
+
+            <ImageButton
+                android:id="@+id/addProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@color/colorPrimaryDark"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_add_new_product_white" />
 
             <ImageButton
                 android:id="@+id/acceptAll"
@@ -65,7 +93,7 @@
             android:maxLines="1"
             android:textSize="10sp"
             android:text="@string/option_name"
-            android:backgroundTint="@color/unselected_green"/>
+            android:backgroundTint="@color/option_button_green"/>
 
         <Button
             android:id="@+id/selectPrice"
@@ -75,7 +103,7 @@
             android:maxLines="2"
             android:textSize="10sp"
             android:text="@string/option_total_price"
-            android:backgroundTint="@color/unselected_blue"/>
+            android:backgroundTint="@color/option_button_blue"/>
 
         <Button
             android:id="@+id/selectUnitPrice"
@@ -85,7 +113,7 @@
             android:maxLines="2"
             android:textSize="10sp"
             android:text="@string/option_unit_price"
-            android:backgroundTint="@color/unselected_red"/>
+            android:backgroundTint="@color/option_button_red"/>
 
         <Button
             android:id="@+id/selectAsNothing"
@@ -95,7 +123,7 @@
             android:maxLines="2"
             android:textSize="10sp"
             android:text="@string/option_ignore"
-            android:backgroundTint="@color/selected_gray"/>
+            android:backgroundTint="@color/option_button_gray"/>
 
     </LinearLayout>
 

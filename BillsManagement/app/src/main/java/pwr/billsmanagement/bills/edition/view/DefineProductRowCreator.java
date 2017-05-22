@@ -14,39 +14,15 @@ import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.ChosenOption;
-import pwr.billsmanagement.bills.edition.ShredProduct;
 import pwr.billsmanagement.bills.edition.listeners.DetermineOptionListener;
-import pwr.billsmanagement.ocr.parsers.Product;
+import pwr.billsmanagement.bills.edition.products.ShredProduct;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 
 /**
  * Created by Squier on 16.05.2017.
  */
 
 public class DefineProductRowCreator {
-
-    public enum ColorPair {
-
-        BLUE(Color.argb(200, 3, 169, 244), Color.argb(200, 129, 212, 250)),
-        GREEN(Color.argb(200, 76, 175, 80), Color.argb(200, 165, 214, 167)),
-        RED(Color.argb(200, 244, 67, 54), Color.argb(200, 239, 154, 154)),
-        GRAY(Color.argb(200, 158, 158, 158), Color.argb(200, 238, 238, 238));
-
-        private int dark;
-        private int light;
-
-        ColorPair(int dark, int light) {
-            this.dark = dark;
-            this.light = light;
-        }
-
-        public int getDark() {
-            return dark;
-        }
-
-        public int getLight() {
-            return light;
-        }
-    }
 
     public static final int NAME = 0;
     public static final int TOTAL_PRICE = 1;
@@ -55,7 +31,6 @@ public class DefineProductRowCreator {
 
     private String[] defineOptions;
     private String rowTitle;
-
     private LayoutInflater inflater;
     private ChosenOption chosenOption;
 
@@ -69,7 +44,7 @@ public class DefineProductRowCreator {
         this.shredProducts = shredProducts;
     }
 
-    public View getProductRow(Product product, int id) {
+    public View getProductRow(OcrProduct ocrProduct, int id) {
 
         View row = inflater.inflate(R.layout.bill_define_product_row, null);
         initMain(row, id);
@@ -78,7 +53,7 @@ public class DefineProductRowCreator {
 
         initSubLayout(
                 row,
-                product.getName().split(" "),
+                ocrProduct.getName().split(" "),
                 ColorPair.GREEN,
                 defineOptions[NAME],
                 R.id.productNameStrings,
@@ -86,7 +61,7 @@ public class DefineProductRowCreator {
         );
 
         initSubLayout(row,
-                product.getPrice().split(" "),
+                ocrProduct.getPrice().split(" "),
                 ColorPair.BLUE,
                 defineOptions[TOTAL_PRICE],
                 R.id.productPriceStrings,
@@ -97,10 +72,6 @@ public class DefineProductRowCreator {
         shredProducts.add(shredProduct);
 
         return row;
-    }
-
-    public ArrayList<ShredProduct> getShredProducts() {
-        return shredProducts;
     }
 
     private void initMain(View row, int id) {
@@ -144,5 +115,32 @@ public class DefineProductRowCreator {
         define.setOnClickListener(optionListener);
     }
 
+    public ArrayList<ShredProduct> getShredProducts() {
+        return shredProducts;
+    }
+
+    public enum ColorPair {
+
+        BLUE(Color.argb(200, 3, 169, 244), Color.argb(200, 129, 212, 250)),
+        GREEN(Color.argb(200, 76, 175, 80), Color.argb(200, 165, 214, 167)),
+        RED(Color.argb(200, 244, 67, 54), Color.argb(200, 239, 154, 154)),
+        GRAY(Color.argb(200, 158, 158, 158), Color.argb(200, 238, 238, 238));
+
+        private int dark;
+        private int light;
+
+        ColorPair(int dark, int light) {
+            this.dark = dark;
+            this.light = light;
+        }
+
+        public int getDark() {
+            return dark;
+        }
+
+        public int getLight() {
+            return light;
+        }
+    }
 
 }

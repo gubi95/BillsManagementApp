@@ -15,19 +15,19 @@ public class ChosenOption {
         colorPair = DefineProductRowCreator.ColorPair.GRAY;
     }
 
-    public void setColorPair(DefineProductRowCreator.ColorPair colorPair) {
-        this.colorPair = colorPair;
-    }
-
-    public void setLabelText(String labelText) {
-        this.labelText = labelText;
-    }
-
     public DefineProductRowCreator.ColorPair getColorPair() {
         return colorPair;
     }
 
+    public void setColorPair(DefineProductRowCreator.ColorPair colorPair) {
+        this.colorPair = colorPair;
+    }
+
     public String getLabelText() {
         return labelText;
+    }
+
+    public void setLabelText(String labelText) {
+        this.labelText = labelText;
     }
 }
