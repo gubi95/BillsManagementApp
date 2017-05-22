@@ -24,9 +24,9 @@ public class CreateProductCategories {
                 + COLUMN_PRODUCTCATEGORYID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_NAME + " NVARCHER(100), "
                 + COLUMN_USEROWNERID + " INTEGER,"
-                + COLUMN_COLOR + " NVARCHAR(MAX),"
+                + COLUMN_COLOR + " NVARCHAR(100),"
                 + COLUMN_MONTHBUDGET + " DECIMAL,"
-                + "FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCED "+TABLE_USERS+"("+COLUMN_USERID+")"
+                + "FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }
 

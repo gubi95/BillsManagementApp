@@ -1,8 +1,16 @@
 package pwr.billsmanagement.localDatabase.creationDatabase;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+
+import pwr.billsmanagement.localDatabase.dataObjects.BillEntries;
+import pwr.billsmanagement.webApp.models.BillEntry;
 
 /**
  * Created by E6520 on 2017-05-16.
@@ -19,8 +27,8 @@ public class DBHandler extends SQLiteOpenHelper {
     CreateUsers tabUsers;
 
 
-    public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+    public DBHandler(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
         tabBillEntries= new CreateBillEntries();
         tabBills = new CreateBills();
         tabProductCategories = new CreateProductCategories();
@@ -47,4 +55,40 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+
+    public boolean insertion (String bill, String entry, String cat, String price,String name,String quant) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CreateBillEntries.COLUMN_BILL_BILLID, bill);
+        contentValues.put(CreateBillEntries.COLUMN_BILLENTRYID, entry);
+        contentValues.put(CreateBillEntries.COLUMN_CATEGORY_PRODUCTCATEGORYID, cat);
+        contentValues.put(CreateBillEntries.COLUMN_PRICE, price);
+        contentValues.put(CreateBillEntries.COLUMN_PRODUCTNAME, name);
+        contentValues.put(CreateBillEntries.COLUMN_QUANTITY, quant);
+        db.insert(CreateBillEntries.TABLE_BILLENTRIES, null, contentValues);
+        return true;
+    }
+
+    public Cursor getData(int id,String idTable) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from "+CreateBillEntries.TABLE_BILLENTRIES+" where "+idTable+"="+id+"", null );
+        return res;
+    }
+
+    public ArrayList<String> getTable(String tableName, String ColumnName) {
+        ArrayList<String> array_list = new ArrayList<String>();
+
+        ;
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from "+tableName, null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(res.getString(res.getColumnIndex(ColumnName)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
 }

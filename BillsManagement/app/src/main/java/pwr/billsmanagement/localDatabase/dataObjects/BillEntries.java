@@ -1,25 +1,49 @@
 package pwr.billsmanagement.localDatabase.dataObjects;
 
+import java.util.ArrayList;
+
 /**
  * Created by E6520 on 2017-05-20.
  */
 
 public class BillEntries {
 
+    public String TABLE_BILLENTRIES;
     public String COLUMN_BILLENTRYID ;
     public String COLUMN_PRODUCTNAME;
     public String COLUMN_PRICE ;
     public String COLUMN_QUANTITY ;
     public String COLUMN_BILL_BILLID;
     public String COLUMN_CATEGORY_PRODUCTCATEGORYID ;
+    public ArrayList<String> LIST_OF_ENTRIES;
 
     public BillEntries() {
+        TABLE_BILLENTRIES = "BillEntries";
         COLUMN_BILLENTRYID = "BillEntryID";
         COLUMN_PRODUCTNAME = "ProductName";
         COLUMN_PRICE = "Price";
         COLUMN_QUANTITY = "Quantity";
         COLUMN_BILL_BILLID = "Bill_BillID";
         COLUMN_CATEGORY_PRODUCTCATEGORYID = "Category_ProductCategoryID";
+        LIST_OF_ENTRIES=new ArrayList<>();
+    }
+
+    public ArrayList makeList(){
+        LIST_OF_ENTRIES.add(COLUMN_BILLENTRYID);
+        LIST_OF_ENTRIES.add(COLUMN_PRODUCTNAME);
+        LIST_OF_ENTRIES.add(COLUMN_PRICE);
+        LIST_OF_ENTRIES.add(COLUMN_QUANTITY);
+        LIST_OF_ENTRIES.add(COLUMN_BILL_BILLID);
+        LIST_OF_ENTRIES.add(COLUMN_CATEGORY_PRODUCTCATEGORYID);
+        return LIST_OF_ENTRIES;
+    }
+
+    public String getTABLE_BILLENTRIES() {
+        return TABLE_BILLENTRIES;
+    }
+
+    public void setTABLE_BILLENTRIES(String TABLE_BILLENTRIES) {
+        this.TABLE_BILLENTRIES = TABLE_BILLENTRIES;
     }
 
     public String getCOLUMN_BILLENTRYID() {

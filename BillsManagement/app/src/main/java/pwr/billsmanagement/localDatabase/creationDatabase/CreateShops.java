@@ -22,7 +22,7 @@ public class CreateShops {
                 + COLUMN_SHOPID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_SHOPNAME + " NVARCHER(100), "
                 + COLUMN_USEROWNER_USERID + " INTEGER,"
-                + "FOREIGN KEY("+COLUMN_USEROWNER_USERID+") REFERENCED "+TABLE_USERS+"("+COLUMN_USERID+")"
+                + "FOREIGN KEY("+COLUMN_USEROWNER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }
 

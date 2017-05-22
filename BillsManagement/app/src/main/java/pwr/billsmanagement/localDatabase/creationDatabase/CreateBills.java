@@ -26,9 +26,9 @@ public class CreateBills {
                 + COLUMN_BILLID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_PURCHASEDATE + " DATE, "
                 + COLUMN_USER_USERID + " INTEGER, "
-                + COLUMN_SHOP_SHOPID + "INTEGER, "
-                + "FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCED "+TABLE_USERS+"("+COLUMN_USERID+") "
-                + "FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCED "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
+                + COLUMN_SHOP_SHOPID + " INTEGER, "
+                + "FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+") "
+                + "FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
                 +")";
     }
 

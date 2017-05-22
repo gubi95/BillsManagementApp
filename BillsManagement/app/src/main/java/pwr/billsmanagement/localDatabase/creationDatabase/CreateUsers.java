@@ -22,9 +22,9 @@ public class CreateUsers {
                 + COLUMN_USERID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_USERNAME + " NVARCHER(40), "
                 + COLUMN_PASSWORD + " NVARCHAR(300),"
-                + COLUMN_EMAIL + "NVARCHAR(100),"
-                + COLUMN_FIRSTNAME + "NVARCHAR(100),"
-                + COLUMN_LASTNAME + "NVARCHAR(150) "
+                + COLUMN_EMAIL + " NVARCHAR(100),"
+                + COLUMN_FIRSTNAME + " NVARCHAR(100),"
+                + COLUMN_LASTNAME + " NVARCHAR(150) "
                 +")";
     }
 

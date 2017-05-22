@@ -2,8 +2,10 @@ package pwr.billsmanagement;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -25,6 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import pwr.billsmanagement.localDatabase.creationDatabase.CreateBillEntries;
+import pwr.billsmanagement.localDatabase.creationDatabase.DBHandler;
+import pwr.billsmanagement.localDatabase.dataObjects.BillEntries;
 import pwr.billsmanagement.ocr.BillsOCR;
 import pwr.billsmanagement.ocr.matcher.BestMatchesArray;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
@@ -56,8 +62,17 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     private Bitmap croppedBill;
     private Uri billPhoto;
 
+    DBHandler mydb;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("BAZA","tu");
+
+        mydb = new DBHandler(this);
+        Log.i("BAZA","albo tu");
+
+        example();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Logger.init("OCR");
@@ -172,6 +187,26 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+    }
+
+    public void example(){
+
+
+        BillEntries billEntry = new BillEntries();
+        billEntry.setCOLUMN_BILL_BILLID("1");
+        billEntry.setCOLUMN_BILLENTRYID("2");
+        billEntry.setCOLUMN_CATEGORY_PRODUCTCATEGORYID("Jadło");
+        billEntry.setCOLUMN_PRICE("1000");
+        billEntry.setCOLUMN_PRODUCTNAME("Ziemioki");
+        billEntry.setCOLUMN_QUANTITY("10000");
+
+
+        mydb.insertion(billEntry.getCOLUMN_BILL_BILLID(),billEntry.getCOLUMN_BILLENTRYID(),billEntry.getCOLUMN_CATEGORY_PRODUCTCATEGORYID(),billEntry.getCOLUMN_PRICE(),billEntry.getCOLUMN_PRODUCTNAME(),billEntry.getCOLUMN_QUANTITY());
+
+        Log.i("BAZA","UDALO SIE!");
+        Log.i("BAZA",mydb.getTable(CreateBillEntries.TABLE_BILLENTRIES,CreateBillEntries.COLUMN_CATEGORY_PRODUCTCATEGORYID).toString());
+
 
     }
 }
