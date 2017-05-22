@@ -5,7 +5,6 @@ import android.content.res.AssetManager;
 
 import com.orhanobut.logger.Logger;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +16,6 @@ import java.util.Set;
 /**
  * Created by Squier on 15.04.2017.
  */
-
 public class FileReader {
 
     private Context context;

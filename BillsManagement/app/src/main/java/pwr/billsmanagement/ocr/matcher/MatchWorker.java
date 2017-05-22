@@ -1,14 +1,10 @@
 package pwr.billsmanagement.ocr.matcher;
 
-import com.orhanobut.logger.Logger;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import pwr.billsmanagement.readers.FileReader;
-import pwr.billsmanagement.readers.PropertiesReader;
 
 /**
  * Created by Squier on 11.04.2017.
@@ -47,12 +43,19 @@ public class MatchWorker {
         return this;
     }
 
+    public Matcher getMatcher() {
+        return matcher;
+    }
+
+    public void setMatcher(Matcher matcher) {
+        this.matcher = matcher;
+    }
+
     public Properties getProperties() {
         return properties;
     }
 
-    public MatchWorker setProperties(Properties properties) {
+    public void setProperties(Properties properties) {
         this.properties = properties;
-        return this;
     }
 }

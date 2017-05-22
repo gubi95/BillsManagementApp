@@ -12,7 +12,6 @@ import java.util.Properties;
 /**
  * Created by Squier on 15.04.2017.
  */
-
 public class PropertiesReader {
 
     private Context context;

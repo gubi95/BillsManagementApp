@@ -7,25 +7,29 @@ import java.util.List;
  */
 public abstract class BillParser {
 
-    protected final String OCR_RESULT;
-    protected final String SHOP_NAME;
+    protected final String ocrResult;
+    protected final String shopName;
     protected List<String> products;
     protected List<String> prices;
 
-    public BillParser(String OCR_RESULT, String SHOP_NAME) {
-        this.OCR_RESULT = OCR_RESULT;
-        this.SHOP_NAME = SHOP_NAME;
+    public BillParser(String ocrResult, String shopName) {
+        this.ocrResult = ocrResult;
+        this.shopName = shopName;
     }
 
-    public BillParser(String OCR_RESULT, String SHOP_NAME, List<String> products, List<String> prices) {
-        this.OCR_RESULT = OCR_RESULT;
-        this.SHOP_NAME = SHOP_NAME;
+    public BillParser(String ocrResult, String shopName, List<String> products, List<String> prices) {
+        this.ocrResult = ocrResult;
+        this.shopName = shopName;
         this.products = products;
         this.prices = prices;
     }
 
-    public String getOCR_RESULT() {
-        return OCR_RESULT;
+    public String getOcrResult() {
+        return ocrResult;
+    }
+
+    public String getShopName() {
+        return shopName;
     }
 
     public List<String> getProducts() {
@@ -44,7 +48,9 @@ public abstract class BillParser {
         this.prices = prices;
     }
 
-    public abstract List<ShopProduct> parseOcrResult();
+    public abstract List<OcrProduct> parseOcrResult();
+
     public abstract String filterByLength(final String line, final int wordLength);
+
     public abstract boolean lineIsPrice(final String word);
 }

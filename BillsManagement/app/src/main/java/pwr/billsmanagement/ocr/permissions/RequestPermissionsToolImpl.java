@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * This class in used only for API>=23
- * https://developer.android.com/training/permissions/requesting.html
- * Created by iuliia on 10/15/16.
  */
 
 public class RequestPermissionsToolImpl implements RequestPermissionsTool {

@@ -1,12 +1,15 @@
 package pwr.billsmanagement.ocr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.orhanobut.logger.Logger;
@@ -24,35 +27,48 @@ import java.util.Properties;
 
 public class BillsOCR {
 
-    private final String CHAR_WHITE_LIST;
-    private final String DATA_PATH;
-    private final String IMG_PATH;
-    private final String TESSERACT_TRAINED_DATA_LOCATION;
-    private final String LANG;
-    private final String CAPTURE_AS;
+    public final String CHAR_WHITE_LIST;
+    public final String DATA_PATH;
+    public final String IMG_PATH;
+    public final String TESSERACT_TRAINED_DATA_LOCATION;
+    public final String LANG;
+    public final String CAPTURE_AS;
+    public final String SAVE_CROPPED_AS;
 
     private Uri outputFileUri;
     private TessBaseAPI tessBaseApi;
     private AssetManager assets;
+    private Context context;
 
-    public BillsOCR(AssetManager assets, Properties config) {
+    public BillsOCR(AssetManager assets, Properties config, Context context) {
         this.assets = assets;
+        this.context = context;
         DATA_PATH = Environment.getExternalStorageDirectory().toString() + config.getProperty("data_path");
         IMG_PATH = DATA_PATH + config.getProperty("img_path");
         CHAR_WHITE_LIST = config.getProperty("ocr_char_white_list");
         TESSERACT_TRAINED_DATA_LOCATION = config.getProperty("ocr_trained_data_location");
         LANG = config.getProperty("ocr_lang");
         CAPTURE_AS = config.getProperty("save_captured_img_as");
+        SAVE_CROPPED_AS = config.getProperty("save_cropped_img_as");
     }
-    
+
     public Intent startCameraActivity() {
         try {
             prepareDirectory(IMG_PATH);
-            outputFileUri = Uri.fromFile(new File(IMG_PATH + CAPTURE_AS));
+
+            Logger.i("Version: " + Build.VERSION.SDK_INT + " " + context.getPackageName());
+
+            if (Build.VERSION.SDK_INT > 23) {
+                outputFileUri = FileProvider.getUriForFile(
+                        context, context.getPackageName() + ".provider", new File(IMG_PATH + CAPTURE_AS)
+                );
+            } else {
+                outputFileUri = Uri.fromFile(new File(IMG_PATH + CAPTURE_AS));
+            }
 
             return new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         } catch (Exception e) {
-            Logger.e(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -71,6 +87,11 @@ public class BillsOCR {
     public String doOCR(Bitmap croppedImage) {
         prepareTesseract();
         return startOCR(croppedImage);
+    }
+
+    public String doOCR(Uri fileUri) {
+        prepareTesseract();
+        return startOCR(fileUri);
     }
 
     public String doOCR() {
@@ -171,4 +192,5 @@ public class BillsOCR {
     public Uri getOutputFileUri() {
         return outputFileUri;
     }
+
 }

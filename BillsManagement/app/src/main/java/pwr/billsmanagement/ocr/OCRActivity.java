@@ -1,50 +1,44 @@
-package pwr.billsmanagement;
+package pwr.billsmanagement.ocr;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.net.URI;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
-import pwr.billsmanagement.localDatabase.creationDatabase.CreateBillEntries;
-import pwr.billsmanagement.localDatabase.creationDatabase.DBHandler;
-import pwr.billsmanagement.localDatabase.dataObjects.BillEntries;
-import pwr.billsmanagement.ocr.BillsOCR;
-import pwr.billsmanagement.ocr.matcher.BestMatchesArray;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
 import pwr.billsmanagement.ocr.matcher.Matcher;
-import pwr.billsmanagement.ocr.matcher.ProductMatch;
 import pwr.billsmanagement.ocr.parsers.BillParser;
-import pwr.billsmanagement.ocr.parsers.ShopProduct;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 import pwr.billsmanagement.ocr.parsers.TwoLineBillParser;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsTool;
 import pwr.billsmanagement.ocr.permissions.RequestPermissionsToolImpl;
 import pwr.billsmanagement.readers.FileReader;
 import pwr.billsmanagement.readers.PropertiesReader;
 
-public class MainActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback  {
+public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
@@ -59,7 +53,6 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     private MatchWorker matchWorker;
     private PropertiesReader reader;
 
-    private Bitmap croppedBill;
     private Uri billPhoto;
 
     DBHandler mydb;
@@ -74,16 +67,21 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
 
         example();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_ocr);
         Logger.init("OCR");
 
         initView();
+        initListeners();
 
         reader = new PropertiesReader(getApplicationContext(), new Properties());
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions();
         }
+    }
+
+    private void initListeners() {
+        cropImageView.setOnCropImageCompleteListener(new CropImageListener());
     }
 
     private void initView() {
@@ -96,7 +94,7 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
 
         startOCRForCroppedImage = (ImageButton) findViewById(R.id.startOCRForCroppedImage);
         startOCRForCroppedImage.setImageResource(R.drawable.ic_start_ocr);
-        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.inactiveButton));
+        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentGrey));
         startOCRForCroppedImage.setEnabled(false);
 
         cropImageView = (CropImageView) findViewById(R.id.cropImageView);
@@ -105,37 +103,18 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
     }
 
     private void startOCRForCroppedImageSetOnClick() {
+        startOCRForCroppedImage.setOnClickListener(v -> cropImageView.getCroppedImageAsync());
+    }
 
-        startOCRForCroppedImage.setOnClickListener(v -> {
-            croppedBill = cropImageView.getCroppedImage();
-            if(croppedBill != null) {
-                String result = billsOCR.doOCR(croppedBill);
-                BillParser billParser = new TwoLineBillParser(result, "ZABKA", reader.readMyProperties(CONFIG_FILE));
-                billParser.setPrices(new ArrayList<>());
-                billParser.setProducts(new ArrayList<>());
-                ArrayList<ShopProduct> shopProducts = (ArrayList<ShopProduct>) billParser.parseOcrResult();
-
-                String check;
-                initializeMatchWorker();
-                for (ShopProduct product : shopProducts) {
-                    check = "FINAL " + product.getName() + " may be: ";
-                    List<BestMatchesArray> bestMatches = matchWorker.doMatch(Arrays.asList(product.getName().split(" ")));
-                    for (BestMatchesArray array : bestMatches) {
-                        for (ProductMatch productMatch : array.getBestMatches()) {
-                            check += productMatch.getMatch() >= productMatch.getName().length()/2 ? productMatch.getName() + " " : "";
-                        }
-                    }
-                    Logger.i(check);
-                }
-            }
-        });
-
+    private void startOCROnCroppedImageAsync() {
+        StartOCRForBitmapTask startOCRForBitmapTask = new StartOCRForBitmapTask();
+        startOCRForBitmapTask.execute();
     }
 
     private void captureImageSetOnClick() {
         if (captureImg != null) {
             captureImg.setOnClickListener(v -> {
-                billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE));
+                billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE), this);
                 final Intent takePhotoIntent = billsOCR.startCameraActivity();
                 startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
             });
@@ -144,13 +123,12 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
 
     private void initializeMatchWorker() {
         matchWorker = new MatchWorker(new Matcher(reader.readMyProperties(CONFIG_FILE)), new Properties());
-        matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES))
-                .initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
+        matchWorker.setProperties(reader.readMyProperties(EXTERNAL_FILES));
+        matchWorker.initializeMatcherDefaultDictionary(new FileReader(getApplicationContext()));
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //making photo
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Logger.i("In onActivityResult after shooting photo.");
             billPhoto = billsOCR.getOutputFileUri();
@@ -209,5 +187,99 @@ public class MainActivity extends Activity implements ActivityCompat.OnRequestPe
 
 
     }
-}
 
+
+    private class CropImageListener implements CropImageView.OnCropImageCompleteListener {
+        @Override
+        public void onCropImageComplete(CropImageView view, CropImageView.CropResult result) {
+            SaveCroppedImageTask saveCroppedImageTask = new SaveCroppedImageTask();
+            saveCroppedImageTask.execute(result.getBitmap());
+        }
+    }
+
+    private class SaveCroppedImageTask extends AsyncTask<Bitmap, Void, Void> {
+
+        private ProgressDialog progressDialog;
+        private Context mainActivityContext = OCRActivity.this;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(
+                    mainActivityContext,
+                    mainActivityContext.getString(R.string.save_cropped_image_progress_title),
+                    mainActivityContext.getString(R.string.save_cropped_image_progress_message)
+            );
+        }
+
+        @Override
+        protected Void doInBackground(Bitmap... params) {
+            billPhoto = Uri.fromFile(new File(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS));
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(billsOCR.IMG_PATH + billsOCR.SAVE_CROPPED_AS);
+                params[0].compress(Bitmap.CompressFormat.PNG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            startOCROnCroppedImageAsync();
+        }
+
+    }
+
+    private class StartOCRForBitmapTask extends AsyncTask<Void, Void, ArrayList<OcrProduct>> {
+
+        private ProgressDialog progressDialog;
+        private Context mainActivityContext = OCRActivity.this;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(
+                    mainActivityContext,
+                    mainActivityContext.getString(R.string.start_ocr_for_bitmap_progress_title),
+                    mainActivityContext.getString(R.string.start_ocr_for_bitmap_progress_message)
+            );
+        }
+
+        @Override
+        protected ArrayList<OcrProduct> doInBackground(Void... params) {
+            String result = billsOCR.doOCR(billPhoto);
+            result = result.replaceAll("\n\n", "\n");
+            Logger.e("WYNIK " + result);
+            BillParser billParser = new TwoLineBillParser(result, null, reader.readMyProperties(CONFIG_FILE));
+            billParser.setPrices(new ArrayList<>());
+            billParser.setProducts(new ArrayList<>());
+            ArrayList<OcrProduct> ocrProducts = (ArrayList<OcrProduct>) billParser.parseOcrResult();
+
+            return ocrProducts;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<OcrProduct> shopOcrProducts) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            Gson gson = new Gson();
+            Logger.i(gson.toJson(shopOcrProducts));
+            Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
+            editBillActivity.putExtra("products_json", gson.toJson(shopOcrProducts));
+            editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(editBillActivity);
+        }
+    }
+}

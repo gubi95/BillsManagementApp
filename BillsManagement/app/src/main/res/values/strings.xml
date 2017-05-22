@@ -6,15 +6,36 @@
         <item>Ustawienia</item>
     </string-array>
     <string name="ok">OK</string>
-    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
-    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
-    <string name="title_activity_main">Ocr Detector Sample</string>
-    <string name="read_text">Skanuj paragon</string>
-    <string name="auto_focus">Auto Focus</string>
-    <string name="use_flash">Włącz latarkę</string>
-    <string name="ocr_success">Text read successfully</string>
-    <string name="ocr_failure">No text captured</string>
-    <string name="ocr_error">"Error reading text: %1$s"</string>
-    <string name="ocr_tap_info">Dotknij ekranu, aby zapisać</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="product_price">Cena produktu</string>
+    <string name="shop_name">Nazwa sklepu</string>
+    <string name="define_label">Produkt</string>
+    <string name="option_name">Nazwa</string>
+    <string name="option_total_price">Cena całk.</string>
+    <string name="option_unit_price">Cena jedn.</string>
+    <string name="option_ignore">Ignoruj</string>
+    <string name="category">Kategoria</string>
+    <string name="product_amount">Ilość</string>
+    <string-array name="define_options">
+        <item>Nazwa</item>
+        <item>Cena całk.</item>
+        <item>Cena jedn.</item>
+        <item>Ignoruj</item>
+    </string-array>
+    <string name="save_cropped_image_progress_title">OCR</string>
+    <string name="save_cropped_image_progress_message">Kadrowanie zdjęcia...</string>
+    <string name="start_ocr_for_bitmap_progress_title">OCR</string>
+    <string name="start_ocr_for_bitmap_progress_message">Odczyt produktów ze zdjęcia...</string>
+    <string name="edit_bill_create_view_progress_title">Widok</string>
+    <string name="edit_bill_create_view_progress_message">Tworzenie widoku...</string>
+    <string name="edit_bill_show_help_page1">
+        Tutaj możesz nam pomóc określić parametry produktu, tj. jego nazwę, cenę jednostkową i cenę całkowitą.\n\nZastanawiasz się co z ilością? Nie przejmuj się, z tym już sobie poradzimy ;)\n\nNa samym początku prosimy Cię abyś podał nazwę sklepu w którym zrobiłeś te zakupy.
+        Następnie prosimy, abyś określił które słowa są nazwą produktu lub jego ceną.
+        Jak zauważysz, nasz program proponuje już pewne rozwiązanie, jesteśmy jednak świadomi że nie koniecznie jest
+        to najlepsze rozwiązanie. Klikając w jeden z kolorowych przycisków a następnie na odpowiedni kafelek, zmieni się
+        jego kolor, a co za tym idzie, jego przypisanie do atrybutu produktu. Śmiało! Możesz teraz wykonać tę czynność ;)
+    </string>
+    <string name="edit_bill_show_help_page2">
+        Na tej stronie możesz poprawić błędy, które nasz program popełnił podczas czytania paragonu.\n\nProsimy Cię również o przypisanie kategorii do jakiej należą zakupione produkty, pozwoli to generować dokładne raporty.\nZwróć również uwagę czy ceny i ilość jest poprawnie wpisana.
+    </string>
 </resources>
