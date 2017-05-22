@@ -2,24 +2,24 @@ package pwr.billsmanagement.bills.edition.products;
 
 import java.util.ArrayList;
 
-import pwr.billsmanagement.bills.edition.view.DefineProductItem;
+import pwr.billsmanagement.bills.edition.view.DefineProductView;
 
 /**
  * Created by Squier on 17.05.2017.
  */
 public class ShredProduct {
 
-    private ArrayList<DefineProductItem> shreds;
+    private ArrayList<DefineProductView> shreds;
 
-    public ShredProduct(ArrayList<DefineProductItem> shreds) {
+    public ShredProduct(ArrayList<DefineProductView> shreds) {
         this.shreds = shreds;
     }
 
-    public void addShred(DefineProductItem shred) {
+    public void addShred(DefineProductView shred) {
         shreds.add(shred);
     }
 
-    public ArrayList<DefineProductItem> getShreds() {
+    public ArrayList<DefineProductView> getShreds() {
         return shreds;
     }
 
@@ -27,7 +27,7 @@ public class ShredProduct {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ShredProduct={");
-        for (DefineProductItem shred :
+        for (DefineProductView shred :
                 shreds) {
             builder.append("shred=");
             builder.append(shred.toString());

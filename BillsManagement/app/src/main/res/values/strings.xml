@@ -38,4 +38,6 @@
     <string name="edit_bill_show_help_page2">
         Na tej stronie możesz poprawić błędy, które nasz program popełnił podczas czytania paragonu.\n\nProsimy Cię również o przypisanie kategorii do jakiej należą zakupione produkty, pozwoli to generować dokładne raporty.\nZwróć również uwagę czy ceny i ilość jest poprawnie wpisana.
     </string>
+    <string name="assembly_finals_progress_title">Edycja</string>
+    <string name="assembly_finals_progress_message">Zapisywanie...</string>
 </resources>

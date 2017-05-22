@@ -22,7 +22,7 @@ import pwr.billsmanagement.ocr.parsers.OcrProduct;
  * Created by Squier on 16.05.2017.
  */
 
-public class DefineProductRowCreator {
+public class DefineProductViewCreator {
 
     public static final int NAME = 0;
     public static final int TOTAL_PRICE = 1;
@@ -36,7 +36,7 @@ public class DefineProductRowCreator {
 
     private ArrayList<ShredProduct> shredProducts;
 
-    public DefineProductRowCreator(Context context, ChosenOption chosenOption, ArrayList<ShredProduct> shredProducts) {
+    public DefineProductViewCreator(Context context, ChosenOption chosenOption, ArrayList<ShredProduct> shredProducts) {
         this.chosenOption = chosenOption;
         inflater = LayoutInflater.from(context);
         defineOptions = context.getResources().getStringArray(R.array.define_options);
@@ -102,7 +102,7 @@ public class DefineProductRowCreator {
 
         setOnClickListener(define, label, value);
 
-        shredProduct.addShred(new DefineProductItem(label, value));
+        shredProduct.addShred(new DefineProductView(label, value));
 
         return define;
     }

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,28 +24,44 @@ public class FinalProductViewCreator {
 
     private LayoutInflater inflater;
     private String rowTitle;
+    private ArrayList<FinalProductView> finalProductViews;
 
-    public FinalProductViewCreator(Context context) {
+    public FinalProductViewCreator(Context context, ArrayList<FinalProductView> finalProductViews) {
         inflater = LayoutInflater.from(context);
         rowTitle = context.getResources().getString(R.string.define_label);
+        this.finalProductViews = finalProductViews;
     }
 
-    public View getRowView(AssembledProduct product, int id) {
+    public View getRowViewAndSave(AssembledProduct product, int id) {
         View row = inflater.inflate(R.layout.bill_edit_product_row, null);
 
+        FinalProductView item = new FinalProductView(
+                (EditText)row.findViewById(R.id.productFinalName),
+                (EditText)row.findViewById(R.id.productFinalUnitPrice),
+                (EditText)row.findViewById(R.id.productFinalQuantity),
+                (EditText)row.findViewById(R.id.productFinalTotalPrice),
+                (Spinner)row.findViewById(R.id.productFinalCategory)
+        );
+
         ((TextView)row.findViewById(R.id.productFinalNumber)).setText(rowTitle + " " + id);
-        ((EditText)row.findViewById(R.id.productFinalName)).setText(product.getProductName());
+        item.getName().setText(product.getProductName());
 
         String totalPrice = extractPrice(product.getProductTotalPrice());
         String unitPrice = extractPrice(product.getProductUnitPrice());
 
-        ((EditText)row.findViewById(R.id.productFinalTotalPrice)).setText(totalPrice);
-        ((EditText)row.findViewById(R.id.productFinalUnitPrice)).setText(unitPrice);
+        item.getTotalPrice().setText(totalPrice);
+        item.getUnitPrice().setText(unitPrice);
 
-        String quantity = Float.toString(Float.parseFloat(totalPrice)/Float.parseFloat(unitPrice));
+        String quantity = "1.0";
 
-        ((EditText)row.findViewById(R.id.productFinalQuantity)).setText(quantity);
+        try {
+            quantity = Float.toString(Float.parseFloat(totalPrice) / Float.parseFloat(unitPrice));
+        } catch (NumberFormatException e) {
+            Logger.e(e, "Possibly no price found.");
+        }
+        item.getQuantity().setText(quantity);
 
+        finalProductViews.add(item);
 
         return row;
     }
@@ -58,4 +76,7 @@ public class FinalProductViewCreator {
         else return string;
     }
 
+    public ArrayList<FinalProductView> getFinalProductViews() {
+        return finalProductViews;
+    }
 }

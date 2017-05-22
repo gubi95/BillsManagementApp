@@ -2,26 +2,36 @@ package pwr.billsmanagement.bills.edition.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.edition.EditBillActivity;
+import pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory;
 import pwr.billsmanagement.bills.edition.products.AssembledProduct;
+import pwr.billsmanagement.bills.edition.products.FinalProduct;
+import pwr.billsmanagement.bills.edition.products.FinalProductAssembler;
 import pwr.billsmanagement.bills.edition.products.ShredProduct;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
 
+import static pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory.*;
+
 /**
  * Created by Squier on 17.05.2017.
  */
-public class AssemblyProductsTask extends AsyncTask<ArrayList<ShredProduct>, Void, ArrayList<AssembledProduct>> {
+public class AssemblyShredsTask extends AsyncTask<ArrayList<ShredProduct>, Void, ArrayList<AssembledProduct>> {
 
     private ShredProductAssembler assembler;
     private ArrayList<AssembledProduct> assembledProducts;
     private EditBillActivity.LayoutHandle layoutHandle;
+    private FinalProductViewCreator creator;
     private Context context;
+    private ImageButton acceptAll;
+    private EditText shopName;
 
     @Override
     protected ArrayList<AssembledProduct> doInBackground(ArrayList<ShredProduct>... params) {
@@ -43,12 +53,25 @@ public class AssemblyProductsTask extends AsyncTask<ArrayList<ShredProduct>, Voi
         layoutHandle.optionButtons.removeAllViews();
         layoutHandle.productList.removeAllViews();
 
-        FinalProductViewCreator creator = new FinalProductViewCreator(context);
         int id = 1;
 
         for (AssembledProduct product : assembledProducts) {
-            layoutHandle.productList.addView(creator.getRowView(product, id++));
+            layoutHandle.productList.addView(creator.getRowViewAndSave(product, id++));
         }
+
+        setNewListener();
+    }
+
+    private void setNewListener() {
+        ListenerParams params = new EditParams(
+                creator.getFinalProductViews(),
+                new ArrayList<>(),
+                new FinalProductAssembler(),
+                shopName,
+                context
+        );
+
+        acceptAll.setOnClickListener(AcceptAllListenerFactory.getListener(ListenerType.EDIT, params));
 
     }
 
@@ -64,7 +87,19 @@ public class AssemblyProductsTask extends AsyncTask<ArrayList<ShredProduct>, Voi
         this.layoutHandle = layoutHandle;
     }
 
+    public void setCreator(FinalProductViewCreator creator) {
+        this.creator = creator;
+    }
+
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void setAcceptAll(ImageButton acceptAll) {
+        this.acceptAll = acceptAll;
+    }
+
+    public void setShopName(EditText shopName) {
+        this.shopName = shopName;
     }
 }

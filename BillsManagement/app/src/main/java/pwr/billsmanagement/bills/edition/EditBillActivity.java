@@ -20,11 +20,14 @@ import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
-import pwr.billsmanagement.bills.edition.listeners.AcceptAllProductsListener;
+import pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory;
 import pwr.billsmanagement.bills.edition.listeners.ShowHelpListener;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
-import pwr.billsmanagement.bills.edition.view.DefineProductRowCreator;
+import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
+import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
 import pwr.billsmanagement.ocr.parsers.OcrProduct;
+
+import static pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory.*;
 
 /**
  * Created by Squier on 08.05.2017.
@@ -35,7 +38,8 @@ public class EditBillActivity extends Activity {
     private EditBillActivityView mView;
 
     private ChosenOption chosenOption;
-    private DefineProductRowCreator creator;
+    private DefineProductViewCreator defineProductViewCreator;
+    private FinalProductViewCreator finalProductViewCreator;
 
     private ShowHelpListener showHelpListener;
 
@@ -50,8 +54,23 @@ public class EditBillActivity extends Activity {
         initView();
         initResources();
         initListeners();
+        initCreators();
         readPassedData();
         createCustomList();
+    }
+
+    private void initCreators() {
+        chosenOption = new ChosenOption();
+        defineProductViewCreator = new DefineProductViewCreator(
+                EditBillActivity.this,
+                chosenOption,
+                new ArrayList<>()
+        );
+
+        finalProductViewCreator = new FinalProductViewCreator(
+                EditBillActivity.this,
+                new ArrayList<>()
+        );
     }
 
     private void initListeners() {
@@ -195,42 +214,45 @@ public class EditBillActivity extends Activity {
 
             showHelp.setOnClickListener(showHelpListener);
 
-            AcceptAllProductsListener acceptAllProductsListener = new AcceptAllProductsListener(
-                    creator,
+            ListenerParams params = new DefineParams(
+                    EditBillActivity.this,
+                    defineProductViewCreator,
+                    finalProductViewCreator,
                     new ShredProductAssembler(defineOptions),
-                    new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList))
+                    new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList)),
+                    addProduct,
+                    acceptAll,
+                    showHelpListener,
+                    shopName
             );
-            acceptAllProductsListener.setContext(EditBillActivity.this);
-            acceptAllProductsListener.setHelpListener(showHelpListener);
-            acceptAllProductsListener.setAddProduct(addProduct);
 
-            acceptAll.setOnClickListener(acceptAllProductsListener);
+            acceptAll.setOnClickListener(AcceptAllListenerFactory.getListener(ListenerType.DEFINE, params));
 
             takePhotoAgain.setOnClickListener(v -> {
                 //TODO go back to camera activity and repeat ocr stuff
             });
 
             markAsProductName.setOnClickListener(v -> {
-                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GREEN);
-                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.NAME]);
+                chosenOption.setColorPair(DefineProductViewCreator.ColorPair.GREEN);
+                chosenOption.setLabelText(defineOptions[DefineProductViewCreator.NAME]);
                 indicateSelectedOption(SelectedOption.SELECT_NAMES);
             });
 
             markAsProductTotalPrice.setOnClickListener(v -> {
-                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.BLUE);
-                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.TOTAL_PRICE]);
+                chosenOption.setColorPair(DefineProductViewCreator.ColorPair.BLUE);
+                chosenOption.setLabelText(defineOptions[DefineProductViewCreator.TOTAL_PRICE]);
                 indicateSelectedOption(SelectedOption.SELECT_TOTAL_PRICE);
             });
 
             markAsProductUnitPrice.setOnClickListener(v -> {
-                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.RED);
-                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.UNIT_PRICE]);
+                chosenOption.setColorPair(DefineProductViewCreator.ColorPair.RED);
+                chosenOption.setLabelText(defineOptions[DefineProductViewCreator.UNIT_PRICE]);
                 indicateSelectedOption(SelectedOption.SELECT_UNIT_PRICE);
             });
 
             markAsGarbage.setOnClickListener(v -> {
-                chosenOption.setColorPair(DefineProductRowCreator.ColorPair.GRAY);
-                chosenOption.setLabelText(defineOptions[DefineProductRowCreator.IGNORE]);
+                chosenOption.setColorPair(DefineProductViewCreator.ColorPair.GRAY);
+                chosenOption.setLabelText(defineOptions[DefineProductViewCreator.IGNORE]);
                 indicateSelectedOption(SelectedOption.SELECT_AS_GARBAGE);
             });
         }
@@ -251,18 +273,11 @@ public class EditBillActivity extends Activity {
 
         @Override
         protected ArrayList<View> doInBackground(Void... params) {
-            chosenOption = new ChosenOption();
-            creator = new DefineProductRowCreator(
-                    getApplicationContext(),
-                    chosenOption,
-                    new ArrayList<>()
-            );
-
             int id = 1;
 
             ArrayList<View> views = new ArrayList<>();
             for (OcrProduct ocrProduct : ocrProducts) {
-                views.add(creator.getProductRow(ocrProduct, id++));
+                views.add(defineProductViewCreator.getProductRow(ocrProduct, id++));
             }
             return views;
         }

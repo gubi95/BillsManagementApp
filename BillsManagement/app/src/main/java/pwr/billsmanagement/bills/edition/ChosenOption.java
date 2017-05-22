@@ -1,6 +1,6 @@
 package pwr.billsmanagement.bills.edition;
 
-import pwr.billsmanagement.bills.edition.view.DefineProductRowCreator;
+import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
 
 /**
  * Created by Squier on 17.05.2017.
@@ -8,18 +8,18 @@ import pwr.billsmanagement.bills.edition.view.DefineProductRowCreator;
 
 public class ChosenOption {
 
-    private DefineProductRowCreator.ColorPair colorPair;
+    private DefineProductViewCreator.ColorPair colorPair;
     private String labelText;
 
     public ChosenOption() {
-        colorPair = DefineProductRowCreator.ColorPair.GRAY;
+        colorPair = DefineProductViewCreator.ColorPair.GRAY;
     }
 
-    public DefineProductRowCreator.ColorPair getColorPair() {
+    public DefineProductViewCreator.ColorPair getColorPair() {
         return colorPair;
     }
 
-    public void setColorPair(DefineProductRowCreator.ColorPair colorPair) {
+    public void setColorPair(DefineProductViewCreator.ColorPair colorPair) {
         this.colorPair = colorPair;
     }
 

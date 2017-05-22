@@ -5,12 +5,12 @@ import android.widget.TextView;
 /**
  * Created by Squier on 17.05.2017.
  */
-public class DefineProductItem {
+public class DefineProductView {
 
     private TextView label;
     private TextView value;
 
-    public DefineProductItem(TextView label, TextView value) {
+    public DefineProductView(TextView label, TextView value) {
         this.label = label;
         this.value = value;
     }

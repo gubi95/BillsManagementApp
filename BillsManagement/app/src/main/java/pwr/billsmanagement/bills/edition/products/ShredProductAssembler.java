@@ -1,10 +1,10 @@
 package pwr.billsmanagement.bills.edition.products;
 
-import pwr.billsmanagement.bills.edition.view.DefineProductItem;
+import pwr.billsmanagement.bills.edition.view.DefineProductView;
 
-import static pwr.billsmanagement.bills.edition.view.DefineProductRowCreator.NAME;
-import static pwr.billsmanagement.bills.edition.view.DefineProductRowCreator.TOTAL_PRICE;
-import static pwr.billsmanagement.bills.edition.view.DefineProductRowCreator.UNIT_PRICE;
+import static pwr.billsmanagement.bills.edition.view.DefineProductViewCreator.NAME;
+import static pwr.billsmanagement.bills.edition.view.DefineProductViewCreator.TOTAL_PRICE;
+import static pwr.billsmanagement.bills.edition.view.DefineProductViewCreator.UNIT_PRICE;
 
 /**
  * Created by Squier on 17.05.2017.
@@ -28,7 +28,7 @@ public class ShredProductAssembler {
         productTotalPrice = "";
         productUnitPrice = "";
 
-        for (DefineProductItem shred : shredProduct.getShreds()) {
+        for (DefineProductView shred : shredProduct.getShreds()) {
             String labelText = "";
             String valueText = "";
 

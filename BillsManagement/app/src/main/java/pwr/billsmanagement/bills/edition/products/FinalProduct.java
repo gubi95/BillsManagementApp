@@ -22,6 +22,17 @@ public class FinalProduct {
         this.category = category;
     }
 
+    @Override
+    public String toString() {
+        return "FinalProduct{" +
+                "name='" + name + '\'' +
+                ", unitPrice='" + unitPrice + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", totalPrice='" + totalPrice + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
+
     public String getName() {
         return name;
     }
