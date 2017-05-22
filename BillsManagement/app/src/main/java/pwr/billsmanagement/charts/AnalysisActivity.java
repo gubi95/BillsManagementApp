@@ -75,7 +75,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         Log.d("chart id", Integer.toString(R.id.myBarChart));
 
         mBarChart.setData(mData.data);
-        mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
+        mBarChart.setDescription("Sumy wydatków w podziale na kategorie"); //no ale działa
         mBarChart.animateY(3000);
 
 

@@ -35,7 +35,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile files('C:/Users/Admin/Documents/BillsManagementApp1/BillsManagement/libs/mpandroidchartlibrary-2-2-4.jar')
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
