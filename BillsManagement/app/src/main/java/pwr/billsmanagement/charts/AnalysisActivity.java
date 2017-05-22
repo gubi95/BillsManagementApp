@@ -19,6 +19,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
 import java.util.Locale;
 
 import pwr.billsmanagement.R;
@@ -40,6 +44,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
     // charts data
     Data mData = new Data();
     BarChart mBarChart;
+    private OnChartValueSelectedListener chartListener;
 
     public AnalysisActivity() {
     }
@@ -62,10 +67,6 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         etDateFrom = (EditText) findViewById(R.id.etDate1);
         etDateTo = (EditText) findViewById(R.id.etDate2);
 
-
-
-
-
         // CHART
         mBarChart = (BarChart) findViewById(R.id.myBarChart);
         mData.testData();
@@ -75,11 +76,26 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         Log.d("chart id", Integer.toString(R.id.myBarChart));
 
         mBarChart.setData(mData.data);
-        mBarChart.setDescription("Sumy wydatków w podziale na kategorie"); //no ale działa
+        mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
         mBarChart.animateY(3000);
+        chartListener = new OnChartValueSelectedListener() {
+
+            @Override
+            public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+                Intent mIntent = new Intent(AnalysisActivity.this, CategoryDetails.class);
+                startActivity(mIntent);
+            }
+
+            @Override
+            public void onNothingSelected() {
+            }
+        };
+        mBarChart.setOnChartValueSelectedListener(chartListener);
 
 
 
+
+        // DRAWER
         mDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mMenuOptions));
         mDrawerList.setOnItemClickListener(this);
 
@@ -98,7 +114,8 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
             }
         };
         mDrawerLayout.addDrawerListener(drawerListener);
-    }
+
+    };
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -131,7 +148,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 break;
             default :
-                mIntent = new Intent(this, Menu.class); // Activity_0 as default
+                mIntent = new Intent(this, Menu.class);
                 break;
         }
         startActivity(mIntent);
