@@ -3,38 +3,31 @@ package pwr.billsmanagement.charts;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import java.util.Locale;
 import java.util.Calendar;
-
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
-import pwr.billsmanagement.ocr.OCRActivity;
 import pwr.billsmanagement.menu.Menu;
-
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+import pwr.billsmanagement.ocr.OCRActivity;
 
 public class AnalysisActivity extends AppCompatActivity implements OnItemClickListener{
 
@@ -85,6 +78,8 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         mData.testData(); // zmienić na pobieranie z bazy
 
         mBarChart.setData(mData.data);
+
+
         mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
         mBarChart.animateY(3000);
         mBarChart.getLegend().setEnabled(false);

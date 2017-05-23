@@ -1,6 +1,5 @@
 package pwr.billsmanagement.charts;
 
-import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -8,10 +7,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
-
-/**
- * Created by Admin on 2017-05-23.
- */
 
 public class LinearData {
 
@@ -57,7 +52,7 @@ public class LinearData {
         this.costs.add(new BarEntry(99f, 8));
         this.costs.add(new BarEntry(299f, 9));
         this.costs.add(new BarEntry(399f, 10));
-        this.costs.add(new BarEntry(269.79f, 11));
+        this.costs.add(new BarEntry(23f, 11));
 
         this.dataSet = new LineDataSet(this.costs, "Wydano");
         this.dataset.setColors(ColorTemplate.PASTEL_COLORS);

@@ -1,35 +1,21 @@
 package pwr.billsmanagement.charts;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 
-import java.util.Locale;
-
 import pwr.billsmanagement.R;
-import pwr.billsmanagement.bills.edition.EditBillActivity;
-import pwr.billsmanagement.ocr.OCRActivity;
-import pwr.billsmanagement.menu.Menu;
 
 public class CategoryDetails extends AppCompatActivity implements OnItemClickListener{
 
@@ -96,10 +82,12 @@ public class CategoryDetails extends AppCompatActivity implements OnItemClickLis
         // CHART
         mLineChart = (LineChart) findViewById(R.id.myLineChart);
         mData.testData(); // zmienić na pobieranie z bazy
+
         mLineChart.setData(mData.data);
         mLineChart.setDescription("Wydatki w ostatnich 12 m-cach");
         mLineChart.animateY(3000);
         mLineChart.getLegend().setEnabled(false);
+
     }
 
     @Override

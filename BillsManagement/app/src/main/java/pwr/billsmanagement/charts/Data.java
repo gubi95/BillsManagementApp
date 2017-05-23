@@ -1,7 +1,5 @@
 package pwr.billsmanagement.charts;
 
-import android.util.Log;
-
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.BarDataSet;
