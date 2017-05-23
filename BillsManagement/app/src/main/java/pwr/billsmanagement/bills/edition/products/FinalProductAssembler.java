@@ -18,8 +18,7 @@ public class FinalProductAssembler {
         finalProduct.setUnitPrice(finalProductView.getUnitPrice().getText().toString());
         finalProduct.setQuantity(finalProductView.getQuantity().getText().toString());
         finalProduct.setTotalPrice(finalProductView.getTotalPrice().getText().toString());
-        finalProduct.setCategory("Jedzenie");
-        //finalProduct.setCategory(finalProductView.getCategory().getSelectedItem().toString());
+        finalProduct.setCategory((String) finalProductView.getCategory().getSelectedItem());
 
         Logger.i("Assembled final product: " + finalProduct.toString());
 

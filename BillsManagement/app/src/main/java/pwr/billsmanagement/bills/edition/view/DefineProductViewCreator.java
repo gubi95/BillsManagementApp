@@ -22,7 +22,7 @@ import pwr.billsmanagement.ocr.parsers.OcrProduct;
  * Created by Squier on 16.05.2017.
  */
 
-public class DefineProductViewCreator {
+public class DefineProductViewCreator implements ViewCreator<OcrProduct> {
 
     public static final int NAME = 0;
     public static final int TOTAL_PRICE = 1;
@@ -44,7 +44,7 @@ public class DefineProductViewCreator {
         this.shredProducts = shredProducts;
     }
 
-    public View getProductRow(OcrProduct ocrProduct, int id) {
+    public View getProductRowAndSave(OcrProduct ocrProduct, int id) {
 
         View row = inflater.inflate(R.layout.bill_define_product_row, null);
         initMain(row, id);

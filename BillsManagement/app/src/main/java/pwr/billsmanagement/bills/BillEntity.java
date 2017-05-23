@@ -1,4 +1,4 @@
-package pwr.billsmanagement.bills.edition;
+package pwr.billsmanagement.bills;
 
 import java.util.ArrayList;
 
@@ -39,10 +39,11 @@ public class BillEntity {
         StringBuilder builder = new StringBuilder("BillEntity{shopName='" + shopName + "\' products:");
         for (FinalProduct product :
                 products) {
+            builder.append("'");
             builder.append(product.getName());
-            builder.append(" ");
+            builder.append("',");
         }
-        builder.append("}");
+        builder.append("'}");
         return builder.toString();
     }
 }

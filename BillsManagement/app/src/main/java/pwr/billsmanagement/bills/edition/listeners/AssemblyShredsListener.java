@@ -6,9 +6,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
+import pwr.billsmanagement.bills.edition.listeners.params.CreatorsParams;
+import pwr.billsmanagement.bills.edition.listeners.params.DefineParams;
+import pwr.billsmanagement.bills.edition.listeners.params.ViewParams;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.tasks.AssemblyShredsTask;
 import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
@@ -29,17 +33,25 @@ public class AssemblyShredsListener implements View.OnClickListener, AcceptAllLi
     private ImageButton addProduct, acceptAll;
     private EditText shopName;
 
-    public AssemblyShredsListener(AcceptAllListenerFactory.DefineParams params) {
-        defineProductViewCreator = params.getDefineCreator();
+    public AssemblyShredsListener(DefineParams params) {
         assembler = params.getAssembler();
-        layoutHandle = params.getLayoutHandle();
-
-        finalProductViewCreator = params.getFinalCreator();
-        context = params.getContext();
         helpListener = params.getHelpListener();
-        addProduct = params.getAddNewProduct();
-        acceptAll = params.getAcceptAll();
-        shopName = params.getShopName();
+
+        context = params.getViewParams().getContext();
+        layoutHandle = params.getViewParams().getLayoutHandle();
+
+        ViewParams viewParams = params.getViewParams();
+        Map<String, Integer> paramMap = viewParams.getViewMap();
+
+        addProduct = (ImageButton) viewParams.getViews()[paramMap.get("ADD_PRODUCT")];
+        acceptAll = (ImageButton) viewParams.getViews()[paramMap.get("ACCEPT_ALL")];
+        shopName = (EditText) viewParams.getViews()[paramMap.get("SHOP_NAME")];
+
+        CreatorsParams creatorsParams = params.getCreatorsParams();
+        paramMap = params.getCreatorsParams().getCreatorsMap();
+
+        defineProductViewCreator = (DefineProductViewCreator) creatorsParams.getCreators()[paramMap.get("DEFINE_CREATOR")];
+        finalProductViewCreator = (FinalProductViewCreator) creatorsParams.getCreators()[paramMap.get("FINAL_CREATOR")];
     }
 
     @Override

@@ -34,4 +34,10 @@ public class PropertiesReader {
         }
         return myProperties;
     }
+
+    public void addProperty(String key, String value) {
+        if(myProperties != null) {
+            myProperties.setProperty(key, value);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
+import pwr.billsmanagement.bills.edition.listeners.params.EditParams;
 import pwr.billsmanagement.bills.edition.products.FinalProduct;
 import pwr.billsmanagement.bills.edition.products.FinalProductAssembler;
 import pwr.billsmanagement.bills.edition.tasks.AssemblyFinalsTask;
@@ -23,12 +24,12 @@ public class AssemblyFinalsListener implements View.OnClickListener, AcceptAllLi
     private Context context;
     private EditText shopName;
 
-    public AssemblyFinalsListener(AcceptAllListenerFactory.EditParams params) {
-        finalProducts = params.getFinalProducts();
-        finalProductViews = params.getFinalProductViews();
+    public AssemblyFinalsListener(EditParams params) {
+        finalProductViews = params.getArrayListParams().getTypeOneArray();
+        finalProducts = params.getArrayListParams().getTypeTwoArray();
         assembler = params.getAssembler();
-        context = params.getContext();
-        shopName = params.getShopName();
+        context = params.getViewParams().getContext();
+        shopName = (EditText) params.getViewParams().getViews()[0];
     }
 
     @Override

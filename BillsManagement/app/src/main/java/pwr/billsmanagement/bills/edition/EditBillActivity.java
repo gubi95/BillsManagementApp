@@ -18,10 +18,16 @@ import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory;
 import pwr.billsmanagement.bills.edition.listeners.ShowHelpListener;
+import pwr.billsmanagement.bills.edition.listeners.params.CreatorsParams;
+import pwr.billsmanagement.bills.edition.listeners.params.DefineParams;
+import pwr.billsmanagement.bills.edition.listeners.params.ListenerParams;
+import pwr.billsmanagement.bills.edition.listeners.params.ViewParams;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
@@ -215,15 +221,9 @@ public class EditBillActivity extends Activity {
             showHelp.setOnClickListener(showHelpListener);
 
             ListenerParams params = new DefineParams(
-                    EditBillActivity.this,
-                    defineProductViewCreator,
-                    finalProductViewCreator,
+                    getViewParams(), getCreatorParams(),
                     new ShredProductAssembler(defineOptions),
-                    new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList)),
-                    addProduct,
-                    acceptAll,
-                    showHelpListener,
-                    shopName
+                    showHelpListener
             );
 
             acceptAll.setOnClickListener(AcceptAllListenerFactory.getListener(ListenerType.DEFINE, params));
@@ -258,6 +258,37 @@ public class EditBillActivity extends Activity {
         }
     }
 
+    private CreatorsParams getCreatorParams() {
+        CreatorsParams creatorsParams = new CreatorsParams(
+                defineProductViewCreator, finalProductViewCreator
+        );
+
+        Map<String, Integer> creatorMap = new HashMap<>();
+        creatorMap.put("DEFINE_CREATOR", 0);
+        creatorMap.put("FINAL_CREATOR", 1);
+
+        creatorsParams.setCreatorsMap(creatorMap);
+
+        return creatorsParams;
+    }
+
+    private ViewParams getViewParams() {
+        ViewParams viewParams = new ViewParams(
+                EditBillActivity.this,
+                new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList)),
+                mView.addProduct, mView.acceptAll, mView.shopName
+        );
+
+        HashMap<String, Integer> viewMap = new HashMap<>();
+        viewMap.put("ADD_PRODUCT", 0);
+        viewMap.put("ACCEPT_ALL", 1);
+        viewMap.put("SHOP_NAME", 2);
+
+        viewParams.setViewMap(viewMap);
+
+        return viewParams;
+    }
+
     private class CreateCustomListAsync extends AsyncTask<Void, Void, ArrayList<View>> {
 
         private ProgressDialog progressDialog;
@@ -277,7 +308,7 @@ public class EditBillActivity extends Activity {
 
             ArrayList<View> views = new ArrayList<>();
             for (OcrProduct ocrProduct : ocrProducts) {
-                views.add(defineProductViewCreator.getProductRow(ocrProduct, id++));
+                views.add(defineProductViewCreator.getProductRowAndSave(ocrProduct, id++));
             }
             return views;
         }

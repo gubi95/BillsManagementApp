@@ -9,7 +9,7 @@ import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
-import pwr.billsmanagement.bills.edition.BillEntity;
+import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.products.FinalProduct;
 import pwr.billsmanagement.bills.edition.products.FinalProductAssembler;
 import pwr.billsmanagement.bills.edition.view.FinalProductView;
