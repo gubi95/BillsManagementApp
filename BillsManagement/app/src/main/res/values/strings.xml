@@ -23,6 +23,6 @@
     <string name="title_activity_category_details">CategoryDetails</string>
     <string name="kategoria">Kategoria:</string>
     <string name="limit">Limit wydatków</string>
-    <string name="wydano">Wydano:</string>
+    <string name="wydano">Wydano w tym miesiącu:</string>
     <string name="save">Zapisz</string>
 </resources>

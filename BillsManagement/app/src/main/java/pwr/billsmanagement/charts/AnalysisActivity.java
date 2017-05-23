@@ -1,6 +1,7 @@
 package pwr.billsmanagement.charts;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.Entry;
@@ -24,13 +26,19 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.Locale;
+import java.util.Calendar;
+
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
 import pwr.billsmanagement.ocr.OCRActivity;
 import pwr.billsmanagement.menu.Menu;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 public class AnalysisActivity extends AppCompatActivity implements OnItemClickListener{
+
+    private String selectedCategory;
 
     private String[] mMenuOptions;
     private DrawerLayout mDrawerLayout;
@@ -40,6 +48,9 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
     private TextView tvDesc, tvDate, tvDateFrom, tvDateTo;
     private EditText etDateFrom, etDateTo;
 
+    private int mStartYear, mEndYear, mStartMonth, mEndMonth, mStartDay, mEndDay;
+    static final int DATE_DIALOG_FROM = 0;
+    static final int DATE_DIALOG_TO = 1;
 
     // charts data
     Data mData = new Data();
@@ -60,6 +71,8 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
 
         toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Analiza wydatków");
+
         tvDesc = (TextView) findViewById(R.id.text_desc);
         tvDate = (TextView) findViewById(R.id.text_range);
         tvDateFrom = (TextView) findViewById(R.id.text_range_start);
@@ -69,20 +82,21 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
 
         // CHART
         mBarChart = (BarChart) findViewById(R.id.myBarChart);
-        mData.testData();
-
-        if(mData.data == null) Log.d("datanull", " data to null");
-        if(mBarChart == null) Log.d("chartnull", " chart to null");
-        Log.d("chart id", Integer.toString(R.id.myBarChart));
+        mData.testData(); // zmienić na pobieranie z bazy
 
         mBarChart.setData(mData.data);
         mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
         mBarChart.animateY(3000);
-        chartListener = new OnChartValueSelectedListener() {
+        mBarChart.getLegend().setEnabled(false);
 
+        chartListener = new OnChartValueSelectedListener() {
+            // click on the chart's bar
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+                selectedCategory = mBarChart.getData().getXVals().get(e.getXIndex());
+                //Toast.makeText(getApplicationContext(), selectedCateghory, Toast.LENGTH_SHORT).show();
                 Intent mIntent = new Intent(AnalysisActivity.this, CategoryDetails.class);
+                mIntent.putExtra("category", selectedCategory);
                 startActivity(mIntent);
             }
 
@@ -91,9 +105,6 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
             }
         };
         mBarChart.setOnChartValueSelectedListener(chartListener);
-
-
-
 
         // DRAWER
         mDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mMenuOptions));
@@ -115,8 +126,93 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         };
         mDrawerLayout.addDrawerListener(drawerListener);
 
+        // date pickers
+
+        etDateFrom = (EditText) findViewById(R.id.etDate1);
+        etDateTo = (EditText) findViewById(R.id.etDate2);
+
+        etDateFrom.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showDialog(DATE_DIALOG_FROM);
+            }
+        }
+        );
+
+        etDateTo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showDialog(DATE_DIALOG_TO);
+            }}
+        );
+
+        // get the current date
+        final Calendar c = Calendar.getInstance();
+        mStartYear = c.get(Calendar.YEAR);
+        mStartMonth = c.get(Calendar.MONTH) -1;
+        mStartDay = c.get(Calendar.DAY_OF_MONTH);
+
+        mEndYear = c.get(Calendar.YEAR);
+        mEndMonth = c.get(Calendar.MONTH);
+        mEndDay = c.get(Calendar.DAY_OF_MONTH);
+
+        // display the current date
+        updateDisplay();
+
+    }
+
+    private void updateDisplay() {
+        this.etDateFrom.setText(
+                new StringBuilder()
+                        // Month is 0 based so add 1
+                        .append(mStartDay).append("-")
+                        .append(mStartMonth + 1).append("-")
+                        .append(mStartYear).append(" "));
+        this.etDateTo.setText(
+                new StringBuilder()
+                        // Month is 0 based so add 1
+                        .append(mEndDay).append("-")
+                        .append(mEndMonth + 1).append("-")
+                        .append(mEndYear).append(" "));
     };
 
+    private DatePickerDialog.OnDateSetListener mFromDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int year,
+                                      int monthOfYear, int dayOfMonth) {
+                    mStartYear = year;
+                    mStartMonth = monthOfYear;
+                    mStartDay = dayOfMonth;
+                    updateDisplay();
+                }
+            };
+
+    private DatePickerDialog.OnDateSetListener mToDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+                public void onDateSet(DatePicker view, int year,
+                                      int monthOfYear, int dayOfMonth) {
+                    mEndYear = year;
+                    mEndMonth = monthOfYear;
+                    mEndDay = dayOfMonth;
+                    updateDisplay();
+                }
+            };
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_DIALOG_FROM:
+                return new DatePickerDialog(this,
+                        mFromDateSetListener,
+                        mStartYear, mStartMonth, mStartDay);
+            case DATE_DIALOG_TO:
+                return new DatePickerDialog(this,
+                        mToDateSetListener,
+                        mEndYear, mEndMonth, mEndDay);
+        }
+        return null;
+    }
+
+
+    // drawer
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO
