@@ -40,4 +40,8 @@
     </string>
     <string name="assembly_finals_progress_title">Edycja</string>
     <string name="assembly_finals_progress_message">Zapisywanie...</string>
+    <string-array name="add_options">
+        <item>Dodaj kategorię</item>
+        <item>Dodaj produkt</item>
+    </string-array>
 </resources>

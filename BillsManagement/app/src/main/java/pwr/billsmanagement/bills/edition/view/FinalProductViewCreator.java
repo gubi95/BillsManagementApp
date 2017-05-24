@@ -1,8 +1,6 @@
 package pwr.billsmanagement.bills.edition.view;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,9 +78,10 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
 
     private void initCategorySpinner(Spinner category) {
         PropertiesReader reader = new PropertiesReader(context, new Properties());
-        String categories = reader.readMyProperties("properties/products.properties").getProperty("categories_values");
+        String categories = reader.readMyProperties("properties/categories.properties").getProperty("categories_values");
         String[] categoriesTab = categories.split(",");
-        ArrayAdapter<String> adapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, categoriesTab);
+        ArrayAdapter<String> adapter = new SpinnerAdapter(
+                context, android.R.layout.simple_spinner_item, categoriesTab);
         adapter.setDropDownViewResource(R.layout.spinner_item);
         category.setAdapter(adapter);
     }
@@ -103,6 +102,12 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
 
     private class SpinnerAdapter extends ArrayAdapter<String> {
 
+        private final String[] ICON_KEYS = {
+                "groceries_icon", "ind_good_icon", "clothes_icon", "food_icon", "beverages_icon",
+                "vegetables_icon", "bread_icon", "dairy_icon", "meat_icon", "chemistry_icon",
+                "cosmetics_icon", "animals_icon", "kids_icon"
+        };
+
         private String[] categories;
 
         public SpinnerAdapter(Context context, int resource, String[] objects) {
@@ -121,8 +126,7 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
                     rowView.findViewById(R.id.itemMainContainer)
             );
 
-            setImageResourcesByCategory(position, handle.icon, handle.text);
-            handle.text.setText(getItem(position));
+            setIconAndText(getItem(position), handle.icon, handle.text);
 
             return rowView;
         }
@@ -142,84 +146,13 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
             return getCustomView(position, rowView, parent);
         }
 
-        private void setImageResourcesByCategory(int item, ImageView icon, TextView text) {
-            switch (item) {
-                case 0: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_groceries);
-                    text.setTypeface(Typeface.DEFAULT_BOLD);
-                    break;
-                }
-                case 1: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_ind_goods);
-                    text.setTypeface(Typeface.DEFAULT_BOLD);
-                    break;
-                }
-                case 2: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_clothes);
-                    text.setTypeface(Typeface.DEFAULT_BOLD);
-                    break;
-                }
-                case 3: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_food);
-                    break;
-                }
-                case 4: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_beverages);
-                    break;
-                }
-                case 5: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_vegetables_fruits);
-                    break;
-                }
-                case 6: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_bread);
-                    break;
-                }
-                case 7: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_dairy);
-                    break;
-                }
-                case 8: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_meat);
-                    break;
-                }
-                case 9: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_chemistry);
-                    break;
-                }
-                case 10: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_cosmetics);
-                    break;
-                }
-                case 11: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_animals);
-                    break;
-                }
-                case 12: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_kids);
-                    break;
-                }
-                default: {
-                    Logger.i("In case: " + item);
-                    icon.setImageResource(R.drawable.ic_default);
-                    break;
-                }
-            }
-        }
+        private void setIconAndText(String item, ImageView icon, TextView text) {
+            String[] valueWithIcon = item.split(";");
+            text.setText(valueWithIcon[0]);
 
+            int id = context.getResources().getIdentifier(valueWithIcon[1], "drawable", context.getPackageName());
+            icon.setImageResource(id);
+        }
 
         private class ViewHandle {
             ImageView icon;

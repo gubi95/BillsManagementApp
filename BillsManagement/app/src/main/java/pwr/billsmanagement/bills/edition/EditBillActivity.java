@@ -1,17 +1,26 @@
 package pwr.billsmanagement.bills.edition;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +42,7 @@ import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
 import pwr.billsmanagement.ocr.parsers.OcrProduct;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory.*;
 
 /**
@@ -124,6 +134,37 @@ public class EditBillActivity extends Activity {
         Logger.i("Create custom list");
         CreateCustomListAsync createCustomListAsync = new CreateCustomListAsync();
         createCustomListAsync.execute();
+    }
+
+    private CreatorsParams getCreatorParams() {
+        CreatorsParams creatorsParams = new CreatorsParams(
+                defineProductViewCreator, finalProductViewCreator
+        );
+
+        Map<String, Integer> creatorMap = new HashMap<>();
+        creatorMap.put("DEFINE_CREATOR", 0);
+        creatorMap.put("FINAL_CREATOR", 1);
+
+        creatorsParams.setCreatorsMap(creatorMap);
+
+        return creatorsParams;
+    }
+
+    private ViewParams getViewParams() {
+        ViewParams viewParams = new ViewParams(
+                EditBillActivity.this,
+                new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList)),
+                mView.addProduct, mView.acceptAll, mView.shopName
+        );
+
+        HashMap<String, Integer> viewMap = new HashMap<>();
+        viewMap.put("ADD_PRODUCT", 0);
+        viewMap.put("ACCEPT_ALL", 1);
+        viewMap.put("SHOP_NAME", 2);
+
+        viewParams.setViewMap(viewMap);
+
+        return viewParams;
     }
 
     private enum SelectedOption {
@@ -228,6 +269,8 @@ public class EditBillActivity extends Activity {
 
             acceptAll.setOnClickListener(AcceptAllListenerFactory.getListener(ListenerType.DEFINE, params));
 
+            addProduct.setOnClickListener(new ShowOptionsPopupLister());
+
             takePhotoAgain.setOnClickListener(v -> {
                 //TODO go back to camera activity and repeat ocr stuff
             });
@@ -256,37 +299,6 @@ public class EditBillActivity extends Activity {
                 indicateSelectedOption(SelectedOption.SELECT_AS_GARBAGE);
             });
         }
-    }
-
-    private CreatorsParams getCreatorParams() {
-        CreatorsParams creatorsParams = new CreatorsParams(
-                defineProductViewCreator, finalProductViewCreator
-        );
-
-        Map<String, Integer> creatorMap = new HashMap<>();
-        creatorMap.put("DEFINE_CREATOR", 0);
-        creatorMap.put("FINAL_CREATOR", 1);
-
-        creatorsParams.setCreatorsMap(creatorMap);
-
-        return creatorsParams;
-    }
-
-    private ViewParams getViewParams() {
-        ViewParams viewParams = new ViewParams(
-                EditBillActivity.this,
-                new LayoutHandle(findViewById(R.id.optionButtons), findViewById(R.id.productList)),
-                mView.addProduct, mView.acceptAll, mView.shopName
-        );
-
-        HashMap<String, Integer> viewMap = new HashMap<>();
-        viewMap.put("ADD_PRODUCT", 0);
-        viewMap.put("ACCEPT_ALL", 1);
-        viewMap.put("SHOP_NAME", 2);
-
-        viewParams.setViewMap(viewMap);
-
-        return viewParams;
     }
 
     private class CreateCustomListAsync extends AsyncTask<Void, Void, ArrayList<View>> {
@@ -327,4 +339,46 @@ public class EditBillActivity extends Activity {
         }
     }
 
+    private class ShowOptionsPopupLister implements View.OnClickListener {
+
+        private final String[] ADD_OPTIONS = EditBillActivity.this.getResources().getStringArray(R.array.add_options);
+
+        @Override
+        public void onClick(View v) {
+
+            LayoutInflater inflater = (LayoutInflater) EditBillActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = inflater.inflate(R.layout.bill_options_popup, null);
+
+            ListView optionsList = (ListView) popupView.findViewById(R.id.addWhatList);
+            optionsList.setAdapter(
+                    new ArrayAdapter<>(
+                            EditBillActivity.this, android.R.layout.simple_list_item_1, ADD_OPTIONS)
+            );
+
+            WindowManager windowManager = EditBillActivity.this.getWindowManager();
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(metrics);
+
+            final PopupWindow options = new PopupWindow(
+                    popupView, metrics.widthPixels/2, WRAP_CONTENT
+            );
+
+            optionsList.setOnItemClickListener((parent, view, position, id) -> {
+                Logger.i("OPITON: " + ((TextView)optionsList.getChildAt(position)).getText());
+                options.dismiss();
+            });
+
+            options.setElevation(5.0f);
+
+            int[] addLocation = new int[2];
+            mView.addProduct.getLocationOnScreen(addLocation);
+
+            options.showAtLocation(
+                    findViewById(R.id.defineProductMainLayout),
+                    Gravity.NO_GRAVITY, addLocation[0], addLocation[1]
+            );
+
+        }
+    }
 }
