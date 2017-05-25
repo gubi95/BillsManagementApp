@@ -191,6 +191,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
         mydb.addProductsAsync(b1);
 
+
     }
 
 
