@@ -1,4 +1,4 @@
-package pwr.billsmanagement.localDatabase.creationDatabase;
+package pwr.billsmanagement.db.creators;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,18 +7,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 
 import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.products.FinalProduct;
-import pwr.billsmanagement.localDatabase.dataObjects.BillEntries;
-import pwr.billsmanagement.webApp.models.BillEntry;
 
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateBillEntries.*;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateBills.TABLE_BILLS;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateShops.TABLE_SHOPS;
+import static pwr.billsmanagement.db.creators.CreateBillEntries.*;
+import static pwr.billsmanagement.db.creators.CreateBills.TABLE_BILLS;
+import static pwr.billsmanagement.db.creators.CreateShops.TABLE_SHOPS;
 
 /**
  * Created by E6520 on 2017-05-16.

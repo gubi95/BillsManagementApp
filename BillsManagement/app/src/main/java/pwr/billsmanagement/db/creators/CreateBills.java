@@ -1,9 +1,9 @@
-package pwr.billsmanagement.localDatabase.creationDatabase;
+package pwr.billsmanagement.db.creators;
 
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateShops.COLUMN_SHOPID;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateShops.TABLE_SHOPS;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateUsers.COLUMN_USERID;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateUsers.TABLE_USERS;
+import static pwr.billsmanagement.db.creators.CreateShops.COLUMN_SHOPID;
+import static pwr.billsmanagement.db.creators.CreateShops.TABLE_SHOPS;
+import static pwr.billsmanagement.db.creators.CreateUsers.COLUMN_USERID;
+import static pwr.billsmanagement.db.creators.CreateUsers.TABLE_USERS;
 
 /**
  * Created by E6520 on 2017-05-16.

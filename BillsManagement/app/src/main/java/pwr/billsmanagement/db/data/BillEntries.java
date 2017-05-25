@@ -1,4 +1,4 @@
-package pwr.billsmanagement.localDatabase.dataObjects;
+package pwr.billsmanagement.db.data;
 
 import java.util.ArrayList;
 

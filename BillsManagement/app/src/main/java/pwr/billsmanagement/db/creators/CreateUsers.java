@@ -1,4 +1,4 @@
-package pwr.billsmanagement.localDatabase.creationDatabase;
+package pwr.billsmanagement.db.creators;
 
 /**
  * Created by E6520 on 2017-05-16.

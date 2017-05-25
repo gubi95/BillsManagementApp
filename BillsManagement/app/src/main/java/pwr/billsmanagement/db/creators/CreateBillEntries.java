@@ -1,9 +1,9 @@
-package pwr.billsmanagement.localDatabase.creationDatabase;
+package pwr.billsmanagement.db.creators;
 
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateBills.COLUMN_BILLID;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateBills.TABLE_BILLS;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateProductCategories.COLUMN_PRODUCTCATEGORYID;
-import static pwr.billsmanagement.localDatabase.creationDatabase.CreateProductCategories.TABLE_PRODUCTCATEGORIES;
+import static pwr.billsmanagement.db.creators.CreateBills.COLUMN_BILLID;
+import static pwr.billsmanagement.db.creators.CreateBills.TABLE_BILLS;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_PRODUCTCATEGORYID;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.TABLE_PRODUCTCATEGORIES;
 
 
 /**

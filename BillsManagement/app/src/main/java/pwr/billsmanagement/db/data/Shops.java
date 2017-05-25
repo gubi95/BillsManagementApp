@@ -1,4 +1,4 @@
-package pwr.billsmanagement.localDatabase.dataObjects;
+package pwr.billsmanagement.db.data;
 
 /**
  * Created by E6520 on 2017-05-20.
