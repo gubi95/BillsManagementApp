@@ -11,6 +11,7 @@ import pwr.billsmanagement.bills.edition.products.FinalProduct;
 public class BillEntity {
 
     private String shopName;
+    private String shopID;
     private ArrayList<FinalProduct> products;
 
     public BillEntity(String shopName, ArrayList<FinalProduct> products) {
@@ -34,6 +35,14 @@ public class BillEntity {
         this.products = products;
     }
 
+    public String getShopID() {
+        return shopID;
+    }
+
+    public void setShopID(String shopID) {
+        this.shopID = shopID;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("BillEntity{shopName='" + shopName + "\' products:");
@@ -41,9 +50,9 @@ public class BillEntity {
                 products) {
             builder.append("'");
             builder.append(product.getName());
-            builder.append("',");
+            builder.append("', ");
         }
-        builder.append("'}");
+        builder.append("}");
         return builder.toString();
     }
 }
