@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Paragony</string>
     <string-array name="menu_items">
-        <item>Skanuj paragon</item>
-        <item>Paragony</item>
-        <item>Ustawienia</item>
+        <item>Historia zakupów</item>
+        <item>Dodaj paragon ze zdjęcia</item>
+        <item>Dodaj paragon ręcznie</item>
+        <item>Diagramy wydatków</item>
+        <item>Wyloguj</item>
     </string-array>
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+
     <string name="ok">OK</string>
     <string name="product_name">Nazwa produktu</string>
     <string name="product_price">Cena produktu</string>
@@ -44,4 +49,15 @@
         <item>Dodaj kategorię</item>
         <item>Dodaj produkt</item>
     </string-array>
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_analysis">AnalysisActivity</string>
+    <string name="wybierz_zakres">Wybierz zakres:</string>
+    <string name="pocz_t_k_zakresu">Początęk zakresu:</string>
+    <string name="koniec_zakresu">Koniec zakresu:</string>
+    <string name="chart_desc">Aby uzyskać szczegółowe informacje, kliknij w słupek kategorii</string>
+    <string name="title_activity_category_details">CategoryDetails</string>
+    <string name="kategoria">Kategoria:</string>
+    <string name="limit">Limit wydatków</string>
+    <string name="wydano">Wydano w tym miesiącu:</string>
+    <string name="save">Zapisz</string>
 </resources>

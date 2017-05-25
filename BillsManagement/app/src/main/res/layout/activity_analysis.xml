@@ -1,0 +1,95 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- The main content view -->
+
+    <LinearLayout
+        android:id="@+id/content_frame"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/myToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:titleTextColor="@color/backgroundWhite"
+            android:theme="@style/AppTheme">
+        </android.support.v7.widget.Toolbar>
+
+        <TextView
+            android:id="@+id/text_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/chart_desc"
+            android:gravity="center"
+        />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/myBarChart"
+            android:layout_width="match_parent"
+            android:layout_height="355dp">
+        </com.github.mikephil.charting.charts.BarChart>
+
+        <TextView
+            android:id="@+id/text_range"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wybierz_zakres"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/text_range_start"
+                android:gravity="center"
+                android:layout_width="202dp"
+                android:layout_height="wrap_content"
+                android:text="@string/pocz_t_k_zakresu"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <EditText
+                android:id="@+id/etDate1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="false"
+                android:inputType="date"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/text_range_end"
+                android:gravity="center"
+                android:layout_width="202dp"
+                android:layout_height="wrap_content"
+                android:text="@string/koniec_zakresu"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <EditText
+                android:id="@+id/etDate2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="false"
+                android:inputType="date"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/drawer_list"
+        android:layout_width="222dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#999" />
+
+    <!-- The navigation drawer -->
+</android.support.v4.widget.DrawerLayout>

@@ -18,5 +18,7 @@
     <color name="option_button_blue">#03a9f4</color>
     <color name="option_button_gray">#9e9e9e</color>
 
+    <color name="green">#00ff00</color>
+    <color name="red">#ff0000</color>
 
 </resources>
