@@ -2,6 +2,8 @@ package pwr.billsmanagement.ocr;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -28,6 +31,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import pwr.billsmanagement.R;
+import pwr.billsmanagement.bills.BillEntity;
+import pwr.billsmanagement.bills.edition.EditBillActivity;
+import pwr.billsmanagement.bills.edition.products.FinalProduct;
+import pwr.billsmanagement.localDatabase.creationDatabase.CreateBillEntries;
+import pwr.billsmanagement.localDatabase.creationDatabase.CreateShops;
+import pwr.billsmanagement.localDatabase.creationDatabase.DBHandler;
+import pwr.billsmanagement.localDatabase.dataObjects.BillEntries;
 import pwr.billsmanagement.ocr.matcher.MatchWorker;
 import pwr.billsmanagement.ocr.matcher.Matcher;
 import pwr.billsmanagement.ocr.parsers.BillParser;
@@ -60,12 +71,14 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("BAZA","tu");
+
 
         mydb = new DBHandler(this);
-        Log.i("BAZA","albo tu");
+
 
         example();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
         Logger.init("OCR");
@@ -78,6 +91,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions();
         }
+
     }
 
     private void initListeners() {
@@ -170,21 +184,17 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     public void example(){
 
+        ArrayList<FinalProduct> testList =new ArrayList();
+        FinalProduct f1=new FinalProduct("chomik","1","2","12","zwierzeta");
+        FinalProduct f2=new FinalProduct("królik","1","2","12","jedzenie");
+        FinalProduct f3=new FinalProduct("kot","1","2","12","ubrania");
+        testList.add(f1);
+        testList.add(f2);
+        testList.add(f3);
+        BillEntity b1 = new BillEntity("Lidl",testList);
 
-        BillEntries billEntry = new BillEntries();
-        billEntry.setCOLUMN_BILL_BILLID("1");
-        billEntry.setCOLUMN_BILLENTRYID("2");
-        billEntry.setCOLUMN_CATEGORY_PRODUCTCATEGORYID("Jadło");
-        billEntry.setCOLUMN_PRICE("1000");
-        billEntry.setCOLUMN_PRODUCTNAME("Ziemioki");
-        billEntry.setCOLUMN_QUANTITY("10000");
 
-
-        mydb.insertion(billEntry.getCOLUMN_BILL_BILLID(),billEntry.getCOLUMN_BILLENTRYID(),billEntry.getCOLUMN_CATEGORY_PRODUCTCATEGORYID(),billEntry.getCOLUMN_PRICE(),billEntry.getCOLUMN_PRODUCTNAME(),billEntry.getCOLUMN_QUANTITY());
-
-        Log.i("BAZA","UDALO SIE!");
-        Log.i("BAZA",mydb.getTable(CreateBillEntries.TABLE_BILLENTRIES,CreateBillEntries.COLUMN_CATEGORY_PRODUCTCATEGORYID).toString());
-
+        mydb.addProductsAsync(b1);
 
     }
 

@@ -26,7 +26,7 @@ public class CreateProductCategories {
                 + COLUMN_USEROWNERID + " INTEGER,"
                 + COLUMN_COLOR + " NVARCHAR(100),"
                 + COLUMN_MONTHBUDGET + " DECIMAL,"
-                + "FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
+                + " CONSRAINT FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }
 

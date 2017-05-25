@@ -10,6 +10,7 @@ public class FinalProduct {
     private String quantity;
     private String totalPrice;
     private String category;
+    private String categoryID;
 
     public FinalProduct() {
     }
@@ -60,5 +61,13 @@ public class FinalProduct {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(String categoryID) {
+        this.categoryID = categoryID;
     }
 }

@@ -24,11 +24,11 @@ public class CreateBills {
     public String getTableBills(){
         return "CREATE TABLE " + TABLE_BILLS + "("
                 + COLUMN_BILLID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_PURCHASEDATE + " DATE, "
+                + COLUMN_PURCHASEDATE + " DEFAULT CURRENT_DATE, "
                 + COLUMN_USER_USERID + " INTEGER, "
                 + COLUMN_SHOP_SHOPID + " INTEGER, "
-                + "FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+") "
-                + "FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
+                + " CONSRAINT FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"), "
+                + " CONSRAINT FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
                 +")";
     }
 
