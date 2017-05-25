@@ -194,7 +194,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return listProduct;
     }
-
+/*
     public Cursor fetch(){
         SQLiteDatabase dbSelect=this.getReadableDatabase();
         Cursor res= dbSelect.rawQuery("SELECT Bills.BillID ,Bills.PurchaseDate,Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID=Shops.ShopID",null);
@@ -202,10 +202,25 @@ public class DBHandler extends SQLiteOpenHelper {
         if(res!=null){
             res.moveToFirst();
         }
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                //query
+                //return cursor;
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                //zrob gui
+            }
+        }
+
         return res;
     }
 
-
+*/
     private void addShopByString(SQLiteDatabase dbInsert, String shopName) {
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
