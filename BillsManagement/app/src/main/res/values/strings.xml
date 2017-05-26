@@ -1,12 +1,24 @@
 <resources>
     <string name="app_name">Paragony</string>
+
     <string-array name="menu_items">
-        <item>Historia zakupów</item>
-        <item>Dodaj paragon ze zdjęcia</item>
-        <item>Dodaj paragon ręcznie</item>
-        <item>Diagramy wydatków</item>
-        <item>Wyloguj</item>
+        <item name="bill_list">Historia zakupów</item>
+        <item name="add_pic">Dodaj paragon ze zdjęcia</item>
+        <item name="add_man">Dodaj paragon ręcznie</item>
+        <item name="charts">Diagramy wydatków</item>
+        <item name="sync">Synchronizuj</item>
+        <item name="logout">Wyloguj</item>
     </string-array>
+
+
+
+    <string name="bill_list">Historia zakupów</string>
+    <string name="add_pic">Dodaj paragon ze zdjęcia</string>
+    <string name="add_man">Dodaj paragon ręcznie</string>
+    <string name="charts">Diagramy wydatków</string>
+    <string name="sync">Synchronizuj</string>
+    <string name="logout">Wyloguj</string>
+
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
 

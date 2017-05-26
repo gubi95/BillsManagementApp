@@ -1,9 +1,8 @@
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!-- The main content view -->
 
     <LinearLayout
         android:id="@+id/content_frame"
@@ -84,12 +83,12 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ListView
+    <android.support.design.widget.NavigationView
         android:id="@+id/drawer_list"
-        android:layout_width="222dp"
-        android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#999" />
-
-    <!-- The navigation drawer -->
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#EEE"
+        app:headerLayout="@layout/drawermenu_header"
+        app:menu="@menu/menu"/>
 </android.support.v4.widget.DrawerLayout>

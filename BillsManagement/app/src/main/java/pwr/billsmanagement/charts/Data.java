@@ -30,11 +30,15 @@ public class Data {
         this.categories.add("Odzież");
         this.categories.add("Alkohol");
         this.categories.add("Rozrywka");
+        this.categories.add("Pożywienie");
+        this.categories.add("Produkty spożywcze");
 
         this.costs.add(new BarEntry(500f, 0));
         this.costs.add(new BarEntry(400f, 1));
         this.costs.add(new BarEntry(655f, 2));
-        this.costs.add(new BarEntry(441.55f, 3));
+        this.costs.add(new BarEntry(336f, 3));
+        this.costs.add(new BarEntry(412f, 4));
+        this.costs.add(new BarEntry(450f, 5));
 
         this.dataset = new BarDataSet(this.costs, "Wydano");
         this.dataset.setColors(ColorTemplate.PASTEL_COLORS);
