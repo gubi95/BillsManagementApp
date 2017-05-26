@@ -28,6 +28,8 @@ import pwr.billsmanagement.readers.PropertiesReader;
 
 public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
 
+    private int lastId;
+
     private LayoutInflater inflater;
     private Context context;
     private String rowTitle;
@@ -41,6 +43,7 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
     }
 
     public View getProductRowAndSave(AssembledProduct product, int id) {
+        lastId = id;
         View row = inflater.inflate(R.layout.bill_edit_product_row, null);
 
         FinalProductView item = new FinalProductView(
@@ -98,6 +101,10 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
 
     public ArrayList<FinalProductView> getFinalProductViews() {
         return finalProductViews;
+    }
+
+    public int getLastId() {
+        return lastId;
     }
 
     private class SpinnerAdapter extends ArrayAdapter<String> {

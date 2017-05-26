@@ -39,6 +39,7 @@ import pwr.billsmanagement.bills.edition.listeners.params.CreatorsParams;
 import pwr.billsmanagement.bills.edition.listeners.params.DefineParams;
 import pwr.billsmanagement.bills.edition.listeners.params.ListenerParams;
 import pwr.billsmanagement.bills.edition.listeners.params.ViewParams;
+import pwr.billsmanagement.bills.edition.products.AssembledProduct;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
@@ -409,7 +410,10 @@ public class EditBillActivity extends Activity {
                 categoryView.showPopup(findViewById(R.id.defineProductMainLayout));
 
             } else if (option.toString().equals(PRODUCT)){
-
+                LinearLayout layout = (LinearLayout) findViewById(R.id.productList);
+                layout.addView(finalProductViewCreator.getProductRowAndSave(
+                        new AssembledProduct("", "", ""), finalProductViewCreator.getLastId() + 1)
+                );
             }
         }
 
