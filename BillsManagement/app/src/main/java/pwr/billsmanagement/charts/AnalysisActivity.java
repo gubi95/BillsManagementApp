@@ -130,10 +130,11 @@ public class AnalysisActivity extends AppCompatActivity {
 
         mBarChart.setData(mData.data);
 
-        mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
+        mBarChart.setDescription("");
         mBarChart.animateY(3000);
         mBarChart.getLegend().setEnabled(false);
         mBarChart.setVisibleXRangeMaximum(4);
+        //mBarChart.setDescriptionPosition(3f, 3f);
 
         chartListener = new OnChartValueSelectedListener() {
             // click on the chart's bar

@@ -22,17 +22,32 @@
         </android.support.v7.widget.Toolbar>
 
         <TextView
+            android:id="@+id/chart_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/barchart_title"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+        />
+
+        <TextView
             android:id="@+id/text_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/chart_desc"
             android:gravity="center"
-        />
+            android:textSize="14dp"
+            android:textStyle="italic"
+            />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/myBarChart"
             android:layout_width="match_parent"
-            android:layout_height="355dp">
+            android:layout_height="300dp">
         </com.github.mikephil.charting.charts.BarChart>
 
         <TextView

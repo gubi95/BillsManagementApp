@@ -35,7 +35,8 @@ public class Menu extends AppCompatActivity{
         mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
         toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
-        tvUsername = (TextView) findViewById(R.id.username);
+        View header = mDrawerList.getHeaderView(0);
+        tvUsername = (TextView) header.findViewById(R.id.username);
         tvUsername.setText(login);
 
         mDrawerList.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
