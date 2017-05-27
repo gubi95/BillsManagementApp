@@ -66,7 +66,6 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         mydb = new DBHandler(this);
 
 
-        example();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis);
@@ -267,7 +266,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         testList.add(f1);
         testList.add(f2);
         testList.add(f3);
-        Log.i("tabela", "JEST!");
+
         BillEntity b1 = new BillEntity("Lidl",testList);
 
 
