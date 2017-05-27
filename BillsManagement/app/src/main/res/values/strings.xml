@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">Paragony</string>
+
+    <string-array name="menu_items">
+        <item name="bill_list">Historia zakupów</item>
+        <item name="add_pic">Dodaj paragon ze zdjęcia</item>
+        <item name="add_man">Dodaj paragon ręcznie</item>
+        <item name="charts">Diagramy wydatków</item>
+        <item name="sync">Synchronizuj</item>
+        <item name="logout">Wyloguj</item>
+    </string-array>
+
+
+
+    <string name="bill_list">Historia zakupów</string>
+    <string name="add_pic">Dodaj paragon ze zdjęcia</string>
+    <string name="add_man">Dodaj paragon ręcznie</string>
+    <string name="charts">Diagramy wydatków</string>
+    <string name="sync">Synchronizuj</string>
+    <string name="logout">Wyloguj</string>
+
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+
+    <string name="ok">OK</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="product_price">Cena produktu</string>
+    <string name="shop_name">Nazwa sklepu</string>
+    <string name="define_label">Produkt</string>
+    <string name="option_name">Nazwa</string>
+    <string name="option_total_price">Cena całk.</string>
+    <string name="option_unit_price">Cena jedn.</string>
+    <string name="option_ignore">Ignoruj</string>
+    <string name="category">Kategoria</string>
+    <string name="product_amount">Ilość</string>
+    <string-array name="define_options">
+        <item>Nazwa</item>
+        <item>Cena całk.</item>
+        <item>Cena jedn.</item>
+        <item>Ignoruj</item>
+    </string-array>
+    <string name="save_cropped_image_progress_title">OCR</string>
+    <string name="save_cropped_image_progress_message">Kadrowanie zdjęcia...</string>
+    <string name="start_ocr_for_bitmap_progress_title">OCR</string>
+    <string name="start_ocr_for_bitmap_progress_message">Odczyt produktów ze zdjęcia...</string>
+    <string name="edit_bill_create_view_progress_title">Widok</string>
+    <string name="edit_bill_create_view_progress_message">Tworzenie widoku...</string>
+    <string name="edit_bill_show_help_page1">
+        Tutaj możesz nam pomóc określić parametry produktu, tj. jego nazwę, cenę jednostkową i cenę całkowitą.\n\nZastanawiasz się co z ilością? Nie przejmuj się, z tym już sobie poradzimy ;)\n\nNa samym początku prosimy Cię abyś podał nazwę sklepu w którym zrobiłeś te zakupy.
+        Następnie prosimy, abyś określił które słowa są nazwą produktu lub jego ceną.
+        Jak zauważysz, nasz program proponuje już pewne rozwiązanie, jesteśmy jednak świadomi że nie koniecznie jest
+        to najlepsze rozwiązanie. Klikając w jeden z kolorowych przycisków a następnie na odpowiedni kafelek, zmieni się
+        jego kolor, a co za tym idzie, jego przypisanie do atrybutu produktu. Śmiało! Możesz teraz wykonać tę czynność ;)
+    </string>
+    <string name="edit_bill_show_help_page2">
+        Na tej stronie możesz poprawić błędy, które nasz program popełnił podczas czytania paragonu.\n\nProsimy Cię również o przypisanie kategorii do jakiej należą zakupione produkty, pozwoli to generować dokładne raporty.\nZwróć również uwagę czy ceny i ilość jest poprawnie wpisana.
+    </string>
+    <string name="assembly_finals_progress_title">Edycja</string>
+    <string name="assembly_finals_progress_message">Zapisywanie...</string>
+    <string-array name="add_options">
+        <item>Dodaj kategorię</item>
+        <item>Dodaj produkt</item>
+    </string-array>
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_analysis">AnalysisActivity</string>
+    <string name="wybierz_zakres">Wybierz zakres:</string>
+    <string name="pocz_t_k_zakresu">Początęk zakresu:</string>
+    <string name="koniec_zakresu">Koniec zakresu:</string>
+    <string name="chart_desc">Aby uzyskać szczegółowe informacje, kliknij w słupek kategorii</string>
+    <string name="title_activity_category_details">CategoryDetails</string>
+    <string name="kategoria">Kategoria:</string>
+    <string name="limit">Limit wydatków</string>
+    <string name="wydano">Wydano w tym miesiącu:</string>
+    <string name="save">Zapisz</string>
+    <string name="barchart_title">Sumy wydatków w podziale na kategorie</string>
+</resources>

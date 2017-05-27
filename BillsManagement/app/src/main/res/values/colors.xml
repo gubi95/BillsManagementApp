@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="backgroundWhite">#e8eaf6</color>
+    <color name="activeButton">#90caf9</color>
+    <color name="transparentGrey">#55353535</color>
+    <color name="transparentLightGrey">#c89e9e9e</color>
+    <color name="transparentWhite">#c8EEEEEE</color>
+    <color name="fontColorDark">#1f1f1f</color>
+
+    <color name="selected_option_button">#EEEEEE</color>
+    <color name="unselected_option_button">#222222</color>
+
+    <color name="option_button_green">#4caf50</color>
+    <color name="option_button_red">#f44336</color>
+    <color name="option_button_blue">#03a9f4</color>
+    <color name="option_button_gray">#9e9e9e</color>
+
+    <color name="green">#00ff00</color>
+    <color name="red">#ff0000</color>
+
+</resources>
