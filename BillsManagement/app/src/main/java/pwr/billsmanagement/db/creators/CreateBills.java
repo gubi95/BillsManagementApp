@@ -12,7 +12,7 @@ import static pwr.billsmanagement.db.creators.CreateUsers.TABLE_USERS;
 public class CreateBills {
 
     public static final String TABLE_BILLS = "Bills";
-    public static final String COLUMN_BILLID = "BillID";
+    public static final String COLUMN_BILLID = "_id";
     public static final String COLUMN_PURCHASEDATE = "PurchaseDate";
     public static final String COLUMN_USER_USERID = "User_UserID";
     public static final String COLUMN_SHOP_SHOPID = "Shop_ShopID";
@@ -43,4 +43,13 @@ public class CreateBills {
                 +")";
     }*/
 
+
+    // Przykladowe dane
+    public String addSampleData(){
+        return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2017-05-10', 2, 1)";
+    }
+
+    public String addSampleData2(){
+        return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2016-06-30', 10, 2)";
+    }
 }

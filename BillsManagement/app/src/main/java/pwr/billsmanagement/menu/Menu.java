@@ -32,6 +32,7 @@ public class Menu extends AppCompatActivity{
     private ActionBarDrawerToggle drawerListener;
     private Toolbar toolbar;
     private String login="Przykładowy Login";
+    private String[] mMenuOptions;
     private TextView tvUsername;
 
 
@@ -44,15 +45,23 @@ public class Menu extends AppCompatActivity{
     final int[] to = new int[]{R.id.id, R.id.shopname, R.id.date};
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
         toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
+
+        mMenuOptions = getResources().getStringArray(R.array.menu_items);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
+        toolbar = (Toolbar) findViewById(R.id.myToolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("Paragony");
         View header = mDrawerList.getHeaderView(0);
         tvUsername = (TextView) header.findViewById(R.id.username);
         tvUsername.setText(login);

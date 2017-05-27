@@ -2,7 +2,7 @@
     <string name="app_name">Paragony</string>
 
     <string-array name="menu_items">
-        <item name="bill_list">Historia zakupów</item>
+        <item name="bill_list">Lista paragonów</item>
         <item name="add_pic">Dodaj paragon ze zdjęcia</item>
         <item name="add_man">Dodaj paragon ręcznie</item>
         <item name="charts">Diagramy wydatków</item>
@@ -12,7 +12,7 @@
 
 
 
-    <string name="bill_list">Historia zakupów</string>
+    <string name="bill_list">Lista zakupów</string>
     <string name="add_pic">Dodaj paragon ze zdjęcia</string>
     <string name="add_man">Dodaj paragon ręcznie</string>
     <string name="charts">Diagramy wydatków</string>

@@ -62,6 +62,7 @@ public class AnalysisActivity extends AppCompatActivity {
         mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
         toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
+
         mMenuOptions = getResources().getStringArray(R.array.menu_items);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (NavigationView) findViewById(R.id.drawer_list);

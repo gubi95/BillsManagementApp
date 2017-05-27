@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.products.FinalProduct;
+import pwr.billsmanagement.db.data.Bills;
 
 import static pwr.billsmanagement.db.creators.CreateBillEntries.*;
 import static pwr.billsmanagement.db.creators.CreateBills.TABLE_BILLS;
@@ -47,18 +48,28 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-
         db.execSQL(tabBillEntries.getTableBillEntries());
         db.execSQL(tabBills.getTableBills());
         db.execSQL(tabProductCategories.getTableProductCategories());
         db.execSQL(tabShops.getTableShops());
         db.execSQL(tabUsers.getTableUsers());
 
+        // Dodawanie przykladowych danych do testow
+        db.execSQL(tabBills.addSampleData());
+        db.execSQL(tabBills.addSampleData2());
+        db.execSQL(tabShops.addSampleData());
+        db.execSQL(tabShops.addSampleData2());
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + CreateBillEntries.TABLE_BILLENTRIES);
+        db.execSQL("DROP TABLE IF EXISTS " + CreateBills.TABLE_BILLS);
+        db.execSQL("DROP TABLE IF EXISTS " + CreateProductCategories.TABLE_PRODUCTCATEGORIES);
+        db.execSQL("DROP TABLE IF EXISTS " + CreateShops.TABLE_SHOPS);
+        db.execSQL("DROP TABLE IF EXISTS " + CreateUsers.TABLE_USERS);
+        onCreate(db);
 
     }
 
@@ -190,7 +201,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public Cursor fetch() {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Bills.BillID, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops.ShopID", null);
+        Cursor cursor = db.rawQuery("SELECT Bills._id, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops._id", null);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -199,33 +210,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
-    /*
-        public Cursor fetch(){
-            SQLiteDatabase dbSelect=this.getReadableDatabase();
-            Cursor res= dbSelect.rawQuery("SELECT Bills.BillID ,Bills.PurchaseDate,Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID=Shops.ShopID",null);
 
-            if(res!=null){
-                res.moveToFirst();
-            }
-
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    //query
-                    //return cursor;
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    //zrob gui
-                }
-            }
-
-            return res;
-        }
-
-    */
     private void addShopByString(SQLiteDatabase dbInsert, String shopName) {
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
