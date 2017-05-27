@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -186,6 +187,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         testList.add(f1);
         testList.add(f2);
         testList.add(f3);
+        Log.i("tabela", "JEST!");
         BillEntity b1 = new BillEntity("Lidl",testList);
 
 

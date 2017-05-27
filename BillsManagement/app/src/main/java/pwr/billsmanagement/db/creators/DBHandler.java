@@ -130,7 +130,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 Log.d("tabela sklepy",s);
             }
 
-
             return null;
         }
 
@@ -261,11 +260,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     public void deleteDatabase(SQLiteDatabase db) {
-        db.delete(CreateBillEntries.TABLE_BILLENTRIES, null, null);
-        db.delete(TABLE_BILLS, null, null);
-        db.delete(TABLE_SHOPS, null, null);
-        db.delete(CreateProductCategories.TABLE_PRODUCTCATEGORIES, null, null);
-        db.delete(CreateUsers.TABLE_USERS, null, null);
+        db.execSQL("DROP DATABASE BillsDB");
     }
 
 
