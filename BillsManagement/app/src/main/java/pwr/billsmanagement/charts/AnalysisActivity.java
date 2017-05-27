@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -22,10 +23,14 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import pwr.billsmanagement.R;
+import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
+import pwr.billsmanagement.bills.edition.products.FinalProduct;
+import pwr.billsmanagement.db.creators.DBHandler;
 import pwr.billsmanagement.menu.Menu;
 import pwr.billsmanagement.ocr.OCRActivity;
 
@@ -50,11 +55,19 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
     BarChart mBarChart;
     private OnChartValueSelectedListener chartListener;
 
+    public DBHandler mydb;
+
     public AnalysisActivity() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        mydb = new DBHandler(this);
+
+
+        example();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis);
 
@@ -244,4 +257,23 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         }
         startActivity(mIntent);
     }
+
+    public void example(){
+
+        ArrayList<FinalProduct> testList =new ArrayList();
+        FinalProduct f1=new FinalProduct("chomik","1","2","12","zwierzeta");
+        FinalProduct f2=new FinalProduct("królik","1","2","12","jedzenie");
+        FinalProduct f3=new FinalProduct("kot","1","2","12","ubrania");
+        testList.add(f1);
+        testList.add(f2);
+        testList.add(f3);
+        Log.i("tabela", "JEST!");
+        BillEntity b1 = new BillEntity("Lidl",testList);
+
+
+        mydb.addProductsAsync(b1);
+
+
+    }
+
 }

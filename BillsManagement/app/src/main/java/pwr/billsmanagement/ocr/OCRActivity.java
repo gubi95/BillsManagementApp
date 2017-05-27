@@ -62,17 +62,13 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     private Uri billPhoto;
 
-    DBHandler mydb;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
-        mydb = new DBHandler(this);
-
-
-        example();
 
 
         super.onCreate(savedInstanceState);
@@ -178,23 +174,6 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     }
 
-    public void example(){
-
-        ArrayList<FinalProduct> testList =new ArrayList();
-        FinalProduct f1=new FinalProduct("chomik","1","2","12","zwierzeta");
-        FinalProduct f2=new FinalProduct("królik","1","2","12","jedzenie");
-        FinalProduct f3=new FinalProduct("kot","1","2","12","ubrania");
-        testList.add(f1);
-        testList.add(f2);
-        testList.add(f3);
-        Log.i("tabela", "JEST!");
-        BillEntity b1 = new BillEntity("Lidl",testList);
-
-
-        mydb.addProductsAsync(b1);
-
-
-    }
 
 
     private class CropImageListener implements CropImageView.OnCropImageCompleteListener {
