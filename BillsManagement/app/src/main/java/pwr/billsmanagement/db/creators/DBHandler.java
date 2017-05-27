@@ -47,6 +47,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+
         db.execSQL(tabBillEntries.getTableBillEntries());
         db.execSQL(tabBills.getTableBills());
         db.execSQL(tabProductCategories.getTableProductCategories());
@@ -185,16 +186,18 @@ public class DBHandler extends SQLiteOpenHelper {
         return listProduct;
     }
 
+
     public Cursor fetch() {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT BILLS._id, BILLS.purchase_date, SHOPS.shopname FROM BILLS, SHOPS WHERE BILLS.shop_shopID = SHOPS._id", null);
+        Cursor cursor = db.rawQuery("SELECT Bills.BillID, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops.ShopID", null);
 
         if (cursor != null) {
             cursor.moveToFirst();
         }
         return cursor;
     }
+
 
     /*
         public Cursor fetch(){

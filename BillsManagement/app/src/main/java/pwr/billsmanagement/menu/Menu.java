@@ -127,10 +127,10 @@ public class Menu extends AppCompatActivity{
         listView.setAdapter(adapter);
 
 
-
-
-
     }
+
+
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);

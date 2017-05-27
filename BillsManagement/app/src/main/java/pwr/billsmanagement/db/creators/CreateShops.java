@@ -17,15 +17,14 @@ public class CreateShops {
     public CreateShops() {
     }
 
-
-    public String getTableShops() {
+    public String getTableShops(){
         return "CREATE TABLE " + TABLE_SHOPS + "("
                 + COLUMN_SHOPID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_SHOPNAME + " NVARCHER(100) UNIQUE, "
+                + COLUMN_SHOPNAME + " NVARCHAR(100) UNIQUE, "
                 + COLUMN_USEROWNER_USERID + " INTEGER,"
-                + " CONSTRAINT FOREIGN KEY(" + COLUMN_USEROWNER_USERID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USERID + "),"
-                + " UNIQUE(" + COLUMN_SHOPID + "," + COLUMN_SHOPNAME + ") ON CONFLICT REPLACE"
-                + ")";
+                + " FOREIGN KEY("+COLUMN_USEROWNER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"),"
+                + " UNIQUE("+COLUMN_SHOPID+","+COLUMN_SHOPNAME+") ON CONFLICT REPLACE"
+                +")";
     }
 
 }

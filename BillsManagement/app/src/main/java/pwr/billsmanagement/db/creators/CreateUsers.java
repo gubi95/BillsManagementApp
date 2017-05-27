@@ -17,16 +17,15 @@ public class CreateUsers {
     public CreateUsers() {
     }
 
-
-    public String getTableUsers() {
+    public String getTableUsers(){
         return "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_USERID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_USERNAME + " NVARCHER(40), "
+                + COLUMN_USERNAME + " NVARCHAR(40), "
                 + COLUMN_PASSWORD + " NVARCHAR(300),"
                 + COLUMN_EMAIL + " NVARCHAR(100),"
                 + COLUMN_FIRSTNAME + " NVARCHAR(100),"
                 + COLUMN_LASTNAME + " NVARCHAR(150) "
-                + ")";
+                +")";
     }
 
 }

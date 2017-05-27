@@ -206,7 +206,9 @@ public class AnalysisActivity extends AppCompatActivity {
                         .append(mEndDay).append("-")
                         .append(mEndMonth + 1).append("-")
                         .append(mEndYear).append(" "));
-    };
+    }
+
+    ;
 
     private DatePickerDialog.OnDateSetListener mFromDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
