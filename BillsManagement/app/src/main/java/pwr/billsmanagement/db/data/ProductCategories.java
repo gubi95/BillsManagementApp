@@ -1,5 +1,7 @@
 package pwr.billsmanagement.db.data;
 
+import pwr.billsmanagement.bills.edition.products.FinalProduct;
+
 /**
  * Created by E6520 on 2017-05-20.
  */
@@ -17,6 +19,13 @@ public class ProductCategories {
         COLUMN_USEROWNERID = "UserOwnerID";
         COLUMN_COLOR = "Color";
         COLUMN_MONTHBUDGET = "MonthBudget";
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("ProductCategories{categories:'"+getCOLUMN_PRODUCTCATEGORYID()+"','"+getCOLUMN_NAME()+"','"+getCOLUMN_USEROWNERID()+"','"+getCOLUMN_COLOR()+"','"+getCOLUMN_MONTHBUDGET()+"'");
+
+        return builder.toString();
     }
 
     public String getCOLUMN_PRODUCTCATEGORYID() {

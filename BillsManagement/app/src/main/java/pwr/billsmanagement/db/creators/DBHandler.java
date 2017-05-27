@@ -12,9 +12,17 @@ import java.util.ArrayList;
 
 import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.products.FinalProduct;
+import pwr.billsmanagement.db.data.ProductCategories;
+import pwr.billsmanagement.webApp.models.ProductCategory;
 
 import static pwr.billsmanagement.db.creators.CreateBillEntries.*;
 import static pwr.billsmanagement.db.creators.CreateBills.TABLE_BILLS;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_COLOR;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_MONTHBUDGET;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_NAME;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_PRODUCTCATEGORYID;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_USEROWNERID;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.TABLE_PRODUCTCATEGORIES;
 import static pwr.billsmanagement.db.creators.CreateShops.TABLE_SHOPS;
 
 /**
@@ -63,7 +71,10 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
+//ADDS BY ASYNC
+
     public void addProductsAsync(BillEntity billEntity) {
+
         InsertProductAsync task = new InsertProductAsync();
         task.setDbInsert(this.getWritableDatabase());
         task.setDbSelect(this.getReadableDatabase());
@@ -72,28 +83,22 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public void addCategoryAsync(ProductCategories category) {
 
-
-
-    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID,String shopName, FinalProduct prod) {
-
-
-
-
-        ContentValues content = new ContentValues();
-        content.put(CreateBills.COLUMN_SHOP_SHOPID, shopID);
-        dbInsert.insert(TABLE_BILLS, null, content);
-
-        content = new ContentValues();
-        content.put(COLUMN_BILL_BILLID, findBillID(dbSelect));
-        content.put(COLUMN_CATEGORY_PRODUCTCATEGORYID, prod.getCategoryID());
-        content.put(COLUMN_PRICE, prod.getUnitPrice());
-        content.put(COLUMN_PRODUCTNAME, prod.getName());
-        content.put(COLUMN_QUANTITY, prod.getQuantity());
-        dbInsert.insert(CreateBillEntries.TABLE_BILLENTRIES, null, content);
+        InsertProductCategoryAsync task = new InsertProductCategoryAsync();
+        task.setDbInsert(this.getWritableDatabase());
+        task.setDbSelect(this.getReadableDatabase());
+        task.execute(category);
 
 
     }
+
+
+
+
+
+
+    //ASYNC
 
     private class InsertProductAsync extends AsyncTask<BillEntity, Void, Void> {
 
@@ -105,7 +110,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             for (FinalProduct product : params[0].getProducts()) {
 
-                addShopByString(dbInsert, params[0].getShopName());
+                insertShopByString(dbInsert, params[0].getShopName());
                 product.setCategoryID(findCategoryIDByString(dbSelect, product.getCategory()));
                 params[0].setShopID(findShopIDByName(dbSelect, params[0].getShopName()));
                 insertProductToDB(dbInsert, dbSelect, params[0].getShopID(),params[0].getShopName(), product);
@@ -135,6 +140,30 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
 
+        public void setDbSelect(SQLiteDatabase dbSelect) {
+            this.dbSelect = dbSelect;
+        }
+
+        public void setDbInsert(SQLiteDatabase dbInsert) {
+            this.dbInsert = dbInsert;
+        }
+
+
+    }
+
+    private class InsertProductCategoryAsync extends AsyncTask<ProductCategories, Void, Void> {
+
+        private SQLiteDatabase dbSelect;
+        private SQLiteDatabase dbInsert;
+
+        @Override
+        protected Void doInBackground(ProductCategories...category) {
+
+            insertCategoryToDB(dbInsert,category[0]);
+
+            return null;
+        }
+
 
 
         public void setDbSelect(SQLiteDatabase dbSelect) {
@@ -147,6 +176,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     }
+
+    //CURSOR
 
     public Cursor getData(int id, String idTable) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -162,6 +193,22 @@ public class DBHandler extends SQLiteOpenHelper {
         return res;
     }
 
+
+    public Cursor fetch(){
+        SQLiteDatabase dbSelect=this.getReadableDatabase();
+        Cursor res= dbSelect.rawQuery("SELECT Bills.BillID ,Bills.PurchaseDate,Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID=Shops.ShopID",null);
+
+        if(res!=null){
+            res.moveToFirst();
+        }
+
+
+
+        return res;
+    }
+
+
+    //ARRAY
 
     public ArrayList<String> getProductsFromShop(SQLiteDatabase dbSelect, String shop) {
 
@@ -194,31 +241,44 @@ public class DBHandler extends SQLiteOpenHelper {
         return listProduct;
     }
 
-    public Cursor fetch(){
-        SQLiteDatabase dbSelect=this.getReadableDatabase();
-        Cursor res= dbSelect.rawQuery("SELECT Bills.BillID ,Bills.PurchaseDate,Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID=Shops.ShopID",null);
 
-        if(res!=null){
-            res.moveToFirst();
-        }
+    //VOID
 
-
-
-        return res;
-    }
-
-
-    private void addShopByString(SQLiteDatabase dbInsert, String shopName) {
+    private void insertShopByString(SQLiteDatabase dbInsert, String shopName) {
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
         dbInsert.execSQL(query);
 
     }
 
+    public void insertCategoryToDB(SQLiteDatabase dbInsert,ProductCategories cat){
+        String query = "INSERT INTO "+TABLE_PRODUCTCATEGORIES+"('"+COLUMN_PRODUCTCATEGORYID+"','"+COLUMN_NAME+"','"+COLUMN_USEROWNERID+"','"+COLUMN_COLOR+"','"+COLUMN_MONTHBUDGET+"') VALUES ('"+cat.getCOLUMN_PRODUCTCATEGORYID()+"','"+cat.getCOLUMN_NAME()+"','"+cat.getCOLUMN_USEROWNERID()+"','"+cat.getCOLUMN_COLOR()+"','"+cat.getCOLUMN_MONTHBUDGET()+"')";
+        dbInsert.execSQL(query);
+
+    }
+
+    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID,String shopName, FinalProduct prod) {
+
+        ContentValues content = new ContentValues();
+        content.put(CreateBills.COLUMN_SHOP_SHOPID, shopID);
+        dbInsert.insert(TABLE_BILLS, null, content);
+
+        content = new ContentValues();
+        content.put(COLUMN_BILL_BILLID, findBillID(dbSelect));
+        content.put(COLUMN_CATEGORY_PRODUCTCATEGORYID, prod.getCategoryID());
+        content.put(COLUMN_PRICE, prod.getUnitPrice());
+        content.put(COLUMN_PRODUCTNAME, prod.getName());
+        content.put(COLUMN_QUANTITY, prod.getQuantity());
+        dbInsert.insert(CreateBillEntries.TABLE_BILLENTRIES, null, content);
+
+
+    }
+
+    //STRING
 
 
     private String findCategoryIDByString(SQLiteDatabase dbSelect, String category) {
-        String query = "SELECT " + CreateProductCategories.COLUMN_PRODUCTCATEGORYID + " FROM " + CreateProductCategories.TABLE_PRODUCTCATEGORIES + " WHERE " + CreateProductCategories.COLUMN_NAME + " = \'" + category + "\'";
+        String query = "SELECT " + CreateProductCategories.COLUMN_PRODUCTCATEGORYID + " FROM " + TABLE_PRODUCTCATEGORIES + " WHERE " + CreateProductCategories.COLUMN_NAME + " = \'" + category + "\'";
         Cursor res = dbSelect.rawQuery(query, null);
 
         if (res != null) {
@@ -247,9 +307,11 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
+    //DELETE
+
     public void deleteDatabase(SQLiteDatabase db) {
+
         db.execSQL("DROP DATABASE BillsDB");
     }
-
 
 }
