@@ -10,9 +10,9 @@
         android:layout_height="wrap_content"
         android:text="@string/add_category_title"
         android:textAlignment="center"
-        android:textSize="26sp"
+        android:textSize="20sp"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginTop="20dp"/>
 
     <LinearLayout
         android:layout_centerHorizontal="true"
@@ -28,22 +28,31 @@
             android:layout_weight="1"
             android:hint="@string/category"/>
 
-        <Spinner
-            android:id="@+id/categoryIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
-
     </LinearLayout>
 
-    <Button
-        android:id="@+id/addCategory"
+    <LinearLayout
         android:layout_alignParentBottom="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <Button
+            android:id="@+id/addCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/cancelAddCategory"
+            android:layout_marginStart="20dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
 
 </RelativeLayout>

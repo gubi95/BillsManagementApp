@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Paragony</string>
+    <string name="ocr_activity_name">Dodaj paragon</string>
     <string-array name="menu_items">
         <item>Historia zakupów</item>
         <item>Dodaj paragon ze zdjęcia</item>
@@ -55,6 +56,9 @@
     <string name="assembly_finals_progress_title">Edycja</string>
     <string name="assembly_finals_progress_message">Zapisywanie...</string>
     <string name="add_category_title">Dodaj kategorię</string>
+    <string name="cancel">Anuluj</string>
+    <string name="bill_one_line_bill_hint">Nazwa i cena w tej samej linii</string>
+    <string name="bill_two_line_bill_hint">Nazwa i cena w osobnych liniach</string>
     <string-array name="add_options">
         <item>Dodaj kategorię</item>
         <item>Dodaj produkt</item>

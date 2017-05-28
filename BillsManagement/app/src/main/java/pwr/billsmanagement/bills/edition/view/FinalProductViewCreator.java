@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import pwr.billsmanagement.R;
+import pwr.billsmanagement.bills.edition.categories.Keys;
 import pwr.billsmanagement.bills.edition.products.AssembledProduct;
 import pwr.billsmanagement.readers.PropertiesReader;
 
@@ -81,7 +82,7 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
 
     private void initCategorySpinner(Spinner category) {
         PropertiesReader reader = new PropertiesReader(context, new Properties());
-        String categories = reader.readMyProperties("properties/categories.properties").getProperty("categories_values");
+        String categories = reader.readMyProperties(Keys.CATEGORIES_PROPERTIES).getProperty(Keys.CATEGORIES_VALUES);
         String[] categoriesTab = categories.split(",");
         ArrayAdapter<String> adapter = new SpinnerAdapter(
                 context, android.R.layout.simple_spinner_item, categoriesTab);
@@ -108,12 +109,6 @@ public class FinalProductViewCreator implements ViewCreator<AssembledProduct> {
     }
 
     private class SpinnerAdapter extends ArrayAdapter<String> {
-
-        private final String[] ICON_KEYS = {
-                "groceries_icon", "ind_good_icon", "clothes_icon", "food_icon", "beverages_icon",
-                "vegetables_icon", "bread_icon", "dairy_icon", "meat_icon", "chemistry_icon",
-                "cosmetics_icon", "animals_icon", "kids_icon"
-        };
 
         private String[] categories;
 

@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 
 import com.orhanobut.logger.Logger;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -35,9 +36,4 @@ public class PropertiesReader {
         return myProperties;
     }
 
-    public void addProperty(String key, String value) {
-        if(myProperties != null) {
-            myProperties.setProperty(key, value);
-        }
-    }
 }
