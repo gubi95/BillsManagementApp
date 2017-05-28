@@ -12,6 +12,8 @@ public class ProductCategories {
     public String COLUMN_USEROWNERID;
     public String COLUMN_COLOR ;
     public String COLUMN_MONTHBUDGET ;
+    public String COLUMN_EXTERNALSYSTEMID ;
+    public String COLUMN_LASTMODIFIEDDATE ;
 
     public ProductCategories() {
         COLUMN_PRODUCTCATEGORYID = "ProductCategoryID";
@@ -19,6 +21,8 @@ public class ProductCategories {
         COLUMN_USEROWNERID = "UserOwnerID";
         COLUMN_COLOR = "Color";
         COLUMN_MONTHBUDGET = "MonthBudget";
+       COLUMN_EXTERNALSYSTEMID = "ExternalSystemID";
+       COLUMN_LASTMODIFIEDDATE = "LastModifiedDate";
     }
 
     @Override
@@ -67,4 +71,22 @@ public class ProductCategories {
     public void setCOLUMN_MONTHBUDGET(String COLUMN_MONTHBUDGET) {
         this.COLUMN_MONTHBUDGET = COLUMN_MONTHBUDGET;
     }
+
+
+    public String getCOLUMN_EXTERNALSYSTEMID() {
+        return COLUMN_EXTERNALSYSTEMID;
+    }
+
+    public void setCOLUMN_EXTERNALSYSTEMID(String COLUMN_EXTERNALSYSTEMID) {
+        this.COLUMN_EXTERNALSYSTEMID = COLUMN_EXTERNALSYSTEMID;
+    }
+
+    public String getCOLUMN_LASTMODIFIEDDATE() {
+        return COLUMN_LASTMODIFIEDDATE;
+    }
+
+    public void setCOLUMN_LASTMODIFIEDDATE(String COLUMN_LASTMODIFIEDDATE) {
+        this.COLUMN_LASTMODIFIEDDATE = COLUMN_LASTMODIFIEDDATE;
+    }
+
 }

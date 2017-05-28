@@ -15,6 +15,8 @@ public class CreateProductCategories {
     public static final String COLUMN_USEROWNERID = "UserOwnerID";
     public static final String COLUMN_COLOR = "Color";
     public static final String COLUMN_MONTHBUDGET = "MonthBudget";
+    public static final String COLUMN_EXTERNALSYSTEMID = "ExternalSystemID";
+    public static final String COLUMN_LASTMODIFIEDDATE = "LastModifiedDate";
 
     public CreateProductCategories() {
     }
@@ -26,6 +28,8 @@ public class CreateProductCategories {
                 + COLUMN_USEROWNERID + " INTEGER,"
                 + COLUMN_COLOR + " NVARCHAR(100),"
                 + COLUMN_MONTHBUDGET + " DECIMAL,"
+                + COLUMN_EXTERNALSYSTEMID + " INTEGER NULL,"
+                + COLUMN_LASTMODIFIEDDATE + " DEFAULT CURRENT_DATE,"
                 + " FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }
