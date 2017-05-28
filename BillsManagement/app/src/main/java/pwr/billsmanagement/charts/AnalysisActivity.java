@@ -29,7 +29,6 @@ import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
 
-import pwr.billsmanagement.bills.edition.products.FinalProduct;
 import pwr.billsmanagement.billslist.BillsList;
 import pwr.billsmanagement.db.creators.DBHandler;
 import pwr.billsmanagement.ocr.OCRActivity;
@@ -268,7 +267,7 @@ public class AnalysisActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         drawerListener.syncState();
     }
-
+/*
     public void example(){
 
         ArrayList<FinalProduct> testList =new ArrayList();
@@ -286,5 +285,5 @@ public class AnalysisActivity extends AppCompatActivity {
 
 
     }
-
+*/
 }

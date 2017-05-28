@@ -25,12 +25,7 @@ public class ProductCategories {
        COLUMN_LASTMODIFIEDDATE = "LastModifiedDate";
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("ProductCategories{categories:'"+getCOLUMN_PRODUCTCATEGORYID()+"','"+getCOLUMN_NAME()+"','"+getCOLUMN_USEROWNERID()+"','"+getCOLUMN_COLOR()+"','"+getCOLUMN_MONTHBUDGET()+"'");
 
-        return builder.toString();
-    }
 
     public String getCOLUMN_PRODUCTCATEGORYID() {
         return COLUMN_PRODUCTCATEGORYID;

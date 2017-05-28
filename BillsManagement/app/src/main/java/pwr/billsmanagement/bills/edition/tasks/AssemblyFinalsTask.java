@@ -3,6 +3,7 @@ package pwr.billsmanagement.bills.edition.tasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import pwr.billsmanagement.bills.edition.products.FinalProduct;
 import pwr.billsmanagement.bills.edition.products.FinalProductAssembler;
 import pwr.billsmanagement.bills.edition.view.FinalProductView;
 import pwr.billsmanagement.billslist.BillsList;
+import pwr.billsmanagement.db.creators.DBHandler;
 
 /**
  * Created by Squier on 22.05.2017.
@@ -37,6 +39,7 @@ public class AssemblyFinalsTask extends AsyncTask<ArrayList<FinalProductView>, V
                 context.getString(R.string.assembly_finals_progress_title),
                 context.getString(R.string.assembly_finals_progress_message)
         );
+
     }
 
     @Override

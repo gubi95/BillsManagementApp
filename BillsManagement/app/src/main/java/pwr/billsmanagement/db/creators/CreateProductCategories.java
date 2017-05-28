@@ -24,12 +24,12 @@ public class CreateProductCategories {
     public String getTableProductCategories(){
         return "CREATE TABLE " + TABLE_PRODUCTCATEGORIES + "("
                 + COLUMN_PRODUCTCATEGORYID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_NAME + " NVARCHER(100), "
+                + COLUMN_NAME + " NVARCHAR(100), "
                 + COLUMN_USEROWNERID + " INTEGER,"
                 + COLUMN_COLOR + " NVARCHAR(100),"
                 + COLUMN_MONTHBUDGET + " DECIMAL,"
                 + COLUMN_EXTERNALSYSTEMID + " INTEGER NULL,"
-                + COLUMN_LASTMODIFIEDDATE + " DATETIME NOT NULL DEFAULT NOW(),"
+                + COLUMN_LASTMODIFIEDDATE + "CURRENT_TIMESTAMP,"
                 + " FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }

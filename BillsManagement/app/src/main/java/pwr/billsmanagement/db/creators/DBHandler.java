@@ -74,9 +74,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
 //ADDS BY ASYNC
 
-    public void insertProductsAsync(BillEntity billEntity) {
+    public void insertProducts(BillEntity billEntity) {
 
-        InsertProductAsync task = new InsertProductAsync();
+        InsertProductsAsync task = new InsertProductsAsync();
         task.setDbInsert(this.getWritableDatabase());
         task.setDbSelect(this.getReadableDatabase());
         task.execute(billEntity);
@@ -84,7 +84,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void insertProductCategoriesAsync(ProductCategories category) {
+    public void insertProductCategories(ProductCategories category) {
 
 
         InsertProductCategoriesAsync task = new InsertProductCategoriesAsync();
@@ -104,7 +104,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //ASYNC
 
-    private class InsertProductAsync extends AsyncTask<BillEntity, Void, Void> {
+    private class InsertProductsAsync extends AsyncTask<BillEntity, Void, Void> {
 
         private SQLiteDatabase dbSelect;
         private SQLiteDatabase dbInsert;
@@ -124,18 +124,13 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
             //Przykład wywołania getTable //ile kolumn się chce
-            Cursor curs = getTable(TABLE_SHOPS);
+            Cursor curs = getTable(TABLE_BILLENTRIES);
             curs.moveToFirst();
             while (curs.moveToNext()) {
                 Log.d("tabela shops", curs.getString(0) + " " + curs.getString(1) + " " + curs.getString(2));
 
             }
 
-
-            for (String s : getProductsFromShop(dbSelect, params[0].getShopName())
-                    ) {
-                Log.d("tabela sklepy", s);
-            }
 
             return null;
         }
