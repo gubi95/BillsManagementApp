@@ -33,4 +33,17 @@ public class CreateBills {
     }
 
 
+    // Przykladowe dane
+    public String addSampleData() {
+        return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2017-05-10', 2, 1)";
+    }
+
+    public String addSampleData2() {
+        return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2016-06-30', 10, 2)";
+    }
+
+    public String addSampleData3() {
+        return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2017-05-27', 2, 3)";
+    }
+
 }

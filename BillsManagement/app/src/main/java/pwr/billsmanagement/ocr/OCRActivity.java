@@ -53,30 +53,17 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
     private static final String EXTERNAL_FILES = "properties/external_files.properties";
-
+    DBHandler mydb;
     private int REQUESTES_BILL_PARSER;
-
     private RequestPermissionsTool requestTool;
     private OCRActivityView mView;
-
     private BillsOCR billsOCR;
     private MatchWorker matchWorker;
     private PropertiesReader reader;
-
     private Uri billPhoto;
-
-    DBHandler mydb;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-        mydb = new DBHandler(this);
-
-
-        example();
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
@@ -99,7 +86,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
 
     private void initMView() {
 
-        mView= new OCRActivityView(
+        mView = new OCRActivityView(
                 findViewById(R.id.cropImageView),
                 findViewById(R.id.myToolbar),
                 findViewById(R.id.shootPhoto),
@@ -175,24 +162,6 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         }
 
     }
-
-    public void example(){
-
-        ArrayList<FinalProduct> testList =new ArrayList();
-        FinalProduct f1=new FinalProduct("chomik","1","2","12","zwierzeta");
-        FinalProduct f2=new FinalProduct("królik","1","2","12","jedzenie");
-        FinalProduct f3=new FinalProduct("kot","1","2","12","ubrania");
-        testList.add(f1);
-        testList.add(f2);
-        testList.add(f3);
-        BillEntity b1 = new BillEntity("Lidl",testList);
-
-
-        mydb.addProductsAsync(b1);
-
-
-    }
-
 
     private class CropImageListener implements CropImageView.OnCropImageCompleteListener {
         @Override
@@ -282,6 +251,7 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
             Gson gson = new Gson();
             Logger.i(gson.toJson(shopOcrProducts));
             Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
+            editBillActivity.putExtra("run_mode", "define");
             editBillActivity.putExtra("products_json", gson.toJson(shopOcrProducts));
             editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(editBillActivity);

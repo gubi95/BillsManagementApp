@@ -54,6 +54,14 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(tabShops.getTableShops());
         db.execSQL(tabUsers.getTableUsers());
 
+
+        // Dodawanie przykladowych danych do testow
+        db.execSQL(tabBills.addSampleData());
+        db.execSQL(tabBills.addSampleData2());
+        db.execSQL(tabBills.addSampleData3());
+        db.execSQL(tabShops.addSampleData());
+        db.execSQL(tabShops.addSampleData2());
+        db.execSQL(tabShops.addSampleData3());
     }
 
     @Override
@@ -197,6 +205,18 @@ public class DBHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getBill(int id) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT Bills._id, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops._id AND Bills._id = " + id;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
 
     private void addShopByString(SQLiteDatabase dbInsert, String shopName) {
 

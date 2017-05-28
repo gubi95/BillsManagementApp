@@ -12,12 +12,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
@@ -26,6 +29,7 @@ import pwr.billsmanagement.db.creators.CreateShops;
 import pwr.billsmanagement.db.creators.DBHandler;
 import pwr.billsmanagement.ocr.OCRActivity;
 import pwr.billsmanagement.charts.AnalysisActivity;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 
 
 public class BillsList extends AppCompatActivity {
@@ -75,10 +79,15 @@ public class BillsList extends AppCompatActivity {
                         mIntent = new Intent(BillsList.this, BillsList.class);
                         break;
                     case R.id.menu_add_pic:
+                        Logger.init("SZYSZKA");
                         mIntent = new Intent(BillsList.this, OCRActivity.class);
                         break;
                     case R.id.menu_add_man:
+                        Logger.init("SZYSZKA");
+                        Gson gson = new Gson();
                         mIntent = new Intent(BillsList.this, EditBillActivity.class);
+                        mIntent.putExtra("run_mode", "edit");
+                        mIntent.putExtra("products_json", gson.toJson(populateProductArray()));
                         break;
                     case R.id.menu_charts:
                         mIntent = new Intent(BillsList.this, AnalysisActivity.class);
@@ -126,29 +135,13 @@ public class BillsList extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         listView.setAdapter(adapter);
+    }
 
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long viewId) {
-                TextView idTextView = (TextView) view.findViewById(R.id.id);
-                TextView shopnameTextView = (TextView) view.findViewById(R.id.shopname);
-                TextView dateTextView = (TextView) view.findViewById(R.id.date);
-
-                String id = idTextView.getText().toString();
-                String shopname = shopnameTextView.getText().toString();
-                String date = dateTextView.getText().toString();
-
-                Intent modify_intent = new Intent(getApplicationContext(), ShowBill.class);
-                modify_intent.putExtra("shopname", shopname);
-                modify_intent.putExtra("date", date);
-                modify_intent.putExtra("id", id);
-
-                startActivity(modify_intent);
-            }
-
-        });
+    private ArrayList<OcrProduct> populateProductArray() {
+        ArrayList<OcrProduct> products = new ArrayList<>();
+        products.add(new OcrProduct("", ""));
+        products.add(new OcrProduct("", ""));
+        return products;
     }
 
 

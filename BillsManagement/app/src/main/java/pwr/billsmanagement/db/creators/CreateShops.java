@@ -27,4 +27,17 @@ public class CreateShops {
                 +")";
     }
 
+    // Przykladowe dane
+    public String addSampleData() {
+        return "INSERT INTO " + TABLE_SHOPS + " (ShopName, UserOwner_UserID) VALUES ('Kaufland', 2)";
+    }
+
+    public String addSampleData2() {
+        return "INSERT INTO " + TABLE_SHOPS + " (ShopName, UserOwner_UserID) VALUES ('Lidl', 3)";
+    }
+
+    public String addSampleData3() {
+        return "INSERT INTO " + TABLE_SHOPS + " (ShopName, UserOwner_UserID) VALUES ('Żabka', 4)";
+    }
+
 }
