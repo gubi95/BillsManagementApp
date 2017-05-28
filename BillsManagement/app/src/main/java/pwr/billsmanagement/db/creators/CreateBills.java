@@ -12,7 +12,7 @@ import static pwr.billsmanagement.db.creators.CreateUsers.TABLE_USERS;
 public class CreateBills {
 
     public static final String TABLE_BILLS = "Bills";
-    public static final String COLUMN_BILLID = "BillID";
+    public static final String COLUMN_BILLID = "_id";
     public static final String COLUMN_PURCHASEDATE = "PurchaseDate";
     public static final String COLUMN_USER_USERID = "User_UserID";
     public static final String COLUMN_SHOP_SHOPID = "Shop_ShopID";

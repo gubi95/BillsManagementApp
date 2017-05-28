@@ -18,7 +18,7 @@
         <activity android:name=".bills.edition.EditBillActivity" />
 
         <activity
-            android:name=".menu.Menu"
+            android:name=".billslist.BillsList"
             android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme" />
         <activity

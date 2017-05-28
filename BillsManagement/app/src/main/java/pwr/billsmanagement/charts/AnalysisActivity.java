@@ -4,17 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -26,19 +25,19 @@ import java.util.Calendar;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
-import pwr.billsmanagement.menu.Menu;
+import pwr.billsmanagement.billslist.BillsList;
 import pwr.billsmanagement.ocr.OCRActivity;
 
-public class AnalysisActivity extends AppCompatActivity implements OnItemClickListener{
+public class AnalysisActivity extends AppCompatActivity {
 
     private String selectedCategory;
-
+    private String login = "Przykładowy Login"; // z bazy
     private String[] mMenuOptions;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private NavigationView mDrawerList;
     private ActionBarDrawerToggle drawerListener;
     private Toolbar toolbar;
-    private TextView tvDesc, tvDate, tvDateFrom, tvDateTo;
+    private TextView tvDesc, tvDate, tvDateFrom, tvDateTo, tvUsername;
     private EditText etDateFrom, etDateTo;
 
     private int mStartYear, mEndYear, mStartMonth, mEndMonth, mStartDay, mEndDay;
@@ -58,31 +57,85 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis);
 
+        //drawer menu
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
+        toolbar = (Toolbar) findViewById(R.id.myToolbar);
+        setSupportActionBar(toolbar);
+
         mMenuOptions = getResources().getStringArray(R.array.menu_items);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.drawer_list);
-
+        mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
         toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Analiza wydatków");
+        View header = mDrawerList.getHeaderView(0);
+        tvUsername = (TextView) header.findViewById(R.id.username);
+        tvUsername.setText(login);
 
-        tvDesc = (TextView) findViewById(R.id.text_desc);
-        tvDate = (TextView) findViewById(R.id.text_range);
-        tvDateFrom = (TextView) findViewById(R.id.text_range_start);
-        tvDateTo = (TextView) findViewById(R.id.text_range_end);
-        etDateFrom = (EditText) findViewById(R.id.etDate1);
-        etDateTo = (EditText) findViewById(R.id.etDate2);
+        mDrawerList.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent mIntent = null;
+                switch (item.getItemId()) {
+                    case R.id.menu_list:
+                        mIntent = new Intent(AnalysisActivity.this, BillsList.class);
+                        break;
+                    case R.id.menu_add_pic:
+                        mIntent = new Intent(AnalysisActivity.this, OCRActivity.class);
+                        break;
+                    case R.id.menu_add_man:
+                        mIntent = new Intent(AnalysisActivity.this, EditBillActivity.class);
+                        break;
+                    case R.id.menu_charts:
+                        mIntent = new Intent(AnalysisActivity.this, AnalysisActivity.class);
+                        break;
+                    case R.id.menu_sync:
+                        break;
+                    case R.id.menu_logout:
+                        mIntent = new Intent(Intent.ACTION_MAIN);
+                        mIntent.addCategory(Intent.CATEGORY_HOME);
+                        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        break;
+                    default:
+                        mIntent = new Intent(AnalysisActivity.this, BillsList.class); // Activity_0 as default
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+                startActivity(mIntent);
+                return false;
+            }
+        });
+
+        drawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // TODO
+                // action performed when drawer closed
+                super.onDrawerClosed(drawerView);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                //TODO
+                // action performed when drawer opened
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        mDrawerLayout.addDrawerListener(drawerListener);
+
 
         // CHART
+
         mBarChart = (BarChart) findViewById(R.id.myBarChart);
         mData.testData(); // zmienić na pobieranie z bazy
 
         mBarChart.setData(mData.data);
 
-
-        mBarChart.setDescription("Sumy wydatków w podziale na kategorie");
+        mBarChart.setDescription("");
         mBarChart.animateY(3000);
         mBarChart.getLegend().setEnabled(false);
+        mBarChart.setVisibleXRangeMaximum(4);
+        //mBarChart.setDescriptionPosition(3f, 3f);
 
         chartListener = new OnChartValueSelectedListener() {
             // click on the chart's bar
@@ -101,48 +154,35 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         };
         mBarChart.setOnChartValueSelectedListener(chartListener);
 
-        // DRAWER
-        mDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mMenuOptions));
-        mDrawerList.setOnItemClickListener(this);
 
-        drawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close){
-            @Override
-            public void onDrawerClosed(View drawerView){
-                // TODO
-                // action performed when drawer closed
-                super.onDrawerClosed(drawerView);
-            }
-
-            public void onDrawerOpened(View drawerView){
-                //TODO
-                // action performed when drawer opened
-                super.onDrawerOpened(drawerView);
-            }
-        };
-        mDrawerLayout.addDrawerListener(drawerListener);
-
-        // date pickers
-
+        // DATE PICKERS
+        tvDesc = (TextView) findViewById(R.id.text_desc);
+        tvDate = (TextView) findViewById(R.id.text_range);
+        tvDateFrom = (TextView) findViewById(R.id.text_range_start);
+        tvDateTo = (TextView) findViewById(R.id.text_range_end);
+        etDateFrom = (EditText) findViewById(R.id.etDate1);
+        etDateTo = (EditText) findViewById(R.id.etDate2);
         etDateFrom = (EditText) findViewById(R.id.etDate1);
         etDateTo = (EditText) findViewById(R.id.etDate2);
 
         etDateFrom.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG_FROM);
-            }
-        }
+                                          public void onClick(View v) {
+                                              showDialog(DATE_DIALOG_FROM);
+                                          }
+                                      }
         );
 
         etDateTo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG_TO);
-            }}
+                                        public void onClick(View v) {
+                                            showDialog(DATE_DIALOG_TO);
+                                        }
+                                    }
         );
 
         // get the current date
         final Calendar c = Calendar.getInstance();
         mStartYear = c.get(Calendar.YEAR);
-        mStartMonth = c.get(Calendar.MONTH) -1;
+        mStartMonth = c.get(Calendar.MONTH) - 1;
         mStartDay = c.get(Calendar.DAY_OF_MONTH);
 
         mEndYear = c.get(Calendar.YEAR);
@@ -167,7 +207,9 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
                         .append(mEndDay).append("-")
                         .append(mEndMonth + 1).append("-")
                         .append(mEndYear).append(" "));
-    };
+    }
+
+    ;
 
     private DatePickerDialog.OnDateSetListener mFromDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
@@ -206,42 +248,10 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         return null;
     }
 
-
-    // drawer
+    //końcówka drawera
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // TODO
-        //actions performed when menu items are clicked
-
-        selectItem(position);
-        mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-    public void selectItem(int position) {
-        Intent mIntent = null;
-        //FragmentActivity fragmentActivity = null;
-        switch(position) {
-            case 0:
-                mIntent = new Intent(this, Menu.class);
-                break;
-            case 1:
-                mIntent = new Intent(this, OCRActivity.class);
-                break;
-            case 2:
-                mIntent = new Intent(this, EditBillActivity.class);
-                break;
-            case 3:
-                mIntent = new Intent(this, AnalysisActivity.class);
-                break;
-            case 4:
-                mIntent = new Intent(Intent.ACTION_MAIN);
-                mIntent.addCategory(Intent.CATEGORY_HOME);
-                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                break;
-            default :
-                mIntent = new Intent(this, Menu.class);
-                break;
-        }
-        startActivity(mIntent);
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerListener.syncState();
     }
 }

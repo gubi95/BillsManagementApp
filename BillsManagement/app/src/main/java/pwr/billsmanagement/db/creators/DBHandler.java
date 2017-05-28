@@ -73,11 +73,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
 
-
-
-    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID,String shopName, FinalProduct prod) {
-
-
+    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID, String shopName, FinalProduct prod) {
 
 
         ContentValues content = new ContentValues();
@@ -108,34 +104,29 @@ public class DBHandler extends SQLiteOpenHelper {
                 addShopByString(dbInsert, params[0].getShopName());
                 product.setCategoryID(findCategoryIDByString(dbSelect, product.getCategory()));
                 params[0].setShopID(findShopIDByName(dbSelect, params[0].getShopName()));
-                insertProductToDB(dbInsert, dbSelect, params[0].getShopID(),params[0].getShopName(), product);
+                insertProductToDB(dbInsert, dbSelect, params[0].getShopID(), params[0].getShopName(), product);
 
 
             }
 
 
-
- //Przykład wywołania getTable //ile kolumn się chce
-            Cursor curs=getTable(TABLE_SHOPS);
+            //Przykład wywołania getTable //ile kolumn się chce
+            Cursor curs = getTable(TABLE_SHOPS);
             curs.moveToFirst();
-            while(curs.moveToNext()){
-                Log.d("tabela shops",curs.getString(0)+" "+curs.getString(1)+" "+curs.getString(2));
+            while (curs.moveToNext()) {
+                Log.d("tabela shops", curs.getString(0) + " " + curs.getString(1) + " " + curs.getString(2));
 
             }
 
 
-
-            for (String s:getProductsFromShop(dbSelect,params[0].getShopName())
-                 ) {
-                Log.d("tabela sklepy",s);
+            for (String s : getProductsFromShop(dbSelect, params[0].getShopName())
+                    ) {
+                Log.d("tabela sklepy", s);
             }
 
 
             return null;
         }
-
-
-
 
 
         public void setDbSelect(SQLiteDatabase dbSelect) {
@@ -183,7 +174,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public ArrayList<String> getColumn(SQLiteDatabase dbSelect, String column, String table) {
 
-        String query = "SELECT "+column+"FROM"+table;
+        String query = "SELECT " + column + "FROM" + table;
 
         Cursor res = dbSelect.rawQuery(query, null);
         res.moveToFirst();
@@ -194,40 +185,26 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return listProduct;
     }
-/*
-    public Cursor fetch(){
-        SQLiteDatabase dbSelect=this.getReadableDatabase();
-        Cursor res= dbSelect.rawQuery("SELECT Bills.BillID ,Bills.PurchaseDate,Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID=Shops.ShopID",null);
 
-        if(res!=null){
-            res.moveToFirst();
+
+    public Cursor getBills() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT Bills._id, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops._id", null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
         }
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                //query
-                //return cursor;
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                //zrob gui
-            }
-        }
-
-        return res;
+        return cursor;
     }
 
-*/
+
     private void addShopByString(SQLiteDatabase dbInsert, String shopName) {
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
         dbInsert.execSQL(query);
 
     }
-
 
 
     private String findCategoryIDByString(SQLiteDatabase dbSelect, String category) {
