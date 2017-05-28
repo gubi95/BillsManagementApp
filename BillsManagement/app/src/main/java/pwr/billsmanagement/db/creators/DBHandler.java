@@ -54,7 +54,6 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(tabShops.getTableShops());
         db.execSQL(tabUsers.getTableUsers());
 
-
     }
 
     @Override

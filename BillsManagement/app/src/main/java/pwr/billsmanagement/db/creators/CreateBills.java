@@ -27,9 +27,10 @@ public class CreateBills {
                 + COLUMN_PURCHASEDATE + " DEFAULT CURRENT_DATE, "
                 + COLUMN_USER_USERID + " INTEGER, "
                 + COLUMN_SHOP_SHOPID + " INTEGER, "
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"), "
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
+                + " FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"), "
+                + " FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
                 +")";
     }
+
 
 }
