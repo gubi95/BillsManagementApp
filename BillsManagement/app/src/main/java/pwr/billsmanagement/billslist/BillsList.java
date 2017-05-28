@@ -12,9 +12,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
@@ -123,6 +126,29 @@ public class BillsList extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         listView.setAdapter(adapter);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long viewId) {
+                TextView idTextView = (TextView) view.findViewById(R.id.id);
+                TextView shopnameTextView = (TextView) view.findViewById(R.id.shopname);
+                TextView dateTextView = (TextView) view.findViewById(R.id.date);
+
+                String id = idTextView.getText().toString();
+                String shopname = shopnameTextView.getText().toString();
+                String date = dateTextView.getText().toString();
+
+                Intent modify_intent = new Intent(getApplicationContext(), ShowBill.class);
+                modify_intent.putExtra("shopname", shopname);
+                modify_intent.putExtra("date", date);
+                modify_intent.putExtra("id", id);
+
+                startActivity(modify_intent);
+            }
+
+        });
     }
 
 
