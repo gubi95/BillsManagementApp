@@ -18,6 +18,8 @@ import pwr.billsmanagement.webApp.models.ProductCategory;
 import static pwr.billsmanagement.db.creators.CreateBillEntries.*;
 import static pwr.billsmanagement.db.creators.CreateBills.TABLE_BILLS;
 import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_COLOR;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_EXTERNALSYSTEMID;
+import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_LASTMODIFIEDDATE;
 import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_MONTHBUDGET;
 import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_NAME;
 import static pwr.billsmanagement.db.creators.CreateProductCategories.COLUMN_PRODUCTCATEGORYID;
@@ -73,7 +75,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 //ADDS BY ASYNC
 
-    public void addProductsAsync(BillEntity billEntity) {
+    public void insertProductsAsync(BillEntity billEntity) {
 
         InsertProductAsync task = new InsertProductAsync();
         task.setDbInsert(this.getWritableDatabase());
@@ -83,16 +85,15 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addCategoryAsync(ProductCategories category) {
+    public void insertProductCategoriesAsync(ProductCategories category) {
 
-        InsertProductCategoryAsync task = new InsertProductCategoryAsync();
+        InsertProductCategoriesAsync task = new InsertProductCategoriesAsync();
         task.setDbInsert(this.getWritableDatabase());
         task.setDbSelect(this.getReadableDatabase());
         task.execute(category);
 
 
     }
-
 
 
 
@@ -151,7 +152,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    private class InsertProductCategoryAsync extends AsyncTask<ProductCategories, Void, Void> {
+    private class InsertProductCategoriesAsync extends AsyncTask<ProductCategories, Void, Void> {
 
         private SQLiteDatabase dbSelect;
         private SQLiteDatabase dbInsert;
@@ -159,7 +160,7 @@ public class DBHandler extends SQLiteOpenHelper {
         @Override
         protected Void doInBackground(ProductCategories...category) {
 
-            insertCategoryToDB(dbInsert,category[0]);
+            insertProductCategoryToDB(dbInsert,category[0]);
 
             return null;
         }
@@ -176,6 +177,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     }
+
+
 
     //CURSOR
 
@@ -241,6 +244,27 @@ public class DBHandler extends SQLiteOpenHelper {
         return listProduct;
     }
 
+    public ArrayList<ProductCategories> getAllCategories() {
+
+        ProductCategories productCategories;
+        Cursor res=getTable(TABLE_PRODUCTCATEGORIES);
+        res.moveToFirst();
+        ArrayList<ProductCategories> listCategories = new ArrayList<>();
+        while(res.moveToNext()){
+            productCategories = new ProductCategories();
+            productCategories.setCOLUMN_PRODUCTCATEGORYID(res.getString(0));
+            productCategories.setCOLUMN_NAME(res.getString(1));
+            productCategories.setCOLUMN_USEROWNERID(res.getString(2));
+            productCategories.setCOLUMN_COLOR(res.getString(3));
+            productCategories.setCOLUMN_MONTHBUDGET(res.getString(4));
+            productCategories.setCOLUMN_EXTERNALSYSTEMID(res.getString(5));
+            productCategories.setCOLUMN_LASTMODIFIEDDATE(res.getString(6));
+            listCategories.add(productCategories);
+        }
+
+        return listCategories;
+    }
+
 
     //VOID
 
@@ -251,7 +275,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void insertCategoryToDB(SQLiteDatabase dbInsert,ProductCategories cat){
+    public void insertProductCategoryToDB(SQLiteDatabase dbInsert,ProductCategories cat){
         String query = "INSERT INTO "+TABLE_PRODUCTCATEGORIES+"('"+COLUMN_PRODUCTCATEGORYID+"','"+COLUMN_NAME+"','"+COLUMN_USEROWNERID+"','"+COLUMN_COLOR+"','"+COLUMN_MONTHBUDGET+"') VALUES ('"+cat.getCOLUMN_PRODUCTCATEGORYID()+"','"+cat.getCOLUMN_NAME()+"','"+cat.getCOLUMN_USEROWNERID()+"','"+cat.getCOLUMN_COLOR()+"','"+cat.getCOLUMN_MONTHBUDGET()+"')";
         dbInsert.execSQL(query);
 
@@ -271,6 +295,12 @@ public class DBHandler extends SQLiteOpenHelper {
         content.put(COLUMN_QUANTITY, prod.getQuantity());
         dbInsert.insert(CreateBillEntries.TABLE_BILLENTRIES, null, content);
 
+
+    }
+
+    public void updateProductCategoryInDB(SQLiteDatabase dbInsert,ProductCategories cat){
+        String query = "UPDATE  "+TABLE_PRODUCTCATEGORIES+" SET "+COLUMN_NAME+"='"+cat.getCOLUMN_NAME()+"',"+COLUMN_USEROWNERID+"='"+cat.getCOLUMN_USEROWNERID()+"',"+COLUMN_COLOR+"='"+cat.getCOLUMN_COLOR()+"',"+COLUMN_MONTHBUDGET+"='"+cat.getCOLUMN_MONTHBUDGET()+"',"+COLUMN_EXTERNALSYSTEMID+"='"+cat.getCOLUMN_EXTERNALSYSTEMID()+"',"+COLUMN_LASTMODIFIEDDATE+"='"+cat.getCOLUMN_LASTMODIFIEDDATE()+"') WHERE "+COLUMN_PRODUCTCATEGORYID+"="+cat.getCOLUMN_PRODUCTCATEGORYID();
+        dbInsert.execSQL(query);
 
     }
 

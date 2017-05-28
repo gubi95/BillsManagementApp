@@ -270,7 +270,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
         BillEntity b1 = new BillEntity("Lidl",testList);
 
 
-        mydb.addProductsAsync(b1);
+        mydb.insertProductsAsync(b1);
 
 
     }

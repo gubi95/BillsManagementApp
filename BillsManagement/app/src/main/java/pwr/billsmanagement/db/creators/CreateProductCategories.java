@@ -29,7 +29,7 @@ public class CreateProductCategories {
                 + COLUMN_COLOR + " NVARCHAR(100),"
                 + COLUMN_MONTHBUDGET + " DECIMAL,"
                 + COLUMN_EXTERNALSYSTEMID + " INTEGER NULL,"
-                + COLUMN_LASTMODIFIEDDATE + " DEFAULT CURRENT_DATE,"
+                + COLUMN_LASTMODIFIEDDATE + " DATETIME NOT NULL DEFAULT NOW(),"
                 + " FOREIGN KEY("+COLUMN_USEROWNERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+")"
                 +")";
     }
