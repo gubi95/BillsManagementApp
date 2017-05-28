@@ -1,4 +1,4 @@
-package pwr.billsmanagement.menu;
+package pwr.billsmanagement.billslist;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,13 +25,13 @@ import pwr.billsmanagement.ocr.OCRActivity;
 import pwr.billsmanagement.charts.AnalysisActivity;
 
 
-public class Menu extends AppCompatActivity{
+public class BillsList extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mDrawerList;
     private ActionBarDrawerToggle drawerListener;
     private Toolbar toolbar;
-    private String login="Przykładowy Login";
+    private String login = "Przykładowy Login";
     private String[] mMenuOptions;
     private TextView tvUsername;
 
@@ -56,10 +56,6 @@ public class Menu extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         mMenuOptions = getResources().getStringArray(R.array.menu_items);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (NavigationView) findViewById(R.id.drawer_list);
-        toolbar = (Toolbar) findViewById(R.id.myToolbar);
-        setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle("Paragony");
         View header = mDrawerList.getHeaderView(0);
@@ -67,23 +63,22 @@ public class Menu extends AppCompatActivity{
         tvUsername.setText(login);
 
 
-
-        mDrawerList.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        mDrawerList.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Intent mIntent = null;
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.menu_list:
-                        mIntent = new Intent(Menu.this, Menu.class);
+                        mIntent = new Intent(BillsList.this, BillsList.class);
                         break;
                     case R.id.menu_add_pic:
-                        mIntent = new Intent(Menu.this, OCRActivity.class);
+                        mIntent = new Intent(BillsList.this, OCRActivity.class);
                         break;
                     case R.id.menu_add_man:
-                        mIntent = new Intent(Menu.this, EditBillActivity.class);
+                        mIntent = new Intent(BillsList.this, EditBillActivity.class);
                         break;
                     case R.id.menu_charts:
-                        mIntent = new Intent(Menu.this, AnalysisActivity.class);
+                        mIntent = new Intent(BillsList.this, AnalysisActivity.class);
                         break;
                     case R.id.menu_sync:
                         break;
@@ -92,8 +87,8 @@ public class Menu extends AppCompatActivity{
                         mIntent.addCategory(Intent.CATEGORY_HOME);
                         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         break;
-                    default :
-                        mIntent = new Intent(Menu.this, Menu.class); // Activity_0 as default
+                    default:
+                        mIntent = new Intent(BillsList.this, BillsList.class); // Activity_0 as default
                         break;
                 }
                 mDrawerLayout.closeDrawers();
@@ -102,15 +97,15 @@ public class Menu extends AppCompatActivity{
             }
         });
 
-        drawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close){
+        drawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
-            public void onDrawerClosed(View drawerView){
+            public void onDrawerClosed(View drawerView) {
                 // TODO
                 // action performed when drawer closed
                 super.onDrawerClosed(drawerView);
             }
 
-            public void onDrawerOpened(View drawerView){
+            public void onDrawerOpened(View drawerView) {
                 //TODO
                 // action performed when drawer opened
                 super.onDrawerOpened(drawerView);
@@ -119,34 +114,27 @@ public class Menu extends AppCompatActivity{
         mDrawerLayout.addDrawerListener(drawerListener);
 
 
-
-
-        setContentView(R.layout.empty_list);
+        //setContentView(R.layout.empty_list);
 
         dbManager = new DBHandler(this);
         //dbManager.open();
         Cursor cursor = dbManager.fetch();
 
         listView = (ListView) findViewById(R.id.list_view);
-        listView.setEmptyView(findViewById(R.id.empty));
+        //listView.setEmptyView(findViewById(R.id.empty));
 
         adapter = new SimpleCursorAdapter(this, R.layout.activity_view_record, cursor, from, to, 0);
         adapter.notifyDataSetChanged();
 
         listView.setAdapter(adapter);
-
-
     }
-
 
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState){
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerListener.syncState();
     }
-
-
 
 
 }

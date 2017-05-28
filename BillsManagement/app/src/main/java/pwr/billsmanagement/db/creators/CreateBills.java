@@ -21,35 +21,24 @@ public class CreateBills {
     public CreateBills() {
     }
 
-    public String getTableBills(){
-        return "CREATE TABLE " + TABLE_BILLS + "("
+    public String getTableBills() {
+        return "CREATE TABLE IF NOT EXISTS" + TABLE_BILLS + "("
                 + COLUMN_BILLID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_PURCHASEDATE + " DEFAULT CURRENT_DATE, "
                 + COLUMN_USER_USERID + " INTEGER, "
                 + COLUMN_SHOP_SHOPID + " INTEGER, "
-                + "FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"), "
-                + "FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
-                +")";
+                + "FOREIGN KEY(" + COLUMN_USER_USERID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USERID + "), "
+                + "FOREIGN KEY(" + COLUMN_SHOP_SHOPID + ") REFERENCES " + TABLE_SHOPS + "(" + COLUMN_SHOPID + ") "
+                + ")";
     }
-
-    /*public String getTableBills(){
-        return "CREATE TABLE " + TABLE_BILLS + "("
-                + COLUMN_BILLID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_PURCHASEDATE + " DEFAULT CURRENT_DATE, "
-                + COLUMN_USER_USERID + " INTEGER, "
-                + COLUMN_SHOP_SHOPID + " INTEGER, "
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_USER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"), "
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_SHOP_SHOPID+") REFERENCES "+TABLE_SHOPS+"("+COLUMN_SHOPID+") "
-                +")";
-    }*/
 
 
     // Przykladowe dane
-    public String addSampleData(){
+    public String addSampleData() {
         return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2017-05-10', 2, 1)";
     }
 
-    public String addSampleData2(){
+    public String addSampleData2() {
         return "INSERT INTO " + TABLE_BILLS + " (PurchaseDate, User_UserID, Shop_ShopID) VALUES ('2016-06-30', 10, 2)";
     }
 }

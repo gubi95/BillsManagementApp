@@ -17,22 +17,22 @@ public class CreateShops {
     public CreateShops() {
     }
 
-    public String getTableShops(){
-        return "CREATE TABLE " + TABLE_SHOPS + "("
+    public String getTableShops() {
+        return "CREATE TABLE IF NOT EXISTS" + TABLE_SHOPS + "("
                 + COLUMN_SHOPID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_SHOPNAME + " NVARCHAR(100) UNIQUE, "
                 + COLUMN_USEROWNER_USERID + " INTEGER,"
-                + " FOREIGN KEY("+COLUMN_USEROWNER_USERID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USERID+"),"
-                + " UNIQUE("+COLUMN_SHOPID+","+COLUMN_SHOPNAME+") ON CONFLICT REPLACE"
-                +")";
+                + " FOREIGN KEY(" + COLUMN_USEROWNER_USERID + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USERID + "),"
+                + " UNIQUE(" + COLUMN_SHOPID + "," + COLUMN_SHOPNAME + ") ON CONFLICT REPLACE"
+                + ")";
     }
 
     // Przykladowe dane
-    public String addSampleData(){
+    public String addSampleData() {
         return "INSERT INTO " + TABLE_SHOPS + " (ShopName, UserOwner_UserID) VALUES ('Kaufland', 2)";
     }
 
-    public String addSampleData2(){
+    public String addSampleData2() {
         return "INSERT INTO " + TABLE_SHOPS + " (ShopName, UserOwner_UserID) VALUES ('Lidl', 3)";
     }
 

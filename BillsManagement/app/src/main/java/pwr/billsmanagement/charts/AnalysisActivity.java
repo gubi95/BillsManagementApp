@@ -25,7 +25,7 @@ import java.util.Calendar;
 
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
-import pwr.billsmanagement.menu.Menu;
+import pwr.billsmanagement.billslist.BillsList;
 import pwr.billsmanagement.ocr.OCRActivity;
 
 public class AnalysisActivity extends AppCompatActivity {
@@ -79,7 +79,7 @@ public class AnalysisActivity extends AppCompatActivity {
                 Intent mIntent = null;
                 switch (item.getItemId()) {
                     case R.id.menu_list:
-                        mIntent = new Intent(AnalysisActivity.this, Menu.class);
+                        mIntent = new Intent(AnalysisActivity.this, BillsList.class);
                         break;
                     case R.id.menu_add_pic:
                         mIntent = new Intent(AnalysisActivity.this, OCRActivity.class);
@@ -98,7 +98,7 @@ public class AnalysisActivity extends AppCompatActivity {
                         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         break;
                     default:
-                        mIntent = new Intent(AnalysisActivity.this, Menu.class); // Activity_0 as default
+                        mIntent = new Intent(AnalysisActivity.this, BillsList.class); // Activity_0 as default
                         break;
                 }
                 mDrawerLayout.closeDrawers();

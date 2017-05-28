@@ -1,5 +1,4 @@
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -8,7 +7,7 @@
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,17 +16,29 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            app:titleTextColor="@color/backgroundWhite"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            app:titleTextColor="@color/backgroundWhite">
+
         </android.support.v7.widget.Toolbar>
 
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:dividerHeight="1dp"
+            android:padding="10dp"
+            android:layout_marginTop="55dp">
+        </ListView>
+
+
     </FrameLayout>
+
     <android.support.design.widget.NavigationView
-            android:id="@+id/drawer_list"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="#EEE"
-            app:headerLayout="@layout/drawermenu_header"
-            app:menu="@menu/menu"/>
+        android:id="@+id/drawer_list"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#EEE"
+        app:headerLayout="@layout/drawermenu_header"
+        app:menu="@menu/menu" />
 </android.support.v4.widget.DrawerLayout>

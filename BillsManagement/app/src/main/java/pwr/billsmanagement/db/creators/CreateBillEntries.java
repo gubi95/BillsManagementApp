@@ -24,7 +24,7 @@ public class CreateBillEntries {
     }
 
     public String getTableBillEntries() {
-        return "CREATE TABLE " + TABLE_BILLENTRIES + "("
+        return "CREATE TABLE IF NOT EXISTS" + TABLE_BILLENTRIES + "("
                 + COLUMN_BILLENTRYID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_PRODUCTNAME + " NVARCHAR(100), "
                 + COLUMN_PRICE + " DECIMAL(18,2), "
@@ -37,16 +37,4 @@ public class CreateBillEntries {
     }
 
 
-    /*public String getTableBillEntries(){
-        return "CREATE TABLE " + TABLE_BILLENTRIES + "("
-                + COLUMN_BILLENTRYID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_PRODUCTNAME + " NVARCHAR(100), "
-                + COLUMN_PRICE + " DECIMAL(18,2), "
-                + COLUMN_QUANTITY + " FLOAT, "
-                + COLUMN_BILL_BILLID + " INTEGER, "
-                + COLUMN_CATEGORY_PRODUCTCATEGORYID + " INTEGER, "
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_BILL_BILLID+") REFERENCES "+TABLE_BILLS+"("+COLUMN_BILLID+"),"
-                + " CONSTRAINT FOREIGN KEY("+COLUMN_CATEGORY_PRODUCTCATEGORYID+") REFERENCES "+TABLE_PRODUCTCATEGORIES+"("+COLUMN_PRODUCTCATEGORYID+")"
-                +")";
-    }*/
 }
