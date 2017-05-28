@@ -46,6 +46,9 @@ public class DBHandler extends SQLiteOpenHelper {
     public DBHandler(Context context) {
 
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase dbInsert=this.getWritableDatabase();;
+        SQLiteDatabase dbSelect=this.getReadableDatabase();;
+        deleteDatabase(dbInsert);
         tabBillEntries = new CreateBillEntries();
         tabBills = new CreateBills();
         tabProductCategories = new CreateProductCategories();

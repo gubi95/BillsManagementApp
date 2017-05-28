@@ -67,6 +67,7 @@ public class AnalysisActivity extends AppCompatActivity implements OnItemClickLi
 
 
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis);
 
