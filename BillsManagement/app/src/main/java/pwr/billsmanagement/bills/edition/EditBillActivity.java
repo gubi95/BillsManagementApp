@@ -64,6 +64,7 @@ public class EditBillActivity extends Activity {
 
     private ArrayList<OcrProduct> ocrProducts;
     private String[] defineOptions;
+    private String runMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,13 @@ public class EditBillActivity extends Activity {
         initCreators();
         readPassedData();
         createCustomList();
+    }
+
+    private void establishRunMode() {
+        if(runMode.equals("edit")) {
+            Logger.i("RUN MODE: " + runMode);
+            mView.acceptAll.performClick();
+        }
     }
 
     private void initCreators() {
@@ -127,6 +135,9 @@ public class EditBillActivity extends Activity {
     private void readPassedData() {
         Logger.i("Read pass data");
         Bundle extras = getIntent().getExtras();
+
+        runMode = extras.getString("run_mode");
+
         String productJson = extras.getString("products_json");
         Gson gson = new Gson();
         ocrProducts = gson.fromJson(productJson, new TypeToken<ArrayList<OcrProduct>>() {
@@ -339,6 +350,8 @@ public class EditBillActivity extends Activity {
 
             Logger.i("Set listeners");
             mView.setListeners();
+
+            establishRunMode();
         }
     }
 

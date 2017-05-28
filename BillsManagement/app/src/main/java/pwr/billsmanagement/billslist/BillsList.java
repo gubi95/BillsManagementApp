@@ -16,6 +16,12 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
+
 import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
 import pwr.billsmanagement.db.creators.CreateBills;
@@ -23,6 +29,7 @@ import pwr.billsmanagement.db.creators.CreateShops;
 import pwr.billsmanagement.db.creators.DBHandler;
 import pwr.billsmanagement.ocr.OCRActivity;
 import pwr.billsmanagement.charts.AnalysisActivity;
+import pwr.billsmanagement.ocr.parsers.OcrProduct;
 
 
 public class BillsList extends AppCompatActivity {
@@ -72,10 +79,15 @@ public class BillsList extends AppCompatActivity {
                         mIntent = new Intent(BillsList.this, BillsList.class);
                         break;
                     case R.id.menu_add_pic:
+                        Logger.init("SZYSZKA");
                         mIntent = new Intent(BillsList.this, OCRActivity.class);
                         break;
                     case R.id.menu_add_man:
+                        Logger.init("SZYSZKA");
+                        Gson gson = new Gson();
                         mIntent = new Intent(BillsList.this, EditBillActivity.class);
+                        mIntent.putExtra("run_mode", "edit");
+                        mIntent.putExtra("products_json", gson.toJson(populateProductArray()));
                         break;
                     case R.id.menu_charts:
                         mIntent = new Intent(BillsList.this, AnalysisActivity.class);
@@ -123,6 +135,13 @@ public class BillsList extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         listView.setAdapter(adapter);
+    }
+
+    private ArrayList<OcrProduct> populateProductArray() {
+        ArrayList<OcrProduct> products = new ArrayList<>();
+        products.add(new OcrProduct("", ""));
+        products.add(new OcrProduct("", ""));
+        return products;
     }
 
 
