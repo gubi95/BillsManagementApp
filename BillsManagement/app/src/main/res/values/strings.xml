@@ -45,6 +45,7 @@
     </string>
     <string name="assembly_finals_progress_title">Edycja</string>
     <string name="assembly_finals_progress_message">Zapisywanie...</string>
+    <string name="add_category_title">Dodaj kategorię</string>
     <string-array name="add_options">
         <item>Dodaj kategorię</item>
         <item>Dodaj produkt</item>
