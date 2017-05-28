@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -31,12 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pwr.billsmanagement.R;
+import pwr.billsmanagement.bills.edition.categories.CategoryAddView;
 import pwr.billsmanagement.bills.edition.listeners.AcceptAllListenerFactory;
 import pwr.billsmanagement.bills.edition.listeners.ShowHelpListener;
 import pwr.billsmanagement.bills.edition.listeners.params.CreatorsParams;
 import pwr.billsmanagement.bills.edition.listeners.params.DefineParams;
 import pwr.billsmanagement.bills.edition.listeners.params.ListenerParams;
 import pwr.billsmanagement.bills.edition.listeners.params.ViewParams;
+import pwr.billsmanagement.bills.edition.products.AssembledProduct;
 import pwr.billsmanagement.bills.edition.products.ShredProductAssembler;
 import pwr.billsmanagement.bills.edition.view.DefineProductViewCreator;
 import pwr.billsmanagement.bills.edition.view.FinalProductViewCreator;
@@ -61,6 +64,7 @@ public class EditBillActivity extends Activity {
 
     private ArrayList<OcrProduct> ocrProducts;
     private String[] defineOptions;
+    private String runMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,13 @@ public class EditBillActivity extends Activity {
         initCreators();
         readPassedData();
         createCustomList();
+    }
+
+    private void establishRunMode() {
+        if(runMode.equals("edit")) {
+            Logger.i("RUN MODE: " + runMode);
+            mView.acceptAll.performClick();
+        }
     }
 
     private void initCreators() {
@@ -124,6 +135,9 @@ public class EditBillActivity extends Activity {
     private void readPassedData() {
         Logger.i("Read pass data");
         Bundle extras = getIntent().getExtras();
+
+        runMode = extras.getString("run_mode");
+
         String productJson = extras.getString("products_json");
         Gson gson = new Gson();
         ocrProducts = gson.fromJson(productJson, new TypeToken<ArrayList<OcrProduct>>() {
@@ -336,6 +350,8 @@ public class EditBillActivity extends Activity {
 
             Logger.i("Set listeners");
             mView.setListeners();
+
+            establishRunMode();
         }
     }
 
@@ -349,26 +365,31 @@ public class EditBillActivity extends Activity {
             LayoutInflater inflater = (LayoutInflater) EditBillActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
             View popupView = inflater.inflate(R.layout.bill_options_popup, null);
 
+            ListView optionsList = getListView(popupView);
+            PopupWindow options = getPopupWindow(popupView);
+            setOnOptionClickListener(optionsList, options);
+            showPopup(options);
+
+        }
+
+        @NonNull
+        private PopupWindow getPopupWindow(View popupView) {
+            return new PopupWindow(
+                            popupView, getMetrics().widthPixels/2, WRAP_CONTENT
+                    );
+        }
+
+        @NonNull
+        private ListView getListView(View popupView) {
             ListView optionsList = (ListView) popupView.findViewById(R.id.addWhatList);
             optionsList.setAdapter(
                     new ArrayAdapter<>(
                             EditBillActivity.this, android.R.layout.simple_list_item_1, ADD_OPTIONS)
             );
+            return optionsList;
+        }
 
-            WindowManager windowManager = EditBillActivity.this.getWindowManager();
-
-            DisplayMetrics metrics = new DisplayMetrics();
-            windowManager.getDefaultDisplay().getMetrics(metrics);
-
-            final PopupWindow options = new PopupWindow(
-                    popupView, metrics.widthPixels/2, WRAP_CONTENT
-            );
-
-            optionsList.setOnItemClickListener((parent, view, position, id) -> {
-                Logger.i("OPITON: " + ((TextView)optionsList.getChildAt(position)).getText());
-                options.dismiss();
-            });
-
+        private void showPopup(PopupWindow options) {
             options.setElevation(5.0f);
 
             int[] addLocation = new int[2];
@@ -378,7 +399,44 @@ public class EditBillActivity extends Activity {
                     findViewById(R.id.defineProductMainLayout),
                     Gravity.NO_GRAVITY, addLocation[0], addLocation[1]
             );
-
         }
+
+        private void setOnOptionClickListener(ListView optionsList, PopupWindow options) {
+            optionsList.setOnItemClickListener((parent, view, position, id) -> {
+                CharSequence option = ((TextView) optionsList.getChildAt(position)).getText();
+                Logger.i("OPTION: " + option);
+                onClickSwitch(option);
+                options.dismiss();
+            });
+        }
+
+        private void onClickSwitch(CharSequence option) {
+            final String CATEGORY = ADD_OPTIONS[0];
+            final String PRODUCT = ADD_OPTIONS[1];
+
+            if(option.toString().equals(CATEGORY)) {
+                CategoryAddView categoryView = new CategoryAddView(
+                        EditBillActivity.this.getWindowManager(), EditBillActivity.this
+                );
+
+                categoryView.getCategoryAddView();
+                categoryView.showPopup(findViewById(R.id.defineProductMainLayout));
+
+            } else if (option.toString().equals(PRODUCT)){
+                LinearLayout layout = (LinearLayout) findViewById(R.id.productList);
+                layout.addView(finalProductViewCreator.getProductRowAndSave(
+                        new AssembledProduct("", "", ""), finalProductViewCreator.getLastId() + 1)
+                );
+            }
+        }
+
+        private DisplayMetrics getMetrics() {
+            WindowManager windowManager = EditBillActivity.this.getWindowManager();
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(metrics);
+            return metrics;
+        }
+
     }
 }

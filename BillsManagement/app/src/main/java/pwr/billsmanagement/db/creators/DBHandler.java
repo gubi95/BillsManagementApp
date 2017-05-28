@@ -64,7 +64,6 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(tabShops.getTableShops());
         db.execSQL(tabUsers.getTableUsers());
 
-
     }
 
     @Override
@@ -87,6 +86,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void insertProductCategoriesAsync(ProductCategories category) {
 
+
         InsertProductCategoriesAsync task = new InsertProductCategoriesAsync();
         task.setDbInsert(this.getWritableDatabase());
         task.setDbSelect(this.getReadableDatabase());
@@ -94,6 +94,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     }
+
+
+
 
 
 
@@ -114,30 +117,29 @@ public class DBHandler extends SQLiteOpenHelper {
                 insertShopByString(dbInsert, params[0].getShopName());
                 product.setCategoryID(findCategoryIDByString(dbSelect, product.getCategory()));
                 params[0].setShopID(findShopIDByName(dbSelect, params[0].getShopName()));
-                insertProductToDB(dbInsert, dbSelect, params[0].getShopID(),params[0].getShopName(), product);
+                insertProductToDB(dbInsert, dbSelect, params[0].getShopID(), params[0].getShopName(), product);
 
 
             }
 
 
-
- //Przykład wywołania getTable //ile kolumn się chce
-            Cursor curs=getTable(TABLE_SHOPS);
+            //Przykład wywołania getTable //ile kolumn się chce
+            Cursor curs = getTable(TABLE_SHOPS);
             curs.moveToFirst();
-            while(curs.moveToNext()){
-                Log.d("tabela shops",curs.getString(0)+" "+curs.getString(1)+" "+curs.getString(2));
+            while (curs.moveToNext()) {
+                Log.d("tabela shops", curs.getString(0) + " " + curs.getString(1) + " " + curs.getString(2));
 
             }
 
 
-
-            for (String s:getProductsFromShop(dbSelect,params[0].getShopName())
-                 ) {
-                Log.d("tabela sklepy",s);
+            for (String s : getProductsFromShop(dbSelect, params[0].getShopName())
+                    ) {
+                Log.d("tabela sklepy", s);
             }
 
             return null;
         }
+
 
 
 
@@ -164,6 +166,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             return null;
         }
+
 
 
 
@@ -232,7 +235,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public ArrayList<String> getColumn(SQLiteDatabase dbSelect, String column, String table) {
 
-        String query = "SELECT "+column+"FROM"+table;
+        String query = "SELECT " + column + "FROM" + table;
 
         Cursor res = dbSelect.rawQuery(query, null);
         res.moveToFirst();
@@ -243,6 +246,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return listProduct;
     }
+
 
     public ArrayList<ProductCategories> getAllCategories() {
 
@@ -268,7 +272,23 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //VOID
 
+
+
+
+    public Cursor getBills() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT Bills._id, Bills.PurchaseDate, Shops.ShopName FROM Bills, Shops WHERE Bills.Shop_ShopID = Shops._id", null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+
     private void insertShopByString(SQLiteDatabase dbInsert, String shopName) {
+
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
         dbInsert.execSQL(query);
@@ -281,7 +301,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID,String shopName, FinalProduct prod) {
+    private void insertProductToDB(SQLiteDatabase dbInsert, SQLiteDatabase dbSelect, String shopID, String shopName, FinalProduct prod) {
 
         ContentValues content = new ContentValues();
         content.put(CreateBills.COLUMN_SHOP_SHOPID, shopID);
@@ -305,7 +325,6 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     //STRING
-
 
     private String findCategoryIDByString(SQLiteDatabase dbSelect, String category) {
         String query = "SELECT " + CreateProductCategories.COLUMN_PRODUCTCATEGORYID + " FROM " + TABLE_PRODUCTCATEGORIES + " WHERE " + CreateProductCategories.COLUMN_NAME + " = \'" + category + "\'";

@@ -15,8 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -47,35 +49,30 @@ import pwr.billsmanagement.readers.PropertiesReader;
 
 public class OCRActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private static final int REQUEST_ONE_LINE_BILL_PARSER = 1;
+    private static final int REQUEST_TWO_LINE_BILL_PARSER = 2;
     private static final int PHOTO_REQUEST_CODE = 1;
     private static final String CONFIG_FILE = "properties/config.properties";
     private static final String EXTERNAL_FILES = "properties/external_files.properties";
-
-    private CropImageView cropImageView;
+    DBHandler mydb;
+    private int REQUESTES_BILL_PARSER;
     private RequestPermissionsTool requestTool;
-    private Toolbar toolbar;
-    private ImageButton captureImg, startOCRForCroppedImage;
-
+    private OCRActivityView mView;
     private BillsOCR billsOCR;
     private MatchWorker matchWorker;
     private PropertiesReader reader;
-
     private Uri billPhoto;
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
         Logger.init("OCR");
 
-        initView();
+        initMView();
         initListeners();
 
         reader = new PropertiesReader(getApplicationContext(), new Properties());
@@ -87,29 +84,29 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     }
 
     private void initListeners() {
-        cropImageView.setOnCropImageCompleteListener(new CropImageListener());
+        mView.cropImageView.setOnCropImageCompleteListener(new CropImageListener());
     }
 
-    private void initView() {
-        toolbar = (Toolbar) findViewById(R.id.myToolbar);
-        toolbar.setTitle(getString(R.string.app_name));
+    private void initMView() {
 
-        captureImg = (ImageButton) findViewById(R.id.shootPhoto);
-        captureImg.setImageResource(R.drawable.ic_take_photo);
-        captureImg.setBackgroundColor(ContextCompat.getColor(this, R.color.activeButton));
+        mView = new OCRActivityView(
+                findViewById(R.id.cropImageView),
+                findViewById(R.id.myToolbar),
+                findViewById(R.id.shootPhoto),
+                findViewById(R.id.startOCRForCroppedImage),
+                findViewById(R.id.twoLineBill),
+                findViewById(R.id.oneLineBill)
+        );
 
-        startOCRForCroppedImage = (ImageButton) findViewById(R.id.startOCRForCroppedImage);
-        startOCRForCroppedImage.setImageResource(R.drawable.ic_start_ocr);
-        startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentGrey));
-        startOCRForCroppedImage.setEnabled(false);
+        mView.init();
+        mView.billsIconSetOnClick();
 
-        cropImageView = (CropImageView) findViewById(R.id.cropImageView);
         captureImageSetOnClick();
         startOCRForCroppedImageSetOnClick();
     }
 
     private void startOCRForCroppedImageSetOnClick() {
-        startOCRForCroppedImage.setOnClickListener(v -> cropImageView.getCroppedImageAsync());
+        mView.startOCRForCroppedImage.setOnClickListener(v -> mView.cropImageView.getCroppedImageAsync());
     }
 
     private void startOCROnCroppedImageAsync() {
@@ -118,10 +115,11 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     }
 
     private void captureImageSetOnClick() {
-        if (captureImg != null) {
-            captureImg.setOnClickListener(v -> {
+        if (mView.captureImg != null) {
+            mView.captureImg.setOnClickListener(v -> {
                 billsOCR = new BillsOCR(getAssets(), reader.readMyProperties(CONFIG_FILE), this);
                 final Intent takePhotoIntent = billsOCR.startCameraActivity();
+                mView.switchToAfterPhotoView();
                 startActivityForResult(takePhotoIntent, PHOTO_REQUEST_CODE);
             });
         }
@@ -136,18 +134,12 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Logger.i("In onActivityResult after shooting photo.");
             billPhoto = billsOCR.getOutputFileUri();
-            cropImageView.setImageUriAsync(billPhoto);
-            activateStartOcrButton(ContextCompat.getColor(this, R.color.activeButton), true);
+            mView.cropImageView.setImageUriAsync(billPhoto);
+            mView.activateStartOcrButton(ContextCompat.getColor(this, R.color.activeButton), true);
         } else {
             Toast.makeText(this, "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void activateStartOcrButton(int color, boolean enabled) {
-        startOCRForCroppedImage.setBackgroundColor(color);
-        startOCRForCroppedImage.setEnabled(enabled);
     }
 
     private void requestPermissions() {
@@ -173,7 +165,6 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
         }
 
     }
-
 
 
     private class CropImageListener implements CropImageView.OnCropImageCompleteListener {
@@ -264,9 +255,69 @@ public class OCRActivity extends Activity implements ActivityCompat.OnRequestPer
             Gson gson = new Gson();
             Logger.i(gson.toJson(shopOcrProducts));
             Intent editBillActivity = new Intent(getApplicationContext(), EditBillActivity.class);
+            editBillActivity.putExtra("run_mode", "define");
             editBillActivity.putExtra("products_json", gson.toJson(shopOcrProducts));
             editBillActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(editBillActivity);
+        }
+    }
+
+    private class OCRActivityView {
+        private CropImageView cropImageView;
+        private Toolbar toolbar;
+        private ImageButton captureImg, startOCRForCroppedImage;
+        private ImageView twoLineBill, oneLineBill;
+
+        public OCRActivityView(View cropImageView, View toolbar, View captureImg,
+                               View startOCRForCroppedImage, View twoLineBill,
+                               View oneLineBill) {
+
+            this.cropImageView = (CropImageView) cropImageView;
+            this.toolbar = (Toolbar) toolbar;
+            this.captureImg = (ImageButton) captureImg;
+            this.startOCRForCroppedImage = (ImageButton) startOCRForCroppedImage;
+            this.twoLineBill = (ImageView) twoLineBill;
+            this.oneLineBill = (ImageView) oneLineBill;
+        }
+
+        void init() {
+            toolbar.setTitle(getString(R.string.ocr_activity_name));
+
+            twoLineBill.setImageResource(R.mipmap.ic_two_line_bill);
+            oneLineBill.setImageResource(R.mipmap.ic_one_line_bill);
+
+            captureImg.setImageResource(R.drawable.ic_take_photo);
+            captureImg.setBackgroundColor(ContextCompat.getColor(OCRActivity.this, R.color.activeButton));
+
+            startOCRForCroppedImage.setImageResource(R.drawable.ic_start_ocr);
+            startOCRForCroppedImage.setBackgroundColor(ContextCompat.getColor(OCRActivity.this, R.color.transparentGrey));
+            startOCRForCroppedImage.setEnabled(false);
+
+        }
+
+        void billsIconSetOnClick() {
+            twoLineBill.setOnClickListener(v -> {
+                oneLineBill.setImageResource(R.mipmap.ic_one_line_bill);
+                twoLineBill.setImageResource(R.mipmap.ic_two_line_bill_selected);
+                REQUESTES_BILL_PARSER = REQUEST_TWO_LINE_BILL_PARSER;
+            });
+
+            oneLineBill.setOnClickListener(v -> {
+                oneLineBill.setImageResource(R.mipmap.ic_one_line_bill_selected);
+                twoLineBill.setImageResource(R.mipmap.ic_two_line_bill);
+                REQUESTES_BILL_PARSER = REQUEST_ONE_LINE_BILL_PARSER;
+            });
+        }
+
+        void activateStartOcrButton(int color, boolean enabled) {
+            startOCRForCroppedImage.setBackgroundColor(color);
+            startOCRForCroppedImage.setEnabled(enabled);
+        }
+
+        public void switchToAfterPhotoView() {
+            twoLineBill.setVisibility(View.GONE);
+            oneLineBill.setVisibility(View.GONE);
+            cropImageView.setVisibility(View.VISIBLE);
         }
     }
 }

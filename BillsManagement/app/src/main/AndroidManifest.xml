@@ -18,12 +18,10 @@
         <activity android:name=".bills.edition.EditBillActivity" />
 
         <activity
-            android:name=".menu.Menu"
-            android:label="@string/title_activity_menu"
+            android:name=".charts.AnalysisActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".charts.AnalysisActivity"
-            android:label="@string/title_activity_analysis"
+            android:name=".billslist.BillsList"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

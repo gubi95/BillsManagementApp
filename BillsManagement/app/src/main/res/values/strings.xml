@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Paragony</string>
+    <string name="ocr_activity_name">Dodaj paragon</string>
     <string-array name="menu_items">
         <item>Historia zakupów</item>
         <item>Dodaj paragon ze zdjęcia</item>
@@ -7,6 +8,15 @@
         <item>Diagramy wydatków</item>
         <item>Wyloguj</item>
     </string-array>
+
+    <string name="bill_list">Lista paragonów</string>
+    <string name="add_pic">Dodaj paragon ze zdjęcia</string>
+    <string name="add_man">Dodaj paragon ręcznie</string>
+    <string name="charts">Diagramy wydatków</string>
+    <string name="sync">Synchronizuj</string>
+    <string name="logout">Wyloguj</string>
+
+
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
 
@@ -45,6 +55,10 @@
     </string>
     <string name="assembly_finals_progress_title">Edycja</string>
     <string name="assembly_finals_progress_message">Zapisywanie...</string>
+    <string name="add_category_title">Dodaj kategorię</string>
+    <string name="cancel">Anuluj</string>
+    <string name="bill_one_line_bill_hint">Nazwa i cena w tej samej linii</string>
+    <string name="bill_two_line_bill_hint">Nazwa i cena w osobnych liniach</string>
     <string-array name="add_options">
         <item>Dodaj kategorię</item>
         <item>Dodaj produkt</item>
@@ -60,4 +74,6 @@
     <string name="limit">Limit wydatków</string>
     <string name="wydano">Wydano w tym miesiącu:</string>
     <string name="save">Zapisz</string>
+    <string name="barchart_title">Sumy wydatków w podziale na kategorie</string>
+    <string name="successfully_added_bill">Pomyślnie dodano paragon.</string>
 </resources>
