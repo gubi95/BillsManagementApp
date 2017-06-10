@@ -17,6 +17,7 @@ public class BillEntity {
     public BillEntity(String shopName, ArrayList<FinalProduct> products) {
         this.shopName = shopName;
         this.products = products;
+        this.shopID = null;
     }
 
     public String getShopName() {

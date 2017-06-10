@@ -29,6 +29,7 @@ import pwr.billsmanagement.R;
 import pwr.billsmanagement.bills.BillEntity;
 import pwr.billsmanagement.bills.edition.EditBillActivity;
 
+import pwr.billsmanagement.bills.edition.products.FinalProduct;
 import pwr.billsmanagement.billslist.BillsList;
 import pwr.billsmanagement.db.creators.DBHandler;
 import pwr.billsmanagement.ocr.OCRActivity;
@@ -55,20 +56,22 @@ public class AnalysisActivity extends AppCompatActivity {
     private OnChartValueSelectedListener chartListener;
 
     public DBHandler mydb;
-
     public AnalysisActivity() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        mydb = new DBHandler(this);
+
 
 
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis);
+
+        mydb = new DBHandler(this);
+
 
         //drawer menu
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -274,14 +277,20 @@ public class AnalysisActivity extends AppCompatActivity {
         FinalProduct f1=new FinalProduct("chomik","1","2","12","zwierzeta");
         FinalProduct f2=new FinalProduct("królik","1","2","12","jedzenie");
         FinalProduct f3=new FinalProduct("kot","1","2","12","ubrania");
+        FinalProduct f4=new FinalProduct("skarpetki","1","2","12","zwierzeta");
+        FinalProduct f5=new FinalProduct("costam","1","2","12","jedzenie");
+        FinalProduct f6=new FinalProduct("kot","1","2","12","ubrania");
         testList.add(f1);
         testList.add(f2);
         testList.add(f3);
+        testList.add(f4);
+        testList.add(f5);
+        testList.add(f6);
 
-        BillEntity b1 = new BillEntity("Lidl",testList);
+        BillEntity b1 = new BillEntity("TENSKLEP",testList);
 
 
-        mydb.insertProductsAsync(b1);
+        mydb.insertProducts(b1);
 
 
     }

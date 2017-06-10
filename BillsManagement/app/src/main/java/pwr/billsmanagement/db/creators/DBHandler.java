@@ -113,21 +113,30 @@ public class DBHandler extends SQLiteOpenHelper {
         protected Void doInBackground(BillEntity... params) {
 
             for (FinalProduct product : params[0].getProducts()) {
-
+                insertCategoryByString(dbInsert, product.getCategory());
                 insertShopByString(dbInsert, params[0].getShopName());
                 product.setCategoryID(findCategoryIDByString(dbSelect, product.getCategory()));
+                Log.d("tabela",product.getCategoryID());
                 params[0].setShopID(findShopIDByName(dbSelect, params[0].getShopName()));
+                Log.d("tabela",params[0].getShopID());
                 insertProductToDB(dbInsert, dbSelect, params[0].getShopID(), params[0].getShopName(), product);
 
 
             }
 
 
+
             //Przykład wywołania getTable //ile kolumn się chce
-            Cursor curs = getTable(TABLE_BILLENTRIES);
+            Cursor curs = getTable(TABLE_SHOPS);
             curs.moveToFirst();
             while (curs.moveToNext()) {
                 Log.d("tabela shops", curs.getString(0) + " " + curs.getString(1) + " " + curs.getString(2));
+
+            }
+            curs = getTable(TABLE_BILLS);
+            curs.moveToFirst();
+            while (curs.moveToNext()) {
+                Log.d("tabela bills", curs.getString(0) + " " + curs.getString(2) + " " + curs.getString(3));
 
             }
 
@@ -287,7 +296,15 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String query = "INSERT INTO " + TABLE_SHOPS + "(" + CreateShops.COLUMN_SHOPNAME + ") " + " SELECT '" + shopName + "' WHERE NOT EXISTS(SELECT 1 FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " LIKE '" + shopName + "')";
         dbInsert.execSQL(query);
+        Log.d("tabela",query);
+    }
 
+    private void insertCategoryByString(SQLiteDatabase dbInsert, String category) {
+
+
+        String query = "INSERT INTO " + CreateProductCategories.TABLE_PRODUCTCATEGORIES + "(" + CreateProductCategories.COLUMN_NAME + ") " + " SELECT '" + category + "' WHERE NOT EXISTS(SELECT 1 FROM " + CreateProductCategories.TABLE_PRODUCTCATEGORIES + " WHERE " + CreateProductCategories.COLUMN_NAME + " LIKE '" + category + "')";
+        dbInsert.execSQL(query);
+        Log.d("tabela",query);
     }
 
     public void insertProductCategoryToDB(SQLiteDatabase dbInsert,ProductCategories cat){
@@ -325,19 +342,18 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "SELECT " + CreateProductCategories.COLUMN_PRODUCTCATEGORYID + " FROM " + TABLE_PRODUCTCATEGORIES + " WHERE " + CreateProductCategories.COLUMN_NAME + " = \'" + category + "\'";
         Cursor res = dbSelect.rawQuery(query, null);
 
-        if (res != null) {
-            res.moveToFirst();
-        }
-        return res.toString();
+        res.moveToFirst();
+        String str = res.getString(res.getColumnIndex(CreateProductCategories.COLUMN_PRODUCTCATEGORYID));
+        return str;
+
     }
 
 
     private String findShopIDByName(SQLiteDatabase dbSelect, String shop) {
-        String query = "SELECT " + CreateShops.COLUMN_SHOPID + " FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " = '%" + shop + "%'";
+        String query = "SELECT " + CreateShops.COLUMN_SHOPID + " FROM " + TABLE_SHOPS + " WHERE " + CreateShops.COLUMN_SHOPNAME + " = '" + shop + "'";
         Cursor res = dbSelect.rawQuery(query, null);
         res.moveToFirst();
         String str = res.getString(res.getColumnIndex(CreateShops.COLUMN_SHOPID));
-
         return str;
     }
 
@@ -346,7 +362,6 @@ public class DBHandler extends SQLiteOpenHelper {
         Cursor res = dbSelect.rawQuery(query, null);
         res.moveToFirst();
         String str = res.getString(res.getColumnIndex(CreateBills.COLUMN_BILLID));
-
         return str;
     }
 
