@@ -64,6 +64,8 @@ public class AssemblyFinalsTask extends AsyncTask<ArrayList<FinalProductView>, V
         }
 
         BillEntity bill = new BillEntity(shopName, finalProducts);
+        DBHandler db = new DBHandler(context);
+        db.insertProducts(bill);
         Logger.i("Read bill: " + bill.toString());
         Intent billsIntent = new Intent(context, BillsList.class);
         Toast.makeText(context, context.getText(R.string.successfully_added_bill), Toast.LENGTH_LONG).show();
